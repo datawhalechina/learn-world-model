@@ -1,6 +1,6 @@
 ---
 title: Curriculum Roadmap
-description: The learning path from L01 to L05, and the starting point for L02: how to compress pixels into a latent vector.
+description: "The learning path from L01 to L05, and the starting point for L02: how to compress pixels into a latent vector."
 lecture: 1
 ---
 

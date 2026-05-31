@@ -1,6 +1,6 @@
 ---
-title: Internal Simulation: History and Intuition of World Models
-description: Starting from everyday intuition, tracing the century-long evolution of the world model idea: Craik's mental models, predictive coding, the internal model principle, and the four eras from Ha & Schmidhuber to Dreamer to JEPA.
+title: "Internal Simulation: History and Intuition of World Models"
+description: "Starting from everyday intuition, tracing the century-long evolution of the world model idea: Craik's mental models, predictive coding, the internal model principle, and the four eras from Ha & Schmidhuber to Dreamer to JEPA."
 lecture: 1
 difficulty: Introductory
 ---
