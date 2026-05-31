@@ -47,7 +47,7 @@
 | L01 | 讲义 | 内部仿真与历史背景 | Craik 的心智模型、预测编码、世界模型演化的四个时代 |
 | L02 | 讲义 | 观测编码与潜在动力学 | VAE、CNN 编码器、ELBO，GRU → MDN-RNN → RSSM |
 | L03 | 讲义 | 架构模式、学习范式与规划 | 七大架构族、CEM-MPC、潜在 Actor-Critic、TD-MPC |
-| L04 | 讲义 | 按模型划分的评估指标 | FID、奖励相关性、一致性损失、PSNR、视野漂移 |
+| L04 | 讲义 | 按模型划分的评估指标 | FID、奖励相关性、一致性损失、PSNR、时程漂移 |
 | L05 | 讲义 | 前沿争论 | 语言 vs 物理 grounding、Bitter Lesson、AGI 作为研究目标 |
 | P01 | 项目 | 训练 VAE 编码器 | 64×64 像素图像压缩为潜在向量；重建损失曲线 |
 | P02 | 项目 | 构建潜在动力学模型 | GRU → RSSM；1 步 vs 5 步预测误差对比 |
@@ -113,6 +113,16 @@ learn-world-model/
 ├── scripts/                               # 构建工具（截图、PDF）
 └── package.json
 ```
+
+---
+
+## 交流社群
+
+扫描二维码加入微信交流群：
+
+<div align="center">
+  <img src="./docs/public/wechat-group-qr-code.jpg" width="200" alt="微信交流群二维码">
+</div>
 
 ---
 

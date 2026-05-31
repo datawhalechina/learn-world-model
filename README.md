@@ -32,7 +32,7 @@
 ![Lecture page](./docs/public/screenshots/readme/en-lecture-01.png)
 
 ### 🗂️ Architecture Deep Dive
-> Six architecture families, three planning mechanisms, side-by-side comparison tables.
+> Seven architecture families, three planning mechanisms, side-by-side comparison tables.
 
 ![Architecture lecture](./docs/public/screenshots/readme/en-lecture-03.png)
 
@@ -47,7 +47,7 @@ Five lectures and five projects that take you from the intuition behind world mo
 | L01 | Lecture | Internal Simulation & Historical Context | Craik's mental models, predictive coding, four eras of world model evolution |
 | L02 | Lecture | Observation Encoding & Latent Dynamics | VAE, CNN encoder, ELBO, GRU → MDN-RNN → RSSM |
 | L03 | Lecture | Architecture Patterns, Learning Paradigms & Planning | Seven architecture families, CEM-MPC, latent Actor-Critic, TD-MPC |
-| L04 | Lecture | Evaluation Metrics by World Model | FID, reward correlation, consistency loss, PSNR, horizon drift |
+| L04 | Lecture | Evaluation by World Model | FID, reward correlation, consistency loss, PSNR, horizon drift |
 | L05 | Lecture | Frontier Debates | Language vs physical grounding, Bitter Lesson, AGI as a research target |
 | P01 | Project | Train a VAE Encoder | Compress 64×64 pixels to latent z; reconstruction loss curve |
 | P02 | Project | Build a Latent Dynamics Model | GRU → RSSM; 1-step vs 5-step prediction error |
@@ -113,6 +113,16 @@ learn-world-model/
 ├── scripts/                               # build utilities (screenshots, PDF)
 └── package.json
 ```
+
+---
+
+## Community
+
+Scan the QR code to join the WeChat discussion group (微信交流群):
+
+<div align="center">
+  <img src="./docs/public/wechat-group-qr-code.jpg" width="200" alt="WeChat Group QR Code">
+</div>
 
 ---
 
