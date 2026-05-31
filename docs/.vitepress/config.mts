@@ -79,7 +79,7 @@ const zhProjectItems = [
 ];
 
 const enWorldModelItems = [
-  { text: "Welcome", link: "/en/world-model/" },
+  { text: "Welcome", link: "/en/" },
   {
     text: "Lecture 01: Internal Simulation",
     collapsed: false,
@@ -88,6 +88,7 @@ const enWorldModelItems = [
       { text: "Foundations", link: "/en/lectures/lecture-01-internal-simulation/01-foundations" },
       { text: "Four Eras", link: "/en/lectures/lecture-01-internal-simulation/02-four-eras" },
       { text: "Why Now", link: "/en/lectures/lecture-01-internal-simulation/03-why-now" },
+      { text: "Course Roadmap", link: "/en/lectures/lecture-01-internal-simulation/04-roadmap" },
     ]
   },
   {
@@ -106,7 +107,8 @@ const enWorldModelItems = [
     items: [
       { text: "Overview", link: "/en/lectures/lecture-03-architecture-patterns/" },
       { text: "Part A: RNN, Transformer & Diffusion", link: "/en/lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion" },
-      { text: "Part A (cont): JEPA, RWM & WAM", link: "/en/lectures/lecture-03-architecture-patterns/02-architectures-jepa-rwm-wam" },
+      { text: "Part A (cont): JEPA & RWM", link: "/en/lectures/lecture-03-architecture-patterns/02-architectures-jepa-rwm-wam" },
+      { text: "Part A (cont): Genie, WAM & Selection", link: "/en/lectures/lecture-03-architecture-patterns/03-architectures-genie-wam" },
       { text: "Part B: CEM-MPC & Actor-Critic", link: "/en/lectures/lecture-03-architecture-patterns/03-planning-cem-ac" },
       { text: "Part B (cont): TD-MPC & Comparison", link: "/en/lectures/lecture-03-architecture-patterns/04-planning-tdmpc" },
     ]
@@ -116,9 +118,14 @@ const enWorldModelItems = [
     collapsed: false,
     items: [
       { text: "Overview", link: "/en/lectures/lecture-04-evaluation-by-model/" },
-      { text: "Dreamer & MuZero Metrics", link: "/en/lectures/lecture-04-evaluation-by-model/01-model-metrics-dreamer-muzero" },
+      { text: "Dreamer Metrics", link: "/en/lectures/lecture-04-evaluation-by-model/01-model-metrics-dreamer-muzero" },
+      { text: "MuZero Metrics", link: "/en/lectures/lecture-04-evaluation-by-model/02-model-metrics-muzero" },
       { text: "TD-MPC Metrics", link: "/en/lectures/lecture-04-evaluation-by-model/02-model-metrics-tdmpc" },
-      { text: "STORM, Diffusion & Drift", link: "/en/lectures/lecture-04-evaluation-by-model/03-storm-diffusion-drift" },
+      { text: "STORM Metrics", link: "/en/lectures/lecture-04-evaluation-by-model/03-storm-diffusion-drift" },
+      { text: "Diffusion & Horizon Drift", link: "/en/lectures/lecture-04-evaluation-by-model/04-diffusion-drift" },
+      { text: "Real-World Deployment Metrics", link: "/en/lectures/lecture-04-evaluation-by-model/04-deployment-metrics" },
+      { text: "Seven Pitfalls & Deployment Strategies", link: "/en/lectures/lecture-04-evaluation-by-model/05-deployment-pitfalls" },
+      { text: "Summary & Outlook", link: "/en/lectures/lecture-04-evaluation-by-model/06-summary" },
     ]
   },
   {
@@ -126,9 +133,10 @@ const enWorldModelItems = [
     collapsed: false,
     items: [
       { text: "Overview", link: "/en/lectures/lecture-05-frontier-debates/" },
-      { text: "Language as Opium & Bitter Lesson", link: "/en/lectures/lecture-05-frontier-debates/01-language-and-bitter-lesson" },
-      { text: "AGI & Convergence", link: "/en/lectures/lecture-05-frontier-debates/02-agi-and-convergence" },
-      { text: "Data & Future", link: "/en/lectures/lecture-05-frontier-debates/03-data-and-future" },
+      { text: "Language & Bitter Lesson", link: "/en/lectures/lecture-05-frontier-debates/01-language-and-bitter-lesson" },
+      { text: "World Models vs LLMs: Convergence", link: "/en/lectures/lecture-05-frontier-debates/02-agi-and-convergence" },
+      { text: "Where Does the Data Come From", link: "/en/lectures/lecture-05-frontier-debates/03-data-and-future" },
+      { text: "Core Bets & Closing Questions", link: "/en/lectures/lecture-05-frontier-debates/04-bets-and-questions" },
     ]
   },
 ];
@@ -227,12 +235,12 @@ export default withMermaid(
         link: "/en/",
         themeConfig: {
           nav: [
-            { text: "Lectures", link: "/en/world-model/", activeMatch: '^/en/(lectures/|world-model/)' },
+            { text: "Lectures", link: "/en/", activeMatch: '^/en/(|lectures/)' },
             { text: "Projects", link: enProjectItems[0].link, activeMatch: '^/en/projects/' },
           ],
           sidebar: {
             '/en/projects/': [{ text: "Projects", items: enProjectItems }],
-            '/en/world-model/': [{ text: "World Models", items: enWorldModelItems }],
+            '/en/': [{ text: "World Models", items: enWorldModelItems }],
             '/en/lectures/lecture-01-internal-simulation/': [{ text: "World Models", items: enWorldModelItems }],
             '/en/lectures/lecture-02-encode-and-dynamics/': [{ text: "World Models", items: enWorldModelItems }],
             '/en/lectures/lecture-03-architecture-patterns/': [{ text: "World Models", items: enWorldModelItems }],
