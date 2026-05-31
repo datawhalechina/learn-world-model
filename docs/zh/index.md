@@ -1,6 +1,6 @@
 ---
 title: 世界模型课程
-description: 五讲系统讲授世界模型理论——从历史脉络到前沿思辨。
+description: 五讲系统讲授世界模型理论，从历史脉络到前沿思辨。
 ---
 
 # 欢迎来到 Learn World Models

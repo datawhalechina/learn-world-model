@@ -155,7 +155,7 @@ export default withMermaid(
     base: docsBase,
     title: "Learn World Models",
     description:
-      "A project-based curriculum on world models — from VAE encoders and latent dynamics to Dreamer, TD-MPC, STORM, and frontier debates on language vs physical grounding.",
+      "A project-based curriculum on world models: from VAE encoders and latent dynamics to Dreamer, TD-MPC, STORM, and frontier debates on language vs physical grounding.",
     cleanUrls: true,
     srcExclude: ["temp/**"],
     ignoreDeadLinks: true,

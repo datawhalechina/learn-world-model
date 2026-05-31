@@ -45,6 +45,30 @@ This design maps almost one-to-one onto the RSSM framework from physical-world m
 
 ---
 
+## Harnesses Getting Thinner: An Engineering Prophecy for World Models
+
+CWM extended the boundary of "world" into code execution space. From a different direction entirely, someone in the physical-world agent engineering community arrived at a closely related conclusion.
+
+At Sequoia AI Ascent 2026, Boris Cherny, the creator of Claude Code, made a prediction worth recording here:
+
+> "The harness is becoming less important. In a year, models will be much better aligned, so today's safety mechanisms around prompt injection, static command verification, permission modes, and human-in-the-loop will all become less important, because the model will just do the right thing."
+
+The **harness** referred to here is the external control layer built around a model in agent engineering: permission checks, tool-calling rules, safety interceptors, human confirmation nodes, and all the surrounding scaffolding code that current AI agent systems depend on to operate reliably. Boris's claim is that as model capability grows, this scaffolding layer will get progressively thinner.
+
+From an engineering standpoint this is a prediction about the trajectory of the harness. From the world model perspective, it points to a deeper question: the most promising path toward an exponential reduction in harness code is to use a world model as the foundation.
+
+The reason comes from two intrinsic properties of world models.
+
+The first is **predictive foresight**. The core capability of a world model is to roll out "if I take this action, what happens next" inside latent space before acting. This means the harness no longer needs to enumerate "forbidden operations" through static rules; instead, the model predicts consequences directly from its internal dynamics, filtering high-risk actions at the planning stage: not through rules, but through foresight.
+
+The second is **causal internalization**. Current LLMs and VLMs understand the causal chain between actions and environment state in a statistical rather than structural sense. This is the root reason harnesses must impose so many external constraints: the model does not know that "deleting this file will break the system," so the harness must act as gatekeeper on its behalf. Once the base model possesses a complete causal world model, it can maintain these constraints through internal reasoning, and the harness's gatekeeping role naturally recedes.
+
+Neither property is something that LLM scaling directly delivers, because larger language models still predict over token distributions rather than performing causal rollouts over state spaces. This is exactly where the world model approach and the pure language route diverge in agent engineering: the former lets the model become its own safety layer; the latter requires an ever-thicker harness to compensate for the model's causal blind spots.
+
+Boris Cherny at Sequoia AI Ascent 2026: [youtube.com/watch?v=SlGRN8jh2RI](https://www.youtube.com/watch?v=SlGRN8jh2RI)
+
+---
+
 ## The Bet of the Unpopular Side
 
 Xie Saining knows that what he is doing is not mainstream:

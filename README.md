@@ -15,7 +15,7 @@
 </div>
 
 > [!CAUTION]
-> ⚠️ **Alpha Preview**: This is an early build. Content is still being completed and revised — sections, examples, and wording may continue to change. Feedback via Issues is welcome.
+> ⚠️ **Alpha Preview**: This is an early build. Content is still being completed and revised: sections, examples, and wording may continue to change. Feedback via Issues is welcome.
 
 ---
 
@@ -68,7 +68,7 @@ flowchart TD
     L02B --> L03A["L03 Part A: Architecture Patterns"]
     L03A --> L03B["L03 Part B: Planning mechanisms"]
     L03B --> P03["P03 Full Dreamer pipeline"]
-    P03 --> P04["P04 TD-MPC — compare vs Dreamer"]
+    P03 --> P04["P04 TD-MPC, compare vs Dreamer"]
     P04 --> L04["L04 Evaluation vocabulary"]
     L04 --> P05["P05 STORM + Three-Model Dashboard"]
     P05 --> L05["L05 Frontier Debates"]
