@@ -27,14 +27,14 @@ flowchart LR
     V[V 视觉模块] --> M[M 记忆模块] --> C[C 控制器]
 ```
 
-<figure>
-<img src="/worldmodels/world-models-card.png" alt="World Models 论文的 V/M/C 三模块总览图" style="width:90%;display:block;margin:0 auto">
-<figcaption>Ha & Schmidhuber (2018) 论文的核心示意图：左侧 V 模块（VAE）将游戏截图压缩为 z，中间 M 模块（MDN-RNN）维护历史并预测未来潜在状态，右侧 C 模块（线性控制器）直接从 z 和 M 的隐状态输出动作。整个系统可以在 M 虚构的"梦境"中训练 C，再迁移到真实环境。</figcaption>
-</figure>
-
 最令人着迷的是他们的实验：把控制器 C 放进记忆模块 M 幻想出的**虚拟环境**里训练，然后把策略迁移到真实游戏。在赛车任务（Car Racing，OpenAI Gym 的二维赛车环境，摄像头俯视视角，任务是跑完随机生成的赛道）上，纯梦境训练的策略能直接在真实环境中取得不错的成绩。VizDoom（基于第一人称射击游戏《毁灭战士》的 RL 研究环境，画面为第一人称 3D 视角，任务复杂度显著高于赛车）任务则遇到了一个更本质的问题：控制器学会了利用世界模型的错误制造虚假高分（policy exploitation），在梦境里"作弊"而非学到真实技能，最终他们需要引入温度参数来增加梦境多样性，才使迁移勉强成立。这个"作弊"问题后来成为整个世界模型领域的核心挑战之一。
 
 **在梦里学会开车，醒来就能上路。** 这个比喻让世界模型的思想第一次走进了大众视野。
+
+<figure>
+<img src="/worldmodels/world-models-card.png" alt="Ha & Schmidhuber (2018) World Models 实验结果：Car Racing 与 VizDoom 并排展示" style="width:90%;display:block;margin:0 auto">
+<figcaption>Ha & Schmidhuber (2018) 实验结果总览。左侧：智能体在 M 模块的梦境中训练后，成功驾驶 Car Racing 赛道，说明纯粹在想象中训练的策略可以迁移到真实环境。右侧：VizDoom 任务，控制器学会利用世界模型的错误制造虚假高分（model exploitation），最终需要引入温度参数增加梦境多样性，才使策略迁移勉强成立。</figcaption>
+</figure>
 
 ### 时代三：Dreamer 与潜在空间（2019）
 
@@ -52,9 +52,11 @@ Dreamer 在 Atari 游戏和连续控制任务上大幅超越了以往的无模�
 
 - **JEPA**（Joint Embedding Predictive Architecture，LeCun 团队，[2022](https://openreview.net/forum?id=BZ5a1r-kVsf)）：抛弃像素重建，只在语义嵌入空间里做预测。"我不需要画出你的脸，我只需要知道你是谁。"
 
+四个时代的演化逻辑清晰：从"如何在序列中预测状态"（时代一），到"如何在梦境中训练策略"（时代二），到"如何在潜在空间里压缩感知"（时代三），再到"如何只保留语义、丢掉噪声"（时代四）。每一步都是对上一步瓶颈的直接回应。
+
 ```mermaid
 flowchart LR
     A[RNN/Kalman 理论框架] --> B[World Models 梦中学习] --> C[Dreamer RSSM 潜在空间] --> D[JEPA 语义空间预测]
 ```
 
-四个时代的演化逻辑清晰：从"如何在序列中预测状态"（时代一），到"如何在梦境中训练策略"（时代二），到"如何在潜在空间里压缩感知"（时代三），再到"如何只保留语义、丢掉噪声"（时代四）。每一步都是对上一步瓶颈的直接回应。下一页讨论这场演化在 2024 年前后为什么突然加速。
+下一页讨论这场演化在 2024 年前后为什么突然加速。

@@ -834,3 +834,21 @@ html.has-mermaid-viewer body {
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+
+/* ---------- Figure captions ---------- */
+.vp-doc figure {
+  margin: 1.5rem 0;
+}
+
+.vp-doc figure figcaption {
+  display: block;
+  margin-top: 0.6rem;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--vp-c-text-3);
+  font-style: italic;
+  text-align: center;
+  padding: 0 1.5rem;
+  border-top: 1px solid var(--vp-c-divider);
+  padding-top: 0.5rem;
+}

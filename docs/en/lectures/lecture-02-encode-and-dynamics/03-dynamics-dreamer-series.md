@@ -36,8 +36,8 @@ RSSM is the foundational architecture established by Dreamer V1. The three subse
 | V4 | Transformer | Discrete Categorical | Offline policy learning | Architectural shift, long-horizon reasoning |
 
 <figure>
-<img src="/planet/rssm-diagnostics.png" alt="PlaNet ablation study: contributions of the deterministic and stochastic paths in RSSM" style="width:90%;display:block;margin:0 auto">
-<figcaption>Ablation comparison from Hafner et al. (2019): pure deterministic path (no stochastic z_t), pure stochastic path (no deterministic h_t), and full RSSM. Results across six DMControl tasks consistently show that both paths are necessary, and the full RSSM outperforms all ablated variants on every task.</figcaption>
+<img src="/planet/rssm-diagnostics.png" alt="PlaNet open-loop state diagnostics: predicting ground-truth positions, velocities, and reward from frozen RSSM latent states" style="width:90%;display:block;margin:0 auto">
+<figcaption>Open-loop state diagnostics from Hafner et al. (2019): the RSSM dynamics model is frozen and small neural networks are trained to predict the simulator's ground-truth positions, velocities, and reward from the learned latent states. Accurate long-horizon prediction of these quantities confirms that the latent space captures most of the information present in the underlying system — further than the planning horizons used in the paper.</figcaption>
 </figure>
 
 ---

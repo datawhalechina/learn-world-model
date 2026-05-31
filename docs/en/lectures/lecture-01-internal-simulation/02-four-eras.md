@@ -27,14 +27,14 @@ flowchart LR
     V[V Vision] --> M[M Memory] --> C[C Controller]
 ```
 
-<figure>
-<img src="/worldmodels/world-models-card.png" alt="World Models paper V/M/C three-module overview" style="width:90%;display:block;margin:0 auto">
-<figcaption>The core diagram from Ha & Schmidhuber (2018): on the left, the V module (VAE) compresses game screenshots into z; in the middle, the M module (MDN-RNN) maintains history and predicts future latent states; on the right, the C module (linear controller) outputs actions directly from z and M's hidden state. The entire system can train C inside M's imagined "dream" environment, then transfer the policy to the real environment.</figcaption>
-</figure>
-
 The most compelling aspect of their experiment was placing controller C inside a **virtual environment** hallucinated by memory module M, training there, then transferring the policy to the real game. On the Car Racing task (an OpenAI Gym 2D racing environment with a top-down camera view, where the goal is to complete a randomly generated track), a policy trained purely in dreams could achieve solid results in the real environment. The VizDoom task (an RL research environment based on the first-person shooter Doom, with a first-person 3D perspective and significantly higher task complexity than Car Racing) exposed a more fundamental problem: the controller learned to exploit errors in the world model to manufacture artificially high scores (model exploitation), "cheating" in the dream rather than learning genuine skills. They ultimately needed to introduce a temperature parameter to increase dream diversity before transfer became viable. This "cheating" problem later became one of the central challenges in the world model field.
 
 **Learn to drive in a dream, wake up and take the wheel.** This framing brought the world model idea into mainstream awareness for the first time.
+
+<figure>
+<img src="/worldmodels/world-models-card.png" alt="Ha & Schmidhuber (2018) World Models experiment results: Car Racing and VizDoom side by side" style="width:90%;display:block;margin:0 auto">
+<figcaption>Ha & Schmidhuber (2018) experiment overview. Left: the agent navigating the Car Racing track after training inside the M-module dream, showing that a policy trained purely in imagination can transfer to the real environment. Right: the VizDoom task, where the controller learned to exploit world model errors to manufacture artificially high scores (model exploitation), requiring temperature-based dream diversification before transfer became viable.</figcaption>
+</figure>
 
 ### Era Three: Dreamer and Latent Space (2019)
 
@@ -52,9 +52,11 @@ Around 2023, two parallel lines of research converged on the same question: **ca
 
 - **JEPA** (Joint Embedding Predictive Architecture, LeCun's team, [2022](https://openreview.net/forum?id=BZ5a1r-kVsf)): abandons pixel reconstruction and makes predictions purely in a semantic embedding space. "I don't need to draw your face; I just need to know who you are."
 
+The evolutionary logic across the four eras is clear: from "how to predict states in a sequence" (Era 1), to "how to train a policy in dreams" (Era 2), to "how to compress perception in latent space" (Era 3), to "how to retain only semantics and discard noise" (Era 4). Each step is a direct response to the bottleneck of the previous one.
+
 ```mermaid
 flowchart LR
     A[RNN/Kalman theoretical framework] --> B[World Models dream learning] --> C[Dreamer RSSM latent space] --> D[JEPA semantic space prediction]
 ```
 
-The evolutionary logic across the four eras is clear: from "how to predict states in a sequence" (Era 1), to "how to train a policy in dreams" (Era 2), to "how to compress perception in latent space" (Era 3), to "how to retain only semantics and discard noise" (Era 4). Each step is a direct response to the bottleneck of the previous one. The next page discusses why this evolution suddenly accelerated around 2024.
+The next page discusses why this evolution suddenly accelerated around 2024.

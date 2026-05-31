@@ -36,8 +36,8 @@ RSSM 是 Dreamer V1 确立的基础架构，此后三个版本在其上逐步演
 | V4 | Transformer | 离散 Categorical | 离线策略学习 | 架构质变，长程推理 |
 
 <figure>
-<img src="/planet/rssm-diagnostics.png" alt="PlaNet 消融实验：RSSM 的确定性路径与随机路径各自的贡献" style="width:90%;display:block;margin:0 auto">
-<figcaption>Hafner et al. (2019) 的消融实验对比：纯确定性路径（无随机 z_t）、纯随机路径（无确定性 h_t）、完整 RSSM。六个 DMControl 任务上的结果一致表明，两条路径缺一不可，完整 RSSM 在所有任务上均优于消融版本。</figcaption>
+<img src="/planet/rssm-diagnostics.png" alt="PlaNet 开环状态诊断：从冻结的 RSSM 潜在状态预测真实位置、速度与奖励" style="width:90%;display:block;margin:0 auto">
+<figcaption>Hafner et al. (2019) 的开环状态诊断实验：冻结 RSSM 的动力学模型，训练小型神经网络从学习到的潜在状态预测仿真器的真实位置、速度和奖励。这些量在超过规划视野的时间步内仍能被准确预测，说明潜在空间保留了底层系统的大部分信息，编码器没有丢失任务相关信号。</figcaption>
 </figure>
 
 ---
