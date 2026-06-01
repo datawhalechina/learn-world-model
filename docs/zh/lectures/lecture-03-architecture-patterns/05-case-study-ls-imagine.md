@@ -5,9 +5,13 @@ LS-Imagine 通过纯视觉观测来玩 Minecraft，仿照人类玩家的做法�
 在高维开放世界中训练视觉强化学习智能体面临诸多挑战。尽管有模型的强化学习方法（MBRL）通过学习交互式世界模型提高了样本效率，但这些智能体往往具有“短视”问题，因为它们通常仅在短暂的想象经验片段上进行训练。我们认为，开放世界决策的主要挑战在于**如何提高在庞大状态空间中的探索效率，特别是对于那些需要考虑长期回报的任务**。所以，我们提出了一种新的强化学习方法： **LS-Imagine**，通过构建一个**长短期世界模型**（Long Short-Term World Model），在目标驱动的情况下模拟跳跃式状态转换，并通过放大单张图像中的特定区域计算相应的**功用性图**（Affordance Map）来实现在有限的状态转移步数内扩展智能体的想象范围，使其能够探索可能带来有利长期回报的行为。
 
 > 论文标题：Open-World Reinforcement Learning over Long Short-Term Imagination
+
 > 论文作者：李佳键\*，王琦\*，王韫博（通讯作者），金鑫，李洋，曾文军，杨小康 (\* 共同一作)
+
 > 项目网址：https://qiwang067.github.io/ls-imagine
+
 > 论文链接：https://openreview.net/pdf?id=vzItLaEoDa
+
 > 代码链接：https://github.com/qiwang067/LS-Imagine
 
 ## 1. 简介
