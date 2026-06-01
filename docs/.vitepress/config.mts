@@ -39,6 +39,7 @@ const zhWorldModelItems = [
       { text: "Part A（续二）：Genie、WAM 与选型", link: "/zh/lectures/lecture-03-architecture-patterns/03-architectures-genie-wam" },
       { text: "Part B：CEM-MPC 与 Actor-Critic", link: "/zh/lectures/lecture-03-architecture-patterns/03-planning-cem-ac" },
       { text: "Part B（续）：TD-MPC 与规划对比", link: "/zh/lectures/lecture-03-architecture-patterns/04-planning-tdmpc" },
+      { text: "案例研究：LS-Imagine", link: "/zh/lectures/lecture-03-architecture-patterns/05-case-study-ls-imagine" },
     ]
   },
   {
@@ -111,6 +112,7 @@ const enWorldModelItems = [
       { text: "Part A (cont): Genie, WAM & Selection", link: "/en/lectures/lecture-03-architecture-patterns/03-architectures-genie-wam" },
       { text: "Part B: CEM-MPC & Actor-Critic", link: "/en/lectures/lecture-03-architecture-patterns/03-planning-cem-ac" },
       { text: "Part B (cont): TD-MPC & Comparison", link: "/en/lectures/lecture-03-architecture-patterns/04-planning-tdmpc" },
+      { text: "Case Study: LS-Imagine", link: "/en/lectures/lecture-03-architecture-patterns/05-case-study-ls-imagine" },
     ]
   },
   {
