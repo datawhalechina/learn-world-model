@@ -57,12 +57,7 @@ IRIS（Imagination with auto-Regression over an Inner Speech，ICLR 2023）的�
 
 IRIS 的 Transformer 接收的是**帧 token 与动作交错的序列**：每帧被 VQ-VAE 编码为 $K$ 个 token（如 $K=16$，codebook 大小 $N=1024$），动作 $a_t$ 作为单独 token 插入帧 token 之后。Transformer 同时预测三个目标：转移分布 $\hat{z}_{t+1}$（用交叉熵损失）、即时奖励 $\hat{r}_t$、以及 episode 终止标志 $\hat{d}_t$。策略则完全在想象轨迹中训练，不接触真实环境。Atari 100k 基准上（仅允许与环境交互 100,000 步，约等于 2 小时真实游戏时间，测试样本效率），IRIS 达到 1.046 的平均**HNS**（Human Normalized Score，人类标准化分数，将智能体得分归一化到"随机策略=0，人类=1"的区间，大于 1 表示超越人类），在 26 款游戏中有 10 款超越人类。
 
-```mermaid
-flowchart TD
-    A[原始帧] -->|VQ-VAE 编码| B[离散 token 序列]
-    B -->|Transformer 自回归预测| C[下一帧 token 序列]
-    C -->|VQ-VAE 解码| D[重建图像]
-```
+IRIS 的处理流程是单向管道：VQ-VAE 将原始帧编码为离散 token 序列，Transformer 自回归预测下一帧 token 序列，VQ-VAE 再将其解码还原为重建图像。
 
 ### STORM 的核心改进：单 token 随机潜变量
 

@@ -22,6 +22,8 @@ His position is that the two paradigms handle different dimensions of informatio
 | World model | Prediction of the physical world, robot control, industrial perception, embodied intelligence |
 | WAM | Unification of both: joint modeling of video and action, understanding physics while accepting language commands |
 
+Dreamer V3 sits squarely in the world model row: it consumes actions, predicts latent states, and has been demonstrated across 7 domains with a single set of hyperparameters.
+
 <figure>
 <img src="/dreamer/dreamer-v3-wm.png" alt="Dreamer V3 world model components: RSSM dynamics + symlog normalization" style="width:80%;display:block;margin:0 auto">
 <figcaption>Hafner et al. (2023) Dreamer V3 world model architecture: RSSM separates the deterministic path (GRU) from the stochastic path (discrete latent variables), combined with symlog reward transformation and percentile normalization, allowing the same set of hyperparameters to run directly across 7 completely different domains without any task-specific tuning. This represents a concrete realization of the world-model camp's goal of "unified physical representations."</figcaption>

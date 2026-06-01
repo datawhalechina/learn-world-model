@@ -57,12 +57,7 @@ IRIS (Imagination with auto-Regression over an Inner Speech, ICLR 2023) centers 
 
 The Transformer in IRIS receives a **sequence of interleaved frame tokens and actions**: each frame is encoded by VQ-VAE into $K$ tokens (e.g., $K=16$, codebook size $N=1024$), and action $a_t$ is inserted as a separate token after each frame's tokens. The Transformer simultaneously predicts three targets: the transition distribution $\hat{z}_{t+1}$ (via cross-entropy loss), the immediate reward $\hat{r}_t$, and the episode termination flag $\hat{d}_t$. The policy is trained entirely within imagined trajectories without touching the real environment. On the Atari 100k benchmark (allowing only 100,000 environment interaction steps, roughly equivalent to 2 hours of real gameplay, to test sample efficiency), IRIS achieves an average **HNS** (Human Normalized Score, which normalizes agent performance to the interval where random policy = 0 and human = 1, with values above 1 indicating superhuman performance) of 1.046, surpassing humans on 10 out of 26 games.
 
-```mermaid
-flowchart LR
-    A[Raw frame] -->|VQ-VAE encode| B[Discrete token sequence]
-    B -->|Transformer autoregressive prediction| C[Next-frame token sequence]
-    C -->|VQ-VAE decode| D[Reconstructed image]
-```
+IRIS processes each frame as a pipeline: VQ-VAE encodes the raw frame into a discrete token sequence, the Transformer autoregressively predicts the next-frame token sequence, and VQ-VAE decodes it back into a reconstructed image.
 
 ### STORM's Key Improvement: Single-Token Stochastic Latent Variable
 

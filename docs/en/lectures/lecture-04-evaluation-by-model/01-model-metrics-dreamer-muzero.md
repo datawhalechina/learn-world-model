@@ -19,12 +19,6 @@ Different world models break down at different points:
 | Latent MPC (TD-MPC) | Latent representation inconsistency, representation collapse, low planning efficiency |
 | Transformer dynamics (STORM) | Gap between teacher forcing and free-running, long-horizon token drift |
 | Diffusion world model (Diamond) | Physical consistency collapse, objects disappearing from the scene |
-
-<figure>
-<img src="/planet/rssm-diagnostics.png" alt="PlaNet open-loop state diagnostics: predicting ground-truth positions, velocities, and reward from frozen RSSM latent states" style="width:90%;display:block;margin:0 auto">
-<figcaption>Open-loop state diagnostics from Hafner et al. (2019): the RSSM dynamics model is frozen and small neural networks are trained to predict the simulator's ground-truth positions, velocities, and reward directly from the learned latent states. The fact that these quantities can be predicted accurately over long horizons confirms that the latent space retains most of the information present in the underlying system — a direct check that the encoder has not lost task-relevant signal.</figcaption>
-</figure>
-
 ---
 
 ## Dreamer (RNN/RSSM)

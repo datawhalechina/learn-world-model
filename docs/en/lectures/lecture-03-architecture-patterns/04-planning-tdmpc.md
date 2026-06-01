@@ -18,10 +18,7 @@ TD-MPC (Temporal Difference Model Predictive Control) [Hansen et al., 2022] comb
 | Temporal-difference target | Updates the Q function (action-value function, $Q(s,a)$ represents the expected cumulative discounted reward obtained by executing action $a$ in state $s$ and following the policy thereafter) via the Bellman equation: $Q(z_t, a_t) = r_t + \gamma \cdot Q(z_{t+1}, \pi(z_{t+1}))$, where $\gamma$ (discount factor) causes future rewards to decay exponentially |
 | CEM planning | At each decision step, uses CEM to search for the optimal action sequence in latent space |
 
-<figure>
-<img src="/tdmpc/tdmpc-overview.png" alt="TD-MPC architecture overview: four-module structure of encoder, implicit dynamics, Q function, and CEM planning" style="width:90%;display:block;margin:0 auto">
-<figcaption>Hansen et al. (2022) TD-MPC four-module overview: the encoder maps observations to latent state z_t; the implicit dynamics function d predicts the next state in latent space; the reward function R and Q function provide TD learning signals; CEM searches for the optimal action sequence in latent space at each decision step. Unlike Dreamer's explicit reconstruction, TD-MPC's latent space only needs to support accurate value prediction without reconstructing pixels.</figcaption>
-</figure>
+These three components are trained jointly: the consistency loss shapes the latent space, while the TD target trains the Q function to guide CEM search.
 
 **The role of stop-gradient**: The `sg(z_{t+1})` in the consistency loss denotes stop-gradient. If both sides of the encoder can receive gradient updates, the model may learn an "identity function" that maps all states to a single point, driving the consistency loss to zero while being completely meaningless. Stop-gradient fixes the target side, preventing this **mode collapse** (where the model finds a degenerate solution: mapping all different inputs to the same output, minimizing the loss but producing no useful representation).
 

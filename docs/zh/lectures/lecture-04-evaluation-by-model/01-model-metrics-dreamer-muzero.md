@@ -20,11 +20,6 @@ lecture: 4
 | Transformer 动力学（STORM）| teacher forcing 与 free-running 差距，长时域 token 漂移 |
 | 扩散世界模型（Diamond）| 物理一致性崩溃，物体凭空消失 |
 
-<figure>
-<img src="/planet/rssm-diagnostics.png" alt="PlaNet 开环状态诊断：从冻结的 RSSM 潜在状态预测真实位置、速度与奖励" style="width:90%;display:block;margin:0 auto">
-<figcaption>Hafner et al. (2019) 的开环状态诊断实验：冻结 RSSM 的动力学模型，训练小型神经网络直接从学习到的潜在状态预测仿真器的真实位置、速度和奖励。在超过规划视野的时间步内这些量仍能被准确预测，说明潜在空间保留了底层系统的大部分信息，可用于验证编码器是否丢失了任务相关信号。</figcaption>
-</figure>
-
 ---
 
 ## Dreamer（RNN/RSSM）

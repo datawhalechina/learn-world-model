@@ -38,6 +38,11 @@ These rules apply to all lecture and project markdown files:
 - **"读者思考" sections**: rename to "留给你" or similar; don't pad with three numbered questions if two suffice
 - **Paragraph rhythm**: vary sentence length. If every paragraph is ~4 sentences, something is off
 - **No em dashes**: never use "—" anywhere in the tutorial. Use a colon, comma, or rewrite the sentence instead
+- **No linear mermaid diagrams**: mermaid diagrams with no branching (pure A→B→C chains, cycles included) are forbidden. Replace with prose or a table. Only use mermaid when the diagram has genuine branching or fan-out structure.
+- **No trivially simple mermaid diagrams**: even a branching mermaid is forbidden if it adds no information beyond what the surrounding prose already says. A diagram earns its place only when the visual structure reveals relationships that prose cannot express as clearly.
+- **No arrow-chain prose**: never write "X → Y → Z" or "A → B → C → D" inline in prose. More broadly, never use any arrow-like symbol (→, ->, ⟶, ⇒, =>)  as a connector between words or concepts in running text — this reads as informal shorthand. Rewrite as a proper sentence, a numbered list, or a table instead.
+- **No adjacent table + figure/mermaid**: a table and a figure or mermaid block must never appear consecutively. Insert at least one sentence of prose between them.
+- **EN/ZH sync**: any layout, structural, or prose change made to an English file must be mirrored in its Chinese counterpart (same path under `docs/zh/`), and vice versa. Never change one locale without updating the other.
 
 ---
 

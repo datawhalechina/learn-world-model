@@ -35,6 +35,8 @@ RSSM 是 Dreamer V1 确立的基础架构，此后三个版本在其上逐步演
 | V3 | GRU | 离散 Categorical | 在线 Actor-Critic | 跨域单一超参，Minecraft 基准 |
 | V4 | Transformer | 离散 Categorical | 离线策略学习 | 架构质变，长程推理 |
 
+每个版本针对前一版本的具体瓶颈进行改进，而非推倒重来。
+
 <figure>
 <img src="/planet/rssm-diagnostics.png" alt="PlaNet 开环状态诊断：从冻结的 RSSM 潜在状态预测真实位置、速度与奖励" style="width:90%;display:block;margin:0 auto">
 <figcaption>Hafner et al. (2019) 的开环状态诊断实验：冻结 RSSM 的动力学模型，训练小型神经网络从学习到的潜在状态预测仿真器的真实位置、速度和奖励。这些量在超过规划视野的时间步内仍能被准确预测，说明潜在空间保留了底层系统的大部分信息，编码器没有丢失任务相关信号。</figcaption>
@@ -44,17 +46,7 @@ RSSM 是 Dreamer V1 确立的基础架构，此后三个版本在其上逐步演
 
 ## Dreamer 中编码器的桥梁作用
 
-编码器不仅仅是压缩工具，它是连接像素世界与潜在动力学世界的**桥梁**：
-
-```mermaid
-flowchart TD
-    E[真实环境] -->|像素观测| V[CNN 编码器]
-    V -->|潜在状态 z| R[RSSM 动力学模型]
-    R -->|预测状态序列| AC[Actor-Critic]
-    AC -->|动作| E
-```
-
-完整的 Dreamer 流程：
+编码器不仅仅是压缩工具，它是连接像素世界与潜在动力学世界的**桥梁**。完整的 Dreamer 流程：
 
 1. **编码**：$\mathbf{o}_t \xrightarrow{\text{encoder}} \mathbf{z}_t$
 2. **动力学**：$(\mathbf{z}_t, \mathbf{a}_t) \xrightarrow{\text{RSSM}} \mathbf{z}_{t+1}, \mathbf{z}_{t+2}, \ldots$（纯想象）

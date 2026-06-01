@@ -35,6 +35,8 @@ RSSM is the foundational architecture established by Dreamer V1. The three subse
 | V3 | GRU | Discrete Categorical | Online Actor-Critic | Single hyperparameters across domains, Minecraft benchmark |
 | V4 | Transformer | Discrete Categorical | Offline policy learning | Architectural shift, long-horizon reasoning |
 
+Each version targets a specific bottleneck of its predecessor rather than redesigning the whole system.
+
 <figure>
 <img src="/planet/rssm-diagnostics.png" alt="PlaNet open-loop state diagnostics: predicting ground-truth positions, velocities, and reward from frozen RSSM latent states" style="width:90%;display:block;margin:0 auto">
 <figcaption>Open-loop state diagnostics from Hafner et al. (2019): the RSSM dynamics model is frozen and small neural networks are trained to predict the simulator's ground-truth positions, velocities, and reward from the learned latent states. Accurate long-horizon prediction of these quantities confirms that the latent space captures most of the information present in the underlying system — further than the planning horizons used in the paper.</figcaption>
@@ -44,17 +46,7 @@ RSSM is the foundational architecture established by Dreamer V1. The three subse
 
 ## The Encoder's Role as a Bridge in Dreamer
 
-The encoder is more than a compression tool. It is the **bridge** connecting the pixel world to the latent dynamics world:
-
-```mermaid
-flowchart LR
-    E[Real Environment] -->|pixel observations| V[CNN Encoder]
-    V -->|latent state z| R[RSSM Dynamics Model]
-    R -->|predicted state sequence| AC[Actor-Critic]
-    AC -->|action| E
-```
-
-The complete Dreamer pipeline:
+The encoder is more than a compression tool. It is the **bridge** connecting the pixel world to the latent dynamics world. The complete Dreamer pipeline:
 
 1. **Encode**: $\mathbf{o}_t \xrightarrow{\text{encoder}} \mathbf{z}_t$
 2. **Dynamics**: $(\mathbf{z}_t, \mathbf{a}_t) \xrightarrow{\text{RSSM}} \mathbf{z}_{t+1}, \mathbf{z}_{t+2}, \ldots$ (pure imagination)

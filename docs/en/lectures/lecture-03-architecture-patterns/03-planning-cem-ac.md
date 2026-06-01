@@ -30,6 +30,8 @@ MuZero maintains three prediction heads:
 | value head | future cumulative value $V(s_t)$ | guides MCTS search direction |
 | policy prior | action probability distribution $\pi(a \mid s_t)$ | reduces the number of branches MCTS needs to explore |
 
+All three heads are trained jointly through the unrolled dynamics function on real interaction data.
+
 <figure>
 <img src="/muzero/muzero-model.png" alt="MuZero's implicit world model: three-module architecture of representation function, dynamics function, and prediction function" style="width:90%;display:block;margin:0 auto">
 <figcaption>Schrittwieser et al. (2020) MuZero's three-function structure: the representation function h compresses historical observations into hidden state s; the dynamics function g simulates action transitions in hidden state space and predicts immediate rewards; the prediction function f outputs a policy prior and value estimate from the hidden state, driving MCTS search. The hidden state does not need to correspond to real pixels, only to support accurate reward and value prediction.</figcaption>

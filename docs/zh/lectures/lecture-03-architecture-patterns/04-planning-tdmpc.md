@@ -18,10 +18,7 @@ TD-MPC（Temporal Difference Model Predictive Control）[Hansen et al., 2022] �
 | 时序差分目标 | 用 Bellman 方程更新 Q 函数（action-value function，动作价值函数，$Q(s,a)$ 表示"在状态 $s$ 执行动作 $a$、此后遵循策略所能获得的期望累计折扣奖励"）：$Q(z_t, a_t) = r_t + \gamma \cdot Q(z_{t+1}, \pi(z_{t+1}))$，其中 $\gamma$（折扣因子）使未来奖励指数衰减 |
 | CEM 规划 | 在每步决策时，用 CEM 在潜在空间中搜索最优动作序列 |
 
-<figure>
-<img src="/tdmpc/tdmpc-overview.png" alt="TD-MPC 架构总览：编码器、隐式动力学、Q 函数与 CEM 规划的四模块结构" style="width:90%;display:block;margin:0 auto">
-<figcaption>Hansen et al. (2022) TD-MPC 的四模块总览：编码器将观测映射为潜在状态 z_t；隐式动力学函数 d 在潜在空间预测下一状态；奖励函数 R 和 Q 函数提供 TD 学习信号；CEM 在每步决策时于潜在空间中搜索最优动作序列。与 Dreamer 的显式重建不同，TD-MPC 的潜在空间只需支撑准确的价值预测，无需重建像素。</figcaption>
-</figure>
+三个组件联合训练：一致性损失塑造潜在空间，TD 目标训练 Q 函数，Q 函数再引导 CEM 搜索。
 
 **stop-gradient 的作用**：一致性损失中的 `sg(z_{t+1})` 表示停止梯度。如果编码器的两端都可以被梯度更新，模型可能学到一个"恒等函数"，把所有状态映射到同一个点，使得一致性损失为零，但毫无意义。stop-gradient 固定住目标端，防止这种**模式坍塌**（mode collapse，模型找到一个退化解：把所有不同的输入都映射到同一个输出，使损失最小化但毫无意义）。
 

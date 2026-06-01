@@ -22,6 +22,8 @@ lecture: 5
 | 世界模型 | 物理世界的预测、机器人控制、工业感知、具身智能 |
 | WAM | 两者的统一：video + action 联合建模，理解物理并接受语言指令 |
 
+Dreamer V3 处于世界模型这一行：吃动作，预测潜在状态，已在 7 个领域用同一套超参数跑通。
+
 <figure>
 <img src="/dreamer/dreamer-v3-wm.png" alt="Dreamer V3 的世界模型组件：RSSM 动力学 + symlog 归一化" style="width:80%;display:block;margin:0 auto">
 <figcaption>Hafner et al. (2023) Dreamer V3 的世界模型结构：RSSM 分离确定性路径（GRU）和随机路径（离散潜变量），配合 symlog 奖励变换和百分位归一化，使同一套超参数可以跨 7 个完全不同的领域直接运行，无需任何任务专属调整。这代表了世界模型派"统一物理表征"目标的一个具体实现。</figcaption>

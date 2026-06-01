@@ -30,6 +30,8 @@ MuZero 维护三个预测头：
 | value head | 未来累计价值 $V(s_t)$ | 引导 MCTS 搜索方向 |
 | policy prior | 动作概率分布 $\pi(a \mid s_t)$ | 减少 MCTS 需要搜索的分支数 |
 
+三个预测头通过展开的动力学函数在真实交互数据上联合训练。
+
 <figure>
 <img src="/muzero/muzero-model.png" alt="MuZero 的隐式世界模型：表示函数、动力学函数和预测函数的三模块架构" style="width:90%;display:block;margin:0 auto">
 <figcaption>Schrittwieser et al. (2020) MuZero 的三函数结构：表示函数 h 将历史观测压缩为隐状态 s；动力学函数 g 在隐状态空间中模拟动作转移并预测即时奖励；预测函数 f 从隐状态输出策略先验和价值估计，驱动 MCTS 搜索。隐状态无需对应真实像素，只需支撑准确的奖励和价值预测。</figcaption>

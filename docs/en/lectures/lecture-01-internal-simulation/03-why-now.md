@@ -96,13 +96,7 @@ Wayve's GAIA-1, Tesla's world model simulation, and Waabi's counterfactual train
 
 Viewed together, the nature of today's world model resurgence becomes clear:
 
-```mermaid
-flowchart LR
-    A[Video generation becomes powerful] --> D
-    B[Embodied intelligence data bottleneck] --> D
-    C[Autonomous driving validates counterfactual simulation] --> D
-    D[World models emerge as the shared solution]
-```
+The three threads evolved independently but converged on the same answer: video generation models supply reusable physical priors, embodied intelligence exposed the data bottleneck of action annotation, and autonomous driving validated the commercial value of counterfactual testing in simulation. These three tracks discovered around 2024 to 2026 that world models are a key missing piece for their respective problems.
 
 This is not a trend driven by a single paper. Three independent tracks, large-scale models, robot learning, and autonomous driving simulation, simultaneously discovered around 2024 to 2026 that world models are a key missing piece for their respective problems, and together pushed this field to center stage.
 
