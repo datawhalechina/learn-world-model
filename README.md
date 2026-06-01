@@ -6,9 +6,9 @@
 
 # Learn World Models（⚠️ Alpha Preview）
 
-[![Read Online](https://img.shields.io/badge/Read-Online-blue?logo=github)](https://datawhalechina.github.io/learn-world-model)
-[![GitHub Stars](https://img.shields.io/github/stars/datawhalechina/learn-world-model?style=flat&logo=github)](https://github.com/datawhalechina/learn-world-model/stargazers)
-[![License](https://img.shields.io/github/license/datawhalechina/learn-world-model?style=flat)](https://github.com/datawhalechina/learn-world-model/blob/main/LICENSE)
+[![Read Online](https://img.shields.io/badge/Read-Online-blue?style=for-the-badge&logo=github)](https://datawhalechina.github.io/learn-world-model)
+[![GitHub Stars](https://img.shields.io/github/stars/datawhalechina/learn-world-model?style=for-the-badge&logo=github)](https://github.com/datawhalechina/learn-world-model/stargazers)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](https://github.com/datawhalechina/learn-world-model/blob/main/LICENSE)
 
 > **Learn world models by building them: from the intuition behind latent dynamics to a working simulation, planning, and evaluation system.**
 
