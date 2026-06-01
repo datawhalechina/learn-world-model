@@ -96,9 +96,7 @@ Wayve's GAIA-1, Tesla's world model simulation, and Waabi's counterfactual train
 
 Viewed together, the nature of today's world model resurgence becomes clear:
 
-The three threads evolved independently but converged on the same answer: video generation models supply reusable physical priors, embodied intelligence exposed the data bottleneck of action annotation, and autonomous driving validated the commercial value of counterfactual testing in simulation. These three tracks discovered around 2024 to 2026 that world models are a key missing piece for their respective problems.
-
-This is not a trend driven by a single paper. Three independent tracks, large-scale models, robot learning, and autonomous driving simulation, simultaneously discovered around 2024 to 2026 that world models are a key missing piece for their respective problems, and together pushed this field to center stage.
+This is not a trend driven by a single paper. Three independent tracks — large-scale video generation, robot learning, and autonomous driving simulation — simultaneously discovered around 2024 to 2026 that world models are a key missing piece for their respective problems. Video generation models supply reusable physical priors, embodied intelligence exposed the data bottleneck of action annotation, and autonomous driving validated the commercial value of counterfactual testing in simulation. Together these pressures pushed the field to center stage.
 
 The previous wave of world model interest (2018 to 2020) was largely academic: researchers demonstrated feasibility in game environments, but practical deployment remained distant. In the current wave (2024 onward) both industry and academia entered simultaneously, because world models now address real cost bottlenecks and safety requirements. The two waves differ substantially in character.
 

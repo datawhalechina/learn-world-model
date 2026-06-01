@@ -18,10 +18,7 @@ The metric frameworks for the five models covered earlier were all designed for 
 
 In real deployment, the world model is just one link in a long chain:
 
-```mermaid
-flowchart LR
-    A[Sensors] --> B[State Estimation] --> C[World Model] --> D[Planner / Policy] --> E[Low-Level Control] --> F[Actuators]
-```
+The full control chain runs through six stages: Sensors feed State Estimation, which feeds the World Model, which feeds the Planner or Policy, which feeds Low-Level Control, which drives the Actuators. Paper metrics measure only the World Model box; failures at any other stage cause system failure regardless of model quality.
 
 Failure at any link in this chain causes system failure. Paper metrics measure only the input-output quality of the "world model" box, not the reliability of the entire chain.
 

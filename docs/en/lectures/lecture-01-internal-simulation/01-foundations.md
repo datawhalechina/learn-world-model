@@ -14,12 +14,7 @@ British psychologist **Kenneth Craik** wrote a slim book during World War II, *T
 
 Craik argued that the brain is not a passive black box that receives stimuli and emits responses. Instead, it actively maintains an **internal simulator**. This simulator can fast-forward into the future and replay the past, allowing a creature to filter out the best action before any real cost is incurred.
 
-```mermaid
-graph LR
-    A[External World] -->|Perception| B[Internal Model]
-    B -->|Prediction| C[Decision / Action]
-    C -->|Error Correction| B
-```
+Perception feeds the internal model, which generates predictions to guide decisions. Prediction errors flow back to correct the model.
 
 Tragically, Craik died in a bicycle accident in 1945 at only 31 years old. His ideas lay dormant for decades, only to be rediscovered with the rise of cognitive science and neuroscience.
 
