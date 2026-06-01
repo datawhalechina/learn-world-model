@@ -34,12 +34,14 @@ Key property: the latent space is **continuous**. This means neighboring values 
 <figcaption>The VAE structure from Ha & Schmidhuber (2018): the encoder outputs mean μ and variance σ², samples z via the reparameterization trick as z = μ + σ·ε (ε ~ N(0,I)), and the decoder reconstructs the original frame from z. The reparameterization trick allows gradients to flow through the sampling operation.</figcaption>
 </figure>
 
+The data flow through a VAE encoder-decoder pair follows a single path:
+
 ```mermaid
-flowchart TD
-    A[原始图像] --> B[编码器 CNN]
-    B --> C[潜在向量 z]
-    C --> D[解码器 CNN]
-    D --> E[重建图像]
+flowchart LR
+    A[Raw image] --> B[CNN Encoder]
+    B --> C[Latent vector z]
+    C --> D[CNN Decoder]
+    D --> E[Reconstructed image]
 ```
 
 > **📖 Transposed Convolution (also called deconvolution)**: A standard convolution compresses a large feature map into a smaller one (reducing spatial resolution); a transposed convolution does the reverse, upsampling a small feature map into a larger one (increasing spatial resolution). The decoder uses transposed convolutions to progressively "restore" the low-dimensional latent vector back to the original image size.

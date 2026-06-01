@@ -23,7 +23,7 @@ Pixel space is saturated with task-irrelevant information: lighting variation, t
 ### The context encoder + predictor + target encoder trio
 
 ```mermaid
-flowchart TD
+flowchart LR
     X[Input Frame] --> CE[context encoder]
     X --> TE[target encoder EMA]
     CE --> SX[context semantic representation]

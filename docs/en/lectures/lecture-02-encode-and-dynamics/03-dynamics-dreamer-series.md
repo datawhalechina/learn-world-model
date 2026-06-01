@@ -47,7 +47,7 @@ RSSM is the foundational architecture established by Dreamer V1. The three subse
 The encoder is more than a compression tool. It is the **bridge** connecting the pixel world to the latent dynamics world:
 
 ```mermaid
-flowchart TD
+flowchart LR
     E[Real Environment] -->|pixel observations| V[CNN Encoder]
     V -->|latent state z| R[RSSM Dynamics Model]
     R -->|predicted state sequence| AC[Actor-Critic]
