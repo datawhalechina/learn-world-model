@@ -27,6 +27,18 @@ In robotics, autonomous driving, and industrial control, the cost of trial-and-e
 
 ---
 
+## The Gap: Why World Models Went Quiet
+
+After the initial wave of enthusiasm around 2018 to 2020, the world model field gradually cooled. Dreamer, RSSM, and PlaNet generated real excitement, but prolonged research revealed a consistent set of problems: predictions degraded quickly over time, long-horizon trajectories collapsed, errors accumulated step by step, and generated video frames blurred within a few steps. These were not just engineering difficulties; they pointed to a fundamental capability gap.
+
+Meanwhile, the broader field was moving elsewhere. The success of scaling laws convinced many researchers that larger data and larger models could handle everything end-to-end. VLMs and VLAs exploded in capability. World models, by contrast, started to feel like an older idea being left behind.
+
+In retrospect, the problem was never that the *idea* was wrong. The problem was that the generative capability required to make it work did not yet exist. A world model needs to stably generate coherent futures, step after step, without drifting. Earlier video prediction architectures simply could not do this: a few frames out, the output blurred into noise.
+
+That changed with diffusion models and video foundation models. For the first time, AI systems gained the ability to generate continuous, temporally coherent world states. This is the root cause of the resurgence: not a new theoretical insight, but a newly acquired generative capability that made the old idea suddenly viable.
+
+The implication is easy to miss: the most significant contribution of diffusion models may not be image synthesis. It may be that they gave AI the ability to model how the world *evolves*, because the real world is itself a continuous temporal process, and video is just world state sampled through time.
+
 ## Why Are World Models Hot Again Now?
 
 World models are not a new concept. The paper by Ha & Schmidhuber [2] was published in 2018, and model-based reinforcement learning (MBRL) has been learning environment dynamics since the 2000s. Dreamer has already iterated to its third version. So why did this field suddenly become the centerpiece of every AI conference between 2024 and 2026?
@@ -96,7 +108,7 @@ Wayve's GAIA-1, Tesla's world model simulation, and Waabi's counterfactual train
 
 Viewed together, the nature of today's world model resurgence becomes clear:
 
-This is not a trend driven by a single paper. Three independent tracks — large-scale video generation, robot learning, and autonomous driving simulation — simultaneously discovered around 2024 to 2026 that world models are a key missing piece for their respective problems. Video generation models supply reusable physical priors, embodied intelligence exposed the data bottleneck of action annotation, and autonomous driving validated the commercial value of counterfactual testing in simulation. Together these pressures pushed the field to center stage.
+This is not a trend driven by a single paper. Three independent tracks, large-scale video generation, robot learning, and autonomous driving simulation, simultaneously discovered around 2024 to 2026 that world models are a key missing piece for their respective problems. Video generation models supply reusable physical priors, embodied intelligence exposed the data bottleneck of action annotation, and autonomous driving validated the commercial value of counterfactual testing in simulation. Together these pressures pushed the field to center stage.
 
 The previous wave of world model interest (2018 to 2020) was largely academic: researchers demonstrated feasibility in game environments, but practical deployment remained distant. In the current wave (2024 onward) both industry and academia entered simultaneously, because world models now address real cost bottlenecks and safety requirements. The two waves differ substantially in character.
 

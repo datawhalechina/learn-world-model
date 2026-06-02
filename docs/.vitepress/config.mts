@@ -73,10 +73,10 @@ const zhWorldModelItems = [
 const zhProjectItems = [
   { text: "欢迎", link: "/zh/projects/" },
   { text: "P01：训练 VAE 编码器", link: "/zh/projects/project-01-vae-encoder/" },
-  { text: "P02：构建潜在动力学模型", link: "/zh/projects/project-02-latent-dynamics/" },
-  { text: "P03：完整 Dreamer 流水线", link: "/zh/projects/project-03-dreamer-pipeline/" },
-  { text: "P04：实现 TD-MPC 规划", link: "/zh/projects/project-04-td-mpc/" },
-  { text: "P05：STORM + 三模型评估仪表盘", link: "/zh/projects/project-05-storm-dashboard/" },
+  { text: "P02：构建 RSSM 动力学模型", link: "/zh/projects/project-02-latent-dynamics/" },
+  { text: "P03：训练 Dreamer 智能体", link: "/zh/projects/project-03-dreamer-agent/" },
+  { text: "P04：替换动力学骨干网络", link: "/zh/projects/project-04-transformer-backbone/" },
+  { text: "P05：世界模型评估仪表盘", link: "/zh/projects/project-05-evaluation-dashboard/" },
 ];
 
 const enWorldModelItems = [
@@ -146,10 +146,10 @@ const enWorldModelItems = [
 const enProjectItems = [
   { text: "Welcome", link: "/en/projects/" },
   { text: "P01: Train a VAE Encoder", link: "/en/projects/project-01-vae-encoder/" },
-  { text: "P02: Build a Latent Dynamics Model", link: "/en/projects/project-02-latent-dynamics/" },
-  { text: "P03: Full Dreamer Pipeline", link: "/en/projects/project-03-dreamer-pipeline/" },
-  { text: "P04: Implement TD-MPC Planning", link: "/en/projects/project-04-td-mpc/" },
-  { text: "P05: STORM + Three-Model Dashboard", link: "/en/projects/project-05-storm-dashboard/" },
+  { text: "P02: Build an RSSM Dynamics Model", link: "/en/projects/project-02-latent-dynamics/" },
+  { text: "P03: Train a Dreamer Agent", link: "/en/projects/project-03-dreamer-agent/" },
+  { text: "P04: Swap the Dynamics Backbone", link: "/en/projects/project-04-transformer-backbone/" },
+  { text: "P05: World Model Evaluation Dashboard", link: "/en/projects/project-05-evaluation-dashboard/" },
 ];
 
 export default withMermaid(

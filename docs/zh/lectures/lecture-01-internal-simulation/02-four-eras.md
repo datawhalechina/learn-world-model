@@ -24,7 +24,7 @@ lecture: 1
 
 他们实验的核心设计是：把控制器 C 放进记忆模块 M 幻想出的**虚拟环境**里训练，然后把策略迁移到真实游戏。在赛车任务（Car Racing，OpenAI Gym 的二维赛车环境，摄像头俯视视角，任务是跑完随机生成的赛道）上，纯梦境训练的策略能直接在真实环境中取得不错的成绩。VizDoom（基于第一人称射击游戏《毁灭战士》的 RL 研究环境，画面为第一人称 3D 视角，任务复杂度显著高于赛车）任务则遇到了一个更本质的问题：控制器学会了利用世界模型的错误制造虚假高分（policy exploitation），在梦境里"作弊"而非学到真实技能，最终他们需要引入温度参数来增加梦境多样性，才使迁移勉强成立。这个"作弊"问题后来成为整个世界模型领域的核心挑战之一。
 
-Ha & Schmidhuber 的框架——完全在幻想出的环境里训练、再迁移到真实环境——让世界模型的思路第一次进入主流视野。
+Ha & Schmidhuber 的框架（完全在幻想出的环境里训练，再迁移到真实环境）让世界模型的思路第一次进入主流视野。
 
 <figure>
 <img src="/worldmodels/world-models-card.png" alt="Ha & Schmidhuber (2018) World Models 实验结果：Car Racing 与 VizDoom 并排展示" style="width:90%;display:block;margin:0 auto">

@@ -39,7 +39,7 @@ Each version targets a specific bottleneck of its predecessor rather than redesi
 
 <figure>
 <img src="/planet/rssm-diagnostics.png" alt="PlaNet open-loop state diagnostics: predicting ground-truth positions, velocities, and reward from frozen RSSM latent states" style="width:90%;display:block;margin:0 auto">
-<figcaption>Open-loop state diagnostics from Hafner et al. (2019): the RSSM dynamics model is frozen and small neural networks are trained to predict the simulator's ground-truth positions, velocities, and reward from the learned latent states. Accurate long-horizon prediction of these quantities confirms that the latent space captures most of the information present in the underlying system — further than the planning horizons used in the paper.</figcaption>
+<figcaption>Open-loop state diagnostics from Hafner et al. (2019): the RSSM dynamics model is frozen and small neural networks are trained to predict the simulator's ground-truth positions, velocities, and reward from the learned latent states. Accurate long-horizon prediction of these quantities confirms that the latent space captures most of the information present in the underlying system, further than the planning horizons used in the paper.</figcaption>
 </figure>
 
 ---

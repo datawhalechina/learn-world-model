@@ -49,11 +49,11 @@ Five lectures and five projects that take you from the intuition behind world mo
 | L03 | Lecture | Architecture Patterns, Learning Paradigms & Planning | Seven architecture families, CEM-MPC, latent Actor-Critic, TD-MPC |
 | L04 | Lecture | Evaluation by World Model | FID, reward correlation, consistency loss, PSNR, horizon drift |
 | L05 | Lecture | Frontier Debates | Language vs physical grounding, Bitter Lesson, AGI as a research target |
-| P01 | Project | Train a VAE Encoder | Compress 64×64 pixels to latent z; reconstruction loss curve |
-| P02 | Project | Build a Latent Dynamics Model | GRU → RSSM; 1-step vs 5-step prediction error |
-| P03 | Project | Full Dreamer Pipeline | Encode → RSSM → latent Actor-Critic → act |
-| P04 | Project | Implement TD-MPC Planning | CEM-MPC + latent consistency loss; compare vs Dreamer |
-| P05 | Project | STORM + Three-Model Evaluation Dashboard | Swap GRU for Transformer; side-by-side Dreamer/TD-MPC/STORM dashboard |
+| P01 | Project | Train a VAE Encoder | Small CNN VAE on 64×64 pixels; ELBO loss curve; latent slider visualization |
+| P02 | Project | Build an RSSM Dynamics Model | GRU, MDN-RNN, and RSSM compared; prior vs posterior rollout plots |
+| P03 | Project | Train a Dreamer Agent | Full training loop: encoder + RSSM + latent Actor-Critic on a small pixel env |
+| P04 | Project | Swap the Dynamics Backbone | Replace RSSM with a small causal Transformer (STORM-style); architecture comparison |
+| P05 | Project | World Model Evaluation Dashboard | Per-model metrics side by side: FID, reward correlation, PSNR, latent drift |
 
 ---
 
@@ -62,19 +62,22 @@ Five lectures and five projects that take you from the intuition behind world mo
 ```mermaid
 flowchart TD
     L01["L01 History and Intuition"] --> L02A
-    L02A["L02 Part A: VAE Encoder"] --> P01["P01 Build and visualize VAE"]
+    L02A["L02 Part A: VAE Encoder"] --> P01["P01 Train VAE, visualize latent space"]
     L02A --> L02B["L02 Part B: GRU to RSSM"]
-    L02B --> P02["P02 Train dynamics, measure drift"]
+    L02B --> P02["P02 Build RSSM, compare prior vs posterior"]
     L02B --> L03A["L03 Part A: Architecture Patterns"]
     L03A --> L03B["L03 Part B: Planning mechanisms"]
-    L03B --> P03["P03 Full Dreamer pipeline"]
-    P03 --> P04["P04 TD-MPC, compare vs Dreamer"]
-    P04 --> L04["L04 Evaluation vocabulary"]
-    L04 --> P05["P05 STORM + Three-Model Dashboard"]
+    L03B --> P03["P03 Train Dreamer agent"]
+    P02 --> P04["P04 Swap RSSM for Transformer backbone"]
+    L03A --> P04
+    P03 & P04 --> L04["L04 Evaluation metrics"]
+    L04 --> P05["P05 Evaluation dashboard"]
     P05 --> L05["L05 Frontier Debates"]
 ```
 
-Suggested path: **L01 → L02 → P01 → P02 → L03 → P03 → P04 → L04 → P05 → L05**
+Suggested path: L01, L02, P01, P02, L03, P03, P04, L04, P05, L05
+
+You do not need to finish all theory before starting a project. Build, then come back with questions.
 
 You do not need to finish all theory before starting a project. Build, then come back with questions.
 

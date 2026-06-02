@@ -29,14 +29,6 @@ npm run docs:preview    # Preview built site
 
 These rules apply to all lecture and project markdown files:
 
-- **No AI flavor**: avoid "接下来我们…", "用大白话理解", "理解了X，我们可以更清楚地回答Y" -- cut these transition phrases entirely
-- **No `💡 直觉` callout boxes**: inline the content into surrounding prose instead
-- **No "认知负荷：高/中/低" labels**: replace with one concrete sentence about what the reader needs before starting
-- **No "下一讲预告" as a section title**: use "下一讲" and lead with the concrete problem the next lecture solves
-- **Analogies**: avoid overused ones (飞行模拟器之于飞行员, 婴儿学走路, 撒网捕鱼, 雕塑家). Use engineering language or drop the analogy
-- **`📖` definition callouts**: keep these (they define terms for deep-learning-only readers). Don't remove them
-- **"读者思考" sections**: rename to "留给你" or similar; don't pad with three numbered questions if two suffice
-- **Paragraph rhythm**: vary sentence length. If every paragraph is ~4 sentences, something is off
 - **No em dashes**: never use "—" anywhere in the tutorial. Use a colon, comma, or rewrite the sentence instead
 - **No linear mermaid diagrams**: mermaid diagrams with no branching (pure A→B→C chains, cycles included) are forbidden. Replace with prose or a table. Only use mermaid when the diagram has genuine branching or fan-out structure.
 - **No trivially simple mermaid diagrams**: even a branching mermaid is forbidden if it adds no information beyond what the surrounding prose already says. A diagram earns its place only when the visual structure reveals relationships that prose cannot express as clearly.
@@ -75,39 +67,15 @@ Each lecture lives under `docs/en/lectures/<slug>/` and `docs/zh/lectures/<slug>
 
 ### Projects
 
-Source code in `external/world-model-tutorial/src/`. Reference chain: **Dreamer (RSSM)** → **TD-MPC** → **STORM**.
+Source code in `external/world-model-tutorial/src/`. Projects build sequentially: P01 produces the encoder used in P02, P02 produces the RSSM used in P03, and P04 replaces the RSSM backbone so P05 can compare both trained systems.
 
 | # | Title | Prereq | Deliverable |
 |---|-------|--------|-------------|
-| P01 | Train a VAE Encoder | L01, L02 Part A | VAE compressing 64×64 → latent `z`; reconstruction loss curve; latent slider demo |
-| P02 | Build a Latent Dynamics Model | P01, L02 Part B | GRU → RSSM predicting next latent; 1-step vs 5-step prediction error plot |
-| P03 | Full Dreamer Pipeline | P02, L03 Part A | End-to-end: encode → RSSM → latent Actor-Critic → act; reward curve + FID/ρ/entropy self-eval |
-| P04 | Implement TD-MPC Planning | P03, L03 Part B | CEM-MPC + latent consistency loss; compare vs Dreamer reward curve |
-| P05 | STORM + Three-Model Evaluation Dashboard | P03, P04, L03, L04 | Swap GRU → Transformer (STORM-style); side-by-side dashboard for Dreamer/TD-MPC/STORM |
-
----
-
-### Curriculum Flow
-
-```
-L01 (History + Intuition)
-        ↓
-L02 Part A (VAE Encoder) → P01 (Build & visualize VAE)
-        ↓
-L02 Part B (GRU → RSSM)  → P02 (Train dynamics, measure drift)
-        ↓
-L03 Part A (Architecture Patterns + Learning Paradigms, anchored to P02 RSSM baseline)
-        ↓
-L03 Part B (Planning: CEM-MPC → Actor-Critic → TD-MPC) → P03 (Full Dreamer pipeline)
-                                                                ↓
-                                                         P04 (TD-MPC, compare vs P03)
-                                                                ↓
-L04 (Evaluation vocabulary) → P05 (STORM + Three-Model Dashboard)
-                                    ↓
-                             L05 (Frontier Debates, no code)
-```
-
-**Suggested path**: L01 → L02 → P01 → P02 → L03 → P03 → P04 → L04 → P05 → L05
+| P01 | Train a VAE Encoder | L02 Part A | Small CNN VAE trained on 64×64 pixel observations; ELBO loss curve; latent slider visualization showing disentangled dimensions |
+| P02 | Build an RSSM Dynamics Model | P01, L02 Part B | GRU, MDN-RNN, and RSSM implemented and compared; prior vs posterior rollout plots; 1-step and 5-step prediction error curves |
+| P03 | Train a Dreamer Agent | P02, L03 Part B | Full training loop: encoder + RSSM + latent Actor-Critic on a small pixel-based environment; reward curve; FID and reward correlation self-evaluation |
+| P04 | Swap the Dynamics Backbone | P02, L03 Part A | Replace RSSM with a small causal Transformer (STORM-style: categorical VAE + Transformer); train on the same task as P03; architecture comparison report |
+| P05 | World Model Evaluation Dashboard | P03, P04, L04 | Load both trained models; compute and display per-model metrics side by side: reconstruction FID, reward correlation, token prediction loss, long-horizon PSNR, and latent drift curve |
 
 ---
 
@@ -120,7 +88,4 @@ L04 (Evaluation vocabulary) → P05 (STORM + Three-Model Dashboard)
 
 ### Reference Sources
 
-- `external/world-model-tutorial/README.md` -- tutorial structure, installation, demos
-- `external/world-model-tutorial/references.md` -- 4-era history, architecture taxonomy, application domains
 - [liyang.page/wm-tutorial](https://liyang.page/wm-tutorial/) -- primary external reference
-- Pioneer papers: Ha & Schmidhuber 2018, Dreamer V1 (Hafner 2019), MuZero (DeepMind 2020), JEPA (LeCun 2023)

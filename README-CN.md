@@ -48,11 +48,11 @@
 | L03 | 讲义 | 架构模式、学习范式与规划 | 七大架构族、CEM-MPC、潜在 Actor-Critic、TD-MPC |
 | L04 | 讲义 | 按模型划分的评估指标 | FID、奖励相关性、一致性损失、PSNR、时程漂移 |
 | L05 | 讲义 | 前沿争论 | 语言 vs 物理 grounding、Bitter Lesson、AGI 作为研究目标 |
-| P01 | 项目 | 训练 VAE 编码器 | 64×64 像素图像压缩为潜在向量；重建损失曲线 |
-| P02 | 项目 | 构建潜在动力学模型 | GRU → RSSM；1 步 vs 5 步预测误差对比 |
-| P03 | 项目 | 完整 Dreamer 流水线 | 编码 → RSSM → 潜在 Actor-Critic → 执行动作 |
-| P04 | 项目 | 实现 TD-MPC 规划 | CEM-MPC + 潜在一致性损失；与 Dreamer 对比奖励曲线 |
-| P05 | 项目 | STORM + 三模型评估仪表盘 | GRU 换成 Transformer；Dreamer/TD-MPC/STORM 并排评估 |
+| P01 | 项目 | 训练 VAE 编码器 | 小型 CNN VAE 处理 64×64 像素观测；ELBO 损失曲线；潜在维度滑块可视化 |
+| P02 | 项目 | 构建 RSSM 动力学模型 | GRU、MDN-RNN、RSSM 三者对比；先验与后验轨迹对比图 |
+| P03 | 项目 | 训练 Dreamer 智能体 | 完整训练循环：编码器 + RSSM + 潜在 Actor-Critic，在小型像素环境上训练 |
+| P04 | 项目 | 替换动力学骨干网络 | 将 RSSM 替换为小型因果 Transformer（STORM 风格）；架构对比分析 |
+| P05 | 项目 | 世界模型评估仪表盘 | 两个模型指标并排展示：FID、奖励相关性、PSNR、潜在漂移曲线 |
 
 ---
 
@@ -61,19 +61,20 @@
 ```mermaid
 flowchart TD
     L01["L01 历史与直觉"] --> L02A
-    L02A["L02 Part A：VAE 编码器"] --> P01["P01 构建并可视化 VAE"]
+    L02A["L02 Part A：VAE 编码器"] --> P01["P01 训练 VAE，可视化潜在空间"]
     L02A --> L02B["L02 Part B：GRU 到 RSSM"]
-    L02B --> P02["P02 训练动力学，观测漂移"]
+    L02B --> P02["P02 构建 RSSM，对比先验与后验"]
     L02B --> L03A["L03 Part A：架构模式"]
     L03A --> L03B["L03 Part B：规划机制"]
-    L03B --> P03["P03 完整 Dreamer 流水线"]
-    P03 --> P04["P04 TD-MPC，与 Dreamer 对比"]
-    P04 --> L04["L04 评估指标体系"]
-    L04 --> P05["P05 STORM + 三模型评估仪表盘"]
+    L03B --> P03["P03 训练 Dreamer 智能体"]
+    P02 --> P04["P04 替换 RSSM 为 Transformer 骨干"]
+    L03A --> P04
+    P03 & P04 --> L04["L04 评估指标体系"]
+    L04 --> P05["P05 评估仪表盘"]
     P05 --> L05["L05 前沿争论"]
 ```
 
-推荐学习顺序：**L01 → L02 → P01 → P02 → L03 → P03 → P04 → L04 → P05 → L05**
+推荐学习顺序：L01、L02、P01、P02、L03、P03、P04、L04、P05、L05
 
 不需要把所有理论读完再动手。先构建，带着问题回来看下一讲，效果更好。
 

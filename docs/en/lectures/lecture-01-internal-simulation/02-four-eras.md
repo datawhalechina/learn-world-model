@@ -24,7 +24,7 @@ The three modules are V (Vision encoder), M (Memory/MDN-RNN), and C (Controller)
 
 The most compelling aspect of their experiment was placing controller C inside a **virtual environment** hallucinated by memory module M, training there, then transferring the policy to the real game. On the Car Racing task (an OpenAI Gym 2D racing environment with a top-down camera view, where the goal is to complete a randomly generated track), a policy trained purely in dreams could achieve solid results in the real environment. The VizDoom task (an RL research environment based on the first-person shooter Doom, with a first-person 3D perspective and significantly higher task complexity than Car Racing) exposed a more fundamental problem: the controller learned to exploit errors in the world model to manufacture artificially high scores (model exploitation), "cheating" in the dream rather than learning genuine skills. They ultimately needed to introduce a temperature parameter to increase dream diversity before transfer became viable. This "cheating" problem later became one of the central challenges in the world model field.
 
-Ha & Schmidhuber's framing — train entirely inside a hallucinated environment, then transfer to the real one — brought the world model idea into mainstream awareness for the first time.
+Ha & Schmidhuber's framing (train entirely inside a hallucinated environment, then transfer to the real one) brought the world model idea into mainstream awareness for the first time.
 
 <figure>
 <img src="/worldmodels/world-models-card.png" alt="Ha & Schmidhuber (2018) World Models experiment results: Car Racing and VizDoom side by side" style="width:90%;display:block;margin:0 auto">
