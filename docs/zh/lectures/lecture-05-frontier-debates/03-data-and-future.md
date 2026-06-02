@@ -57,3 +57,4 @@ lecture: 5
 - LeCun, Y. *A Path Towards Autonomous Machine Intelligence*（见 L01 延伸阅读）
 - Ha & Schmidhuber (2018): World Models（见 L01 延伸阅读）
 - 谢赛宁 (Saining Xie) 访谈《商业访谈录》(张小珺, 2024). [YouTube](https://www.youtube.com/watch?v=rIwgZWzUKm8)
+- LeCun, Y. (2026 年 5 月). 访谈：LLM 安全性、VLA 与 JEPA. [YouTube](https://www.youtube.com/watch?v=ngBraLDqzdI)

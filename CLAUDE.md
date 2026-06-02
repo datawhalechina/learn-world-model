@@ -29,6 +29,7 @@ npm run docs:preview    # Preview built site
 
 These rules apply to all lecture and project markdown files:
 
+- **Contextual fit**: any new content (sentences, sections, examples, diagrams) must integrate naturally with the surrounding text. It should feel like it was always there, not appended or inserted. Read the paragraphs before and after before writing.
 - **No em dashes**: never use "—" anywhere in the tutorial. Use a colon, comma, or rewrite the sentence instead
 - **No linear mermaid diagrams**: mermaid diagrams with no branching (pure A→B→C chains, cycles included) are forbidden. Replace with prose or a table. Only use mermaid when the diagram has genuine branching or fan-out structure.
 - **No trivially simple mermaid diagrams**: even a branching mermaid is forbidden if it adds no information beyond what the surrounding prose already says. A diagram earns its place only when the visual structure reveals relationships that prose cannot express as clearly.

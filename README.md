@@ -129,6 +129,12 @@ Scan the QR code to join the WeChat discussion group (微信交流群):
 
 ---
 
+## Contributing
+
+Contributions are welcome. Before submitting a pull request, read [CLAUDE.md](./CLAUDE.md) for the writing style rules that apply to all lecture and project files (no em dashes, no linear mermaid diagrams, no arrow-chain prose, EN/ZH sync, and others). Content that does not follow those rules will be asked to revise before merging.
+
+---
+
 ## Contributors (Tutorial)
 
 | Name | Role | Affiliation | GitHub |

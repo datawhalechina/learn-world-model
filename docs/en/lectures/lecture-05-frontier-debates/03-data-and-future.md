@@ -57,3 +57,4 @@ Going deeper: is that choice genuinely one you can "agree to" or "refuse"? Or wi
 - LeCun, Y. *A Path Towards Autonomous Machine Intelligence* (see Lecture 1 further reading)
 - Ha & Schmidhuber (2018): World Models (see Lecture 1 further reading)
 - Saining Xie interview, *Business Interview* (Zhang Xiaojun, 2024). [YouTube](https://www.youtube.com/watch?v=rIwgZWzUKm8)
+- LeCun, Y. (2026, May). Interview on LLM safety, VLA, and JEPA. [YouTube](https://www.youtube.com/watch?v=ngBraLDqzdI)

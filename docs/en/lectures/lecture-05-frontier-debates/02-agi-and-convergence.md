@@ -57,6 +57,12 @@ LeCun's JEPA (Joint Embedding Predictive Architecture, [LeCun 2022](https://open
 
 JEPA does not generate pixels; it only predicts semantic representations. This choice reflects a clear stance: **pixels are noise, semantics are signal.** A model that generates no images at all may actually acquire structural understanding of the physical world faster than diffusion-based world models.
 
+LeCun has put a concrete timestamp on this bet. In a May 2026 interview, he stated that by early 2027 the entire field will recognize that the paradigm must change, and that within five years JEPA-style architectures will become the foundational standard in AI the way Linux became the standard in operating systems.
+
+The sharpest version of his argument comes from comparing two kinds of learners. A **VLA (Vision-Language-Action) model** takes visual input plus a language instruction and directly outputs actions, which is the approach behind most current end-to-end robotic and autonomous driving systems. Tesla's Autopilot follows this logic: trained on millions of hours of driving footage, it maps perception to steering. But LeCun's critique is that VLA is fundamentally the wrong direction: it memorizes an enormous catalog of situations but has no internal model for predicting consequences. When it encounters a genuinely novel situation, it has no principled way to reason about what will happen next.
+
+A 17-year-old learning to drive in 20 hours does not memorize road situations. The learner builds an internal model of how vehicles, physics, and other drivers behave, and uses that model to anticipate and plan. That is the capability JEPA is designed to develop: not token-by-token output, but structured prediction of future representations that enables deliberate planning.
+
 JEPA and WAM represent another debate within the world-model camp: in which space should prediction happen? Prediction in pixel space is interpretable but computationally expensive and easily distracted by irrelevant details. Prediction in representation space is efficient, but the quality of the representation determines everything.
 
 ---
