@@ -1,6 +1,6 @@
 ---
 title: "What Is a World Model: Rendering, Simulation, and Planning"
-description: Fei-Fei Li and the World Labs team systematically clarify the conceptual confusion around "world model": three functional definitions (renderer, simulator, planner) and why the simulator is the missing link between the other two.
+description: "Fei-Fei Li and the World Labs team systematically clarify the conceptual confusion around \"world model\": three functional definitions (renderer, simulator, planner) and why the simulator is the missing link between the other two."
 lecture: 1
 ---
 
