@@ -14,9 +14,10 @@ const zhWorldModelItems = [
     items: [
       { text: "导读", link: "/zh/lectures/lecture-01-internal-simulation/" },
       { text: "思想基石", link: "/zh/lectures/lecture-01-internal-simulation/01-foundations" },
-      { text: "四个时代", link: "/zh/lectures/lecture-01-internal-simulation/02-four-eras" },
-      { text: "世界模型的价值与时代背景", link: "/zh/lectures/lecture-01-internal-simulation/03-why-now" },
-      { text: "课程路线图", link: "/zh/lectures/lecture-01-internal-simulation/04-roadmap" },
+      { text: "世界模型是什么：渲染、模拟与规划", link: "/zh/lectures/lecture-01-internal-simulation/02-what-is-a-world-model" },
+      { text: "四个时代", link: "/zh/lectures/lecture-01-internal-simulation/03-four-eras" },
+      { text: "世界模型的价值与时代背景", link: "/zh/lectures/lecture-01-internal-simulation/04-why-now" },
+      { text: "课程路线图", link: "/zh/lectures/lecture-01-internal-simulation/05-roadmap" },
     ]
   },
   {
@@ -87,9 +88,10 @@ const enWorldModelItems = [
     items: [
       { text: "Overview", link: "/en/lectures/lecture-01-internal-simulation/" },
       { text: "Foundations", link: "/en/lectures/lecture-01-internal-simulation/01-foundations" },
-      { text: "Four Eras", link: "/en/lectures/lecture-01-internal-simulation/02-four-eras" },
-      { text: "Why Now", link: "/en/lectures/lecture-01-internal-simulation/03-why-now" },
-      { text: "Course Roadmap", link: "/en/lectures/lecture-01-internal-simulation/04-roadmap" },
+      { text: "What Is a World Model", link: "/en/lectures/lecture-01-internal-simulation/02-what-is-a-world-model" },
+      { text: "Four Eras", link: "/en/lectures/lecture-01-internal-simulation/03-four-eras" },
+      { text: "Why Now", link: "/en/lectures/lecture-01-internal-simulation/04-why-now" },
+      { text: "Course Roadmap", link: "/en/lectures/lecture-01-internal-simulation/05-roadmap" },
     ]
   },
   {

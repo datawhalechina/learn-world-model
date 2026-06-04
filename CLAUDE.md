@@ -35,7 +35,9 @@ These rules apply to all lecture and project markdown files:
 - **No trivially simple mermaid diagrams**: even a branching mermaid is forbidden if it adds no information beyond what the surrounding prose already says. A diagram earns its place only when the visual structure reveals relationships that prose cannot express as clearly.
 - **No arrow-chain prose**: never write "X → Y → Z" or "A → B → C → D" inline in prose. More broadly, never use any arrow-like symbol (→, ->, ⟶, ⇒, =>)  as a connector between words or concepts in running text — this reads as informal shorthand. Rewrite as a proper sentence, a numbered list, or a table instead.
 - **No adjacent table + figure/mermaid**: a table and a figure or mermaid block must never appear consecutively. Insert at least one sentence of prose between them.
+- **No ASCII diagrams**: never use ASCII art (boxes drawn with `+`, `-`, `|`, spaces, or similar characters) to represent diagrams or flowcharts. Use a mermaid block instead.
 - **EN/ZH sync**: any layout, structural, or prose change made to an English file must be mirrored in its Chinese counterpart (same path under `docs/zh/`), and vice versa. Never change one locale without updating the other.
+- **File length**: keep each markdown file to 1-2 pages of readable content. If a file grows beyond that, split it at a logically separable boundary (a major section or topic shift) into multiple numbered files, then update the sidebar in `config.mts` accordingly.
 
 ---
 
