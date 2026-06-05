@@ -104,3 +104,9 @@ At some point, will a "simpler and more general" method emerge that overtakes th
 Perhaps the final answer is not "who won," but that different application domains converge on different technical routes: language generation and code assistants follow the LLM route; robotics, industrial control, and autonomous driving follow the world model route; and certain tasks, perhaps the ones you and I use most, will remain permanently in the gray zone between the two.
 
 If that is the case, the significance of this debate lies not in determining a winner, but in helping us understand more clearly: **what problem are we actually trying to solve, and where does the path we are on lead.**
+
+---
+
+## Further Reading
+
+- Boris Cherny at Sequoia AI Ascent 2026: [youtube.com/watch?v=SlGRN8jh2RI](https://www.youtube.com/watch?v=SlGRN8jh2RI)

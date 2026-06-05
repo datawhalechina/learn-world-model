@@ -19,3 +19,4 @@ This lecture gives no verdict. Four debates, each laying out the sharpest argume
 - **Debate 3** (see "Division of Labor and Convergence between World Models and LLMs"): Are world models and LLMs competitors or complements? What is WAM betting on, and what is JEPA betting on? Will the two paths eventually converge?
 - **Debate 4** (see "Where Does the Data Come From"): In the era of "downloading humanity," where does physical-world data come from?
 - **Architecture bets and closing questions** (see "Core Bets by Architecture Line and Closing Questions"): The core bets of six architecture lines, the CWM case study, and three questions to carry forward.
+- **Philosophical coda** (see "Enactive Cognition and What World Models Still Miss"): Rafiee and Sutton's 2025 paper evaluated from the world model perspective: what passive representation cannot reach, and what enactive cognition demands.

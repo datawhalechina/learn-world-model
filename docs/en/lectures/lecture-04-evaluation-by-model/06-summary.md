@@ -66,4 +66,6 @@ These questions have no standard answers. But you now have the tools needed to a
 
 L05 has no code, only debates. Is language the "opium" of world models or a necessary tool? Is the LLM a victory of the Bitter Lesson or a betrayal of it? Is AGI a legitimate research target or a false premise? These questions have no standard answers. The sharpest arguments on each side are laid out for you to judge.
 
+If you want to see how world models compare on standardized interactive tasks beyond the metrics covered here, [World Arena](https://huggingface.co/spaces/WorldArena/WorldArena) is a community benchmark platform where models are evaluated on interactive prediction tasks head-to-head.
+
 > **Complete P05**: Build an evaluation dashboard that displays all metrics for Dreamer, TD-MPC, and STORM side by side, translating the theory from this lecture into interactive experimental evidence. The dashboard should cover: reconstruction FID, reward correlation, consistency loss, token prediction loss, long-horizon PSNR, FVD, and a visualization of the latent drift curve.

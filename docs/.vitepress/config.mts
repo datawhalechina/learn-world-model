@@ -67,6 +67,7 @@ const zhWorldModelItems = [
       { text: "世界模型与 LLM 的分工与收敛", link: "/zh/lectures/lecture-05-frontier-debates/02-agi-and-convergence" },
       { text: "数据从哪里来", link: "/zh/lectures/lecture-05-frontier-debates/03-data-and-future" },
       { text: "各路线核心赌注与收尾问题", link: "/zh/lectures/lecture-05-frontier-debates/04-bets-and-questions" },
+      { text: "哲学后记：生成认知", link: "/zh/lectures/lecture-05-frontier-debates/05-enactive-cognition" },
     ]
   },
 ];
@@ -141,6 +142,7 @@ const enWorldModelItems = [
       { text: "World Models vs LLMs: Convergence", link: "/en/lectures/lecture-05-frontier-debates/02-agi-and-convergence" },
       { text: "Where Does the Data Come From", link: "/en/lectures/lecture-05-frontier-debates/03-data-and-future" },
       { text: "Core Bets & Closing Questions", link: "/en/lectures/lecture-05-frontier-debates/04-bets-and-questions" },
+      { text: "Philosophical Coda: Enactive Cognition", link: "/en/lectures/lecture-05-frontier-debates/05-enactive-cognition" },
     ]
   },
 ];
