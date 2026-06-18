@@ -2,14 +2,6 @@
 title: P02 Build an RSSM Dynamics Model
 ---
 
-## Project page
-
-- [/en/projects/p02_rssm_dynamics/](/en/projects/p02_rssm_dynamics/)
-
-## Notebook source
-
-- [p02_rssm_dynamics.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p02_rssm_dynamics.ipynb)
-
 # P02: Build an RSSM Dynamics Model
 
 Train and compare GRU, MDN-RNN, and RSSM dynamics models on synthetic pixel trajectories. The point of this notebook is comparison, not leaderboard chasing: GRU is the simplest baseline, MDN-RNN adds predictive uncertainty, and RSSM introduces a latent stochastic state for world-model style rollouts.

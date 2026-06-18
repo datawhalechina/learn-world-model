@@ -2,14 +2,6 @@
 title: P05 World Model Evaluation Dashboard
 ---
 
-## Project page
-
-- [/en/projects/p05_evaluation_dashboard/](/en/projects/p05_evaluation_dashboard/)
-
-## Notebook source
-
-- [p05_evaluation_dashboard.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p05_evaluation_dashboard.ipynb)
-
 # P05: World Model Evaluation Dashboard
 
 Load the P03 Dreamer and P04 Transformer checkpoints, evaluate them on held-out episodes, and compare the P04 metrics side by side. The dashboard is intentionally conservative: it prefers explicit checkpoint loading and honest fallback behavior over hidden assumptions.

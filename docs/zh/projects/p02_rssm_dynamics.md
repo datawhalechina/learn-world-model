@@ -2,14 +2,6 @@
 title: P02 构建 RSSM 动力学模型
 ---
 
-## 项目页面
-
-- [/zh/projects/p02_rssm_dynamics/](/zh/projects/p02_rssm_dynamics/)
-
-## Notebook 源文件
-
-- [p02_rssm_dynamics.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p02_rssm_dynamics.ipynb)
-
 # P02: 构建 RSSM 动力学模型
 
 在合成像素轨迹上训练并对比 GRU、MDN-RNN 和 RSSM 三种动力学模型。本 notebook 的重点在于对比，而非追求排行榜成绩：GRU 是最简单的基线，MDN-RNN 引入预测不确定性，RSSM 则通过潜在随机状态实现世界模型风格的 rollout。

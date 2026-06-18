@@ -2,14 +2,6 @@
 title: P03：训练 Dreamer 智能体
 ---
 
-## 项目页面
-
-- [/zh/projects/p03_dreamer_agent/](/zh/projects/p03_dreamer_agent/)
-
-## Notebook 源文件
-
-- [p03_dreamer_agent.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p03_dreamer_agent.ipynb)
-
 # P03：训练 Dreamer 智能体
 
 训练一个包含世界模型与潜在 Actor-Critic 策略的紧凑型 Dreamer 智能体。本项目为教程规模的演示：目标是展示 Dreamer 训练循环、权重文件的衔接方式以及指标诊断流程，而非求解高难度控制基准。本项目不依赖外部 gym 库，由 `SyntheticEnv` 生成 64×64 RGB 帧并附带简单奖励信号。

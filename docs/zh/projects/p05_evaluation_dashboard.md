@@ -2,14 +2,6 @@
 title: P05 世界模型评估仪表盘
 ---
 
-## 项目页面
-
-- [/zh/projects/p05_evaluation_dashboard/](/zh/projects/p05_evaluation_dashboard/)
-
-## Notebook 源文件
-
-- [p05_evaluation_dashboard.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p05_evaluation_dashboard.ipynb)
-
 # P05: 世界模型评估仪表盘
 
 加载 P03 的 Dreamer 权重文件和 P04 的 Transformer 权重文件，在留出 episode 上进行评估，并将各项指标并排比较。本仪表盘有意保持保守风格：优先采用显式的权重文件加载和诚实的回退机制，避免任何隐含假设。

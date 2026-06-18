@@ -94,8 +94,6 @@ async function convertNotebook(nbPath: string): Promise<void> {
 
   const title = firstHeadingTitle(nb.cells, base);
   const parts: string[] = [`---\ntitle: ${title}\n---\n`];
-  parts.push(`## ${projectLabel}\n\n- [${projectUrl}](${projectUrl})\n`);
-  parts.push(`## ${sourceLabel}\n\n- [${base}.ipynb](${notebookUrl})\n`);
 
   for (const cell of nb.cells) {
     if (cell.cell_type === "markdown") {

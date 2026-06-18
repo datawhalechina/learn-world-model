@@ -2,14 +2,6 @@
 title: P01：训练 VAE 编码器
 ---
 
-## 项目页面
-
-- [/zh/projects/p01_vae_encoder/](/zh/projects/p01_vae_encoder/)
-
-## Notebook 源文件
-
-- [p01_vae_encoder.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p01_vae_encoder.ipynb)
-
 # P01：训练 VAE 编码器
 
 在合成的 64x64 RGB 图像上训练一个紧凑的卷积变分自编码器（VAE）。编码器学习一个 32 维的潜在空间，P02 将其复用为观测编码器。此处的目标不是生成逼真的图像，而是学习一个稳定的潜在空间，供下游 notebook 使用。

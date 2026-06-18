@@ -2,14 +2,6 @@
 title: P04 Swap the Dynamics Backbone
 ---
 
-## Project page
-
-- [/en/projects/p04_transformer_backbone/](/en/projects/p04_transformer_backbone/)
-
-## Notebook source
-
-- [p04_transformer_backbone.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p04_transformer_backbone.ipynb)
-
 # P04: Swap the Dynamics Backbone
 
 Replace the P02 RSSM with a causal Transformer and compare both backbones on the same synthetic data. The tutorial focuses on the engineering tradeoff: a stronger inductive bias in RSSM versus the easier parallelization and longer-context flexibility of attention. The pipeline is CatVAE tokenization, causal Transformer training, and a rollout comparison against RSSM, read as a controlled comparison, not a general claim that the Transformer is better.

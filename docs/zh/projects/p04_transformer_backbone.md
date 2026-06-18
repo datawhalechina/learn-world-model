@@ -2,14 +2,6 @@
 title: P04：替换动力学骨干网络
 ---
 
-## 项目页面
-
-- [/zh/projects/p04_transformer_backbone/](/zh/projects/p04_transformer_backbone/)
-
-## Notebook 源文件
-
-- [p04_transformer_backbone.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p04_transformer_backbone.ipynb)
-
 # P04：替换动力学骨干网络
 
 将 P02 的 RSSM 替换为因果 Transformer，并在相同合成数据上对两种骨干网络进行对比。本教程聚焦于工程权衡：RSSM 具有更强的归纳偏置，而注意力机制则更易于并行化，并对长上下文具有更强的灵活性。整体流程包括：类别 VAE（CatVAE）tokenization、因果 Transformer 训练，以及与 RSSM 的 rollout 对比，这是一次受控对比，而非声称 Transformer 在一般情况下更优。
