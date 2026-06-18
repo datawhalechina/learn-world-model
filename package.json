@@ -5,10 +5,11 @@
   "description": "Course docs for Learn World Models powered by VitePress.",
   "scripts": {
     "notebooks:render": "tsx scripts/build-notebook-pages.ts",
-    "dev": "npm run notebooks:render && vitepress dev docs",
+    "notebooks:watch": "tsx scripts/build-notebook-pages.ts --watch",
+    "dev": "tsx scripts/dev-docs.ts",
     "build": "npm run notebooks:render && vitepress build docs",
     "preview": "vitepress preview docs",
-    "docs:dev": "npm run notebooks:render && vitepress dev docs",
+    "docs:dev": "tsx scripts/dev-docs.ts",
     "docs:build": "npm run notebooks:render && vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "lecture:run": "tsx",

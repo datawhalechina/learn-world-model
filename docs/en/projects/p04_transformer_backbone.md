@@ -2,15 +2,19 @@
 title: P04 Swap the Dynamics Backbone
 ---
 
-# P04: Swap the Dynamics Backbone
+## Project page
 
-Replace the P02 RSSM with a causal Transformer and compare both backbones on the same synthetic data. The comparison is deliberately narrow: CatVAE tokenization keeps the input space fixed, so the notebook isolates the backbone tradeoff between RSSM's stronger inductive bias and attention's easier parallelization plus longer-context flexibility.
-
-**Prerequisite**: P02 (`rssm.pt`) if present; otherwise the rollout comparison falls back to a randomly initialized RSSM so the notebook still runs, but the RSSM-vs-Transformer numbers are only meaningful with the pretrained checkpoint. This notebook trains a CatVAE and Transformer from scratch and saves them to `transformer_wm.pt` for P05.
+- [/en/projects/p04_transformer_backbone/](/en/projects/p04_transformer_backbone/)
 
 ## Notebook source
 
 - [p04_transformer_backbone.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p04_transformer_backbone.ipynb)
+
+# P04: Swap the Dynamics Backbone
+
+Replace the P02 RSSM with a causal Transformer and compare both backbones on the same synthetic data. The tutorial focuses on the engineering tradeoff: a stronger inductive bias in RSSM versus the easier parallelization and longer-context flexibility of attention. The pipeline is CatVAE tokenization, causal Transformer training, and a rollout comparison against RSSM, read as a controlled comparison, not a general claim that the Transformer is better.
+
+**Prerequisite**: P02 (`rssm.pt`) if present; otherwise the rollout comparison falls back to a randomly initialized RSSM so the notebook still runs, but the RSSM-vs-Transformer numbers are only meaningful with the pretrained checkpoint. This notebook trains a CatVAE and Transformer from scratch and saves them to `transformer_wm.pt` for P05.
 
 ```python
 # Install dependencies for a fresh environment.
@@ -30,7 +34,6 @@ except Exception:
     pass
 import matplotlib.pyplot as plt
 import time
-import os
 import math
 from pathlib import Path
 

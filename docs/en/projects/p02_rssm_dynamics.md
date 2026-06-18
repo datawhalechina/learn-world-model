@@ -2,15 +2,19 @@
 title: P02 Build an RSSM Dynamics Model
 ---
 
-# P02: Build an RSSM Dynamics Model
+## Project page
 
-Compare GRU, MDN-RNN, and RSSM on synthetic pixel trajectories. P01's encoder defines the shared latent space, so the comparison stays focused on the dynamics choice: GRU is the simplest baseline, MDN-RNN adds predictive uncertainty, and RSSM introduces a latent stochastic state for world-model rollouts.
-
-**Prerequisite**: P01 (`vae_encoder.pt`) if present; otherwise the notebook falls back to a randomly initialized encoder so it still runs, but the rollout comparison only becomes meaningful with the pretrained checkpoint. This notebook trains the dynamics models and saves the RSSM to `rssm.pt` for P03 and P04.
+- [/en/projects/p02_rssm_dynamics/](/en/projects/p02_rssm_dynamics/)
 
 ## Notebook source
 
 - [p02_rssm_dynamics.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p02_rssm_dynamics.ipynb)
+
+# P02: Build an RSSM Dynamics Model
+
+Train and compare GRU, MDN-RNN, and RSSM dynamics models on synthetic pixel trajectories. The point of this notebook is comparison, not leaderboard chasing: GRU is the simplest baseline, MDN-RNN adds predictive uncertainty, and RSSM introduces a latent stochastic state for world-model style rollouts.
+
+**Prerequisite**: P01 (`vae_encoder.pt`) if present; otherwise the notebook falls back to a randomly initialized encoder so it still runs, but the rollout comparison is only meaningful with the pretrained checkpoint. This notebook trains the dynamics models and saves the RSSM to `rssm.pt` for P03 and P04.
 
 ```python
 # Install dependencies for a fresh environment.

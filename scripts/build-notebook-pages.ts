@@ -10,9 +10,12 @@
  *   - output artifacts stay in the source `.ipynb` files
  *
  * The generated `.md` files are what the sidebar and project index link to.
+ * The script also keeps a `project_url` field in notebook metadata so the
+ * notebook itself knows which docs page it belongs to.
+ *
  * Run automatically before `docs:build` and `docs:dev`; safe to re-run.
  */
-import { promises as fs } from "node:fs";
+import { promises as fs, watch as watchFs } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -32,7 +35,10 @@ interface NotebookCell {
 
 interface Notebook {
   cells: NotebookCell[];
-  metadata?: Record<string, unknown>;
+  metadata?: {
+    project_url?: string;
+    [key: string]: unknown;
+  };
 }
 
 const joinSource = (src: string[] | string): string =>
@@ -40,6 +46,20 @@ const joinSource = (src: string[] | string): string =>
 
 const fence = (lang: string, body: string): string =>
   "```" + lang + "\n" + body.replace(/\n+$/, "") + "\n```";
+
+function projectPageUrl(nbPath: string): string {
+  const relPath = path.relative(ROOT, nbPath).split(path.sep).join("/");
+  const match = relPath.match(/^docs\/(en|zh)\/projects\/([^/]+)\.ipynb$/);
+  if (!match) {
+    throw new Error(`Unexpected notebook path: ${nbPath}`);
+  }
+  return `/${match[1]}/projects/${match[2]}/`;
+}
+
+function sourceNotebookUrl(nbPath: string): string {
+  const relPath = path.relative(ROOT, nbPath).split(path.sep).join("/");
+  return `${GITHUB_BLOB_BASE}${relPath}`;
+}
 
 function firstHeadingTitle(cells: NotebookCell[], fallback: string): string {
   for (const cell of cells) {
@@ -58,12 +78,24 @@ async function convertNotebook(nbPath: string): Promise<void> {
   const relPath = path.relative(ROOT, nbPath).split(path.sep).join("/");
   const isZh = relPath.startsWith("docs/zh/");
   const sourceLabel = isZh ? "Notebook 源文件" : "Notebook source";
+  const projectLabel = isZh ? "项目页面" : "Project page";
+  const projectUrl = projectPageUrl(nbPath);
+  const notebookUrl = sourceNotebookUrl(nbPath);
+
+  const metadata = nb.metadata ?? {};
+  const needsMetadataWrite = metadata.project_url !== projectUrl;
+  if (needsMetadataWrite) {
+    nb.metadata = {
+      ...metadata,
+      project_url: projectUrl,
+    };
+    await fs.writeFile(nbPath, JSON.stringify(nb, null, 1) + "\n", "utf8");
+  }
 
   const title = firstHeadingTitle(nb.cells, base);
   const parts: string[] = [`---\ntitle: ${title}\n---\n`];
-  parts.push(
-    `## ${sourceLabel}\n\n- [${base}.ipynb](${GITHUB_BLOB_BASE}${relPath})\n`
-  );
+  parts.push(`## ${projectLabel}\n\n- [${projectUrl}](${projectUrl})\n`);
+  parts.push(`## ${sourceLabel}\n\n- [${base}.ipynb](${notebookUrl})\n`);
 
   for (const cell of nb.cells) {
     if (cell.cell_type === "markdown") {
@@ -87,7 +119,7 @@ async function convertNotebook(nbPath: string): Promise<void> {
   console.log(`  rendered ${rel}`);
 }
 
-async function main(): Promise<void> {
+async function renderAll(): Promise<void> {
   for (const dir of PROJECT_DIRS) {
     let entries: string[];
     try {
@@ -102,6 +134,64 @@ async function main(): Promise<void> {
       await convertNotebook(path.join(dir, file));
     }
   }
+}
+
+function parseWatchFlag(): boolean {
+  return process.argv.includes("--watch");
+}
+
+async function watch(): Promise<void> {
+  let timer: NodeJS.Timeout | null = null;
+  let rerendering = false;
+  let rerunRequested = false;
+
+  const schedule = () => {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      timer = null;
+      void run();
+    }, 150);
+  };
+
+  const run = async () => {
+    if (rerendering) {
+      rerunRequested = true;
+      return;
+    }
+    rerendering = true;
+    try {
+      await renderAll();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      rerendering = false;
+      if (rerunRequested) {
+        rerunRequested = false;
+        schedule();
+      }
+    }
+  };
+
+  await renderAll();
+  for (const dir of PROJECT_DIRS) {
+    watchFs(dir, { persistent: true }, (eventType, filename) => {
+      if (!filename || !filename.endsWith(".ipynb")) {
+        return;
+      }
+      console.log(`File change detected in ${path.relative(ROOT, dir)}: ${String(filename)} (${eventType})`);
+      schedule();
+    });
+  }
+
+  await new Promise<void>(() => {});
+}
+
+async function main(): Promise<void> {
+  if (parseWatchFlag()) {
+    await watch();
+    return;
+  }
+  await renderAll();
 }
 
 main().catch((err) => {

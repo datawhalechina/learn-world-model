@@ -2,15 +2,19 @@
 title: P01：训练 VAE 编码器
 ---
 
+## 项目页面
+
+- [/zh/projects/p01_vae_encoder/](/zh/projects/p01_vae_encoder/)
+
+## Notebook 源文件
+
+- [p01_vae_encoder.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p01_vae_encoder.ipynb)
+
 # P01：训练 VAE 编码器
 
 在合成的 64x64 RGB 图像上训练一个紧凑的卷积变分自编码器（VAE）。编码器学习一个 32 维的潜在空间，P02 将其复用为观测编码器。此处的目标不是生成逼真的图像，而是学习一个稳定的潜在空间，供下游 notebook 使用。
 
 **输出**：本 notebook 从头训练（无需任何预置权重文件），并将训练好的权重保存至 `vae_encoder.pt`，P02 和 P03 将以此作为观测编码器加载。
-
-## Notebook 源文件
-
-- [p01_vae_encoder.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p01_vae_encoder.ipynb)
 
 **内容大纲：**
 1. 准备：合成数据与 DataLoader
@@ -33,12 +37,61 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 import numpy as np
+from pathlib import Path
 try:
     from IPython import get_ipython
     get_ipython().run_line_magic('matplotlib', 'inline')
 except Exception:
     pass
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+from matplotlib import font_manager
+
+# 让 Colab 和新环境优先使用支持中文的字体，避免标题和坐标轴显示成方框。
+def _configure_cjk_font():
+    preferred = [
+        "Noto Sans CJK SC",
+        "Noto Sans SC",
+        "Source Han Sans SC",
+        "Microsoft YaHei",
+        "SimHei",
+        "PingFang SC",
+        "WenQuanYi Micro Hei",
+    ]
+    for family in preferred:
+        try:
+            font_manager.findfont(family, fallback_to_default=False)
+            mpl.rcParams["font.family"] = "sans-serif"
+            mpl.rcParams["font.sans-serif"] = [family] + [f for f in mpl.rcParams.get("font.sans-serif", []) if f != family]
+            mpl.rcParams["axes.unicode_minus"] = False
+            return family
+        except Exception:
+            pass
+
+    font_path = Path.home() / ".cache" / "notebook-fonts" / "NotoSansCJKsc-Regular.otf"
+    if not font_path.exists():
+        try:
+            import urllib.request
+            font_path.parent.mkdir(parents=True, exist_ok=True)
+            url = "https://github.com/googlefonts/noto-cjk/raw/main/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf"
+            urllib.request.urlretrieve(url, font_path)
+        except Exception:
+            font_path = None
+
+    if font_path and font_path.exists():
+        font_manager.fontManager.addfont(str(font_path))
+        family = font_manager.FontProperties(fname=str(font_path)).get_name()
+        mpl.rcParams["font.family"] = "sans-serif"
+        mpl.rcParams["font.sans-serif"] = [family] + [f for f in preferred if f != family]
+        mpl.rcParams["axes.unicode_minus"] = False
+        return family
+
+    mpl.rcParams["font.family"] = "sans-serif"
+    mpl.rcParams["font.sans-serif"] = ["DejaVu Sans"]
+    mpl.rcParams["axes.unicode_minus"] = False
+    return None
+
+_CJK_FONT = _configure_cjk_font()
 
 torch.manual_seed(42)
 np.random.seed(42)

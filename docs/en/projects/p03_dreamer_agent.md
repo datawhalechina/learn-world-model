@@ -2,17 +2,21 @@
 title: P03 Train a Dreamer Agent
 ---
 
-# P03: Train a Dreamer Agent
+## Project page
 
-Train a compact Dreamer agent with a world model and a latent Actor-Critic policy. The notebook uses `SyntheticEnv` instead of an external gym task, so the focus stays on the training loop, checkpoint wiring, and metric diagnostics rather than benchmark chasing.
-
-**Prerequisite**: P01 (`vae_encoder.pt`) and P02 (`rssm.pt`) if present; otherwise the missing parts fall back to random initialization so the notebook still runs, but the trained agent is only meaningful with the pretrained checkpoints. This notebook saves the full agent to `dreamer.pt` for P05.
+- [/en/projects/p03_dreamer_agent/](/en/projects/p03_dreamer_agent/)
 
 ## Notebook source
 
 - [p03_dreamer_agent.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p03_dreamer_agent.ipynb)
 
-Expect a noisy reward trace. The tutorial goal is a working world-model plus policy pipeline, not a benchmark score.
+# P03: Train a Dreamer Agent
+
+Train a compact Dreamer agent with a world model and a latent Actor-Critic policy. This is a tutorial-scale demo: the objective is to show the Dreamer training loop, checkpoint wiring, and metric diagnostics, not to solve a hard control benchmark. There is no external gym dependency; a `SyntheticEnv` generates 64x64 RGB frames with a simple reward signal.
+
+**Prerequisite**: P01 (`vae_encoder.pt`) and P02 (`rssm.pt`) if present; otherwise the missing parts fall back to random initialization so the notebook still runs, but the trained agent is only meaningful with the pretrained checkpoints. This notebook saves the full agent to `dreamer.pt` for P05.
+
+A noisy reward trace is acceptable here; the tutorial goal is a working world-model + policy pipeline, not a benchmark score.
 
 ```python
 # Install dependencies for a fresh environment.
@@ -23,8 +27,6 @@ Expect a noisy reward trace. The tutorial goal is a working world-model plus pol
 Define the shared environment, model dimensions, and training schedule.
 
 ```python
-import os
-import math
 import random
 import numpy as np
 import torch

@@ -2,15 +2,19 @@
 title: P04：替换动力学骨干网络
 ---
 
-# P04：替换动力学骨干网络
+## 项目页面
 
-将 P02 的 RSSM 替换为因果 Transformer，并在相同合成数据上对两种骨干网络进行对比。这个对比是刻意收窄的：CatVAE tokenization 先把输入空间固定下来，随后 notebook 只比较骨干网络本身的取舍，即 RSSM 更强的归纳偏置与注意力机制更易并行、也更擅长处理更长上下文之间的权衡。
-
-**前置条件**：若存在 P02 的权重文件（`rssm.pt`），则直接加载；否则将使用随机初始化的 RSSM 作为回退，notebook 仍可正常运行，但此时 RSSM 与 Transformer 的数值比较仅具有参考意义，而非基于预训练权重的有效对比。本 notebook 从头训练 CatVAE 和 Transformer，并将结果保存至 `transformer_wm.pt`，供 P05 使用。
+- [/zh/projects/p04_transformer_backbone/](/zh/projects/p04_transformer_backbone/)
 
 ## Notebook 源文件
 
 - [p04_transformer_backbone.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p04_transformer_backbone.ipynb)
+
+# P04：替换动力学骨干网络
+
+将 P02 的 RSSM 替换为因果 Transformer，并在相同合成数据上对两种骨干网络进行对比。本教程聚焦于工程权衡：RSSM 具有更强的归纳偏置，而注意力机制则更易于并行化，并对长上下文具有更强的灵活性。整体流程包括：类别 VAE（CatVAE）tokenization、因果 Transformer 训练，以及与 RSSM 的 rollout 对比，这是一次受控对比，而非声称 Transformer 在一般情况下更优。
+
+**前置条件**：若存在 P02 的权重文件（`rssm.pt`），则直接加载；否则将使用随机初始化的 RSSM 作为回退，notebook 仍可正常运行，但此时 RSSM 与 Transformer 的数值比较仅具有参考意义，而非基于预训练权重的有效对比。本 notebook 从头训练 CatVAE 和 Transformer，并将结果保存至 `transformer_wm.pt`，供 P05 使用。
 
 ```python
 # Install dependencies for a fresh environment.
@@ -29,10 +33,58 @@ try:
 except Exception:
     pass
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+from matplotlib import font_manager
+from pathlib import Path
+
+# 让 Colab 和新环境优先使用支持中文的字体，避免标题和坐标轴显示成方框。
+def _configure_cjk_font():
+    preferred = [
+        "Noto Sans CJK SC",
+        "Noto Sans SC",
+        "Source Han Sans SC",
+        "Microsoft YaHei",
+        "SimHei",
+        "PingFang SC",
+        "WenQuanYi Micro Hei",
+    ]
+    for family in preferred:
+        try:
+            font_manager.findfont(family, fallback_to_default=False)
+            mpl.rcParams["font.family"] = "sans-serif"
+            mpl.rcParams["font.sans-serif"] = [family] + [f for f in mpl.rcParams.get("font.sans-serif", []) if f != family]
+            mpl.rcParams["axes.unicode_minus"] = False
+            return family
+        except Exception:
+            pass
+
+    font_path = Path.home() / ".cache" / "notebook-fonts" / "NotoSansCJKsc-Regular.otf"
+    if not font_path.exists():
+        try:
+            import urllib.request
+            font_path.parent.mkdir(parents=True, exist_ok=True)
+            url = "https://github.com/googlefonts/noto-cjk/raw/main/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf"
+            urllib.request.urlretrieve(url, font_path)
+        except Exception:
+            font_path = None
+
+    if font_path and font_path.exists():
+        font_manager.fontManager.addfont(str(font_path))
+        family = font_manager.FontProperties(fname=str(font_path)).get_name()
+        mpl.rcParams["font.family"] = "sans-serif"
+        mpl.rcParams["font.sans-serif"] = [family] + [f for f in preferred if f != family]
+        mpl.rcParams["axes.unicode_minus"] = False
+        return family
+
+    mpl.rcParams["font.family"] = "sans-serif"
+    mpl.rcParams["font.sans-serif"] = ["DejaVu Sans"]
+    mpl.rcParams["axes.unicode_minus"] = False
+    return None
+
+_CJK_FONT = _configure_cjk_font()
 import time
 import os
 import math
-from pathlib import Path
 
 torch.manual_seed(42)
 np.random.seed(42)

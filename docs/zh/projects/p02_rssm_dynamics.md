@@ -2,15 +2,19 @@
 title: P02 构建 RSSM 动力学模型
 ---
 
-## P02: 构建 RSSM 动力学模型
+## 项目页面
 
-在合成像素轨迹上对比 GRU、MDN-RNN 和 RSSM。P01 的编码器定义了共享的潜在空间，因此这里的重点只放在动力学选择上：GRU 是最简单的基线，MDN-RNN 引入预测不确定性，RSSM 则通过潜在随机状态实现世界模型风格的 rollout。
-
-**前置条件**：P01 生成的 `vae_encoder.pt` 权重文件（如有）；否则 notebook 会使用随机初始化的编码器继续运行，但只有在使用预训练权重后，rollout 对比才真正有意义。本 notebook 将训练动力学模型，并将 RSSM 保存为 `rssm.pt`，供 P03 和 P04 使用。
+- [/zh/projects/p02_rssm_dynamics/](/zh/projects/p02_rssm_dynamics/)
 
 ## Notebook 源文件
 
 - [p02_rssm_dynamics.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p02_rssm_dynamics.ipynb)
+
+# P02: 构建 RSSM 动力学模型
+
+在合成像素轨迹上训练并对比 GRU、MDN-RNN 和 RSSM 三种动力学模型。本 notebook 的重点在于对比，而非追求排行榜成绩：GRU 是最简单的基线，MDN-RNN 引入预测不确定性，RSSM 则通过潜在随机状态实现世界模型风格的 rollout。
+
+**前置条件**：P01 生成的 `vae_encoder.pt` 权重文件（如有）；否则 notebook 会使用随机初始化的编码器继续运行，但此时 rollout 对比结果仅供参考，意义有限。本 notebook 将训练动力学模型，并将 RSSM 保存为 `rssm.pt`，供 P03 和 P04 使用。
 
 ```python
 # Install dependencies for a fresh environment.
@@ -21,7 +25,6 @@ title: P02 构建 RSSM 动力学模型
 构建冻结编码器、合成轨迹数据集及潜在数据集。
 
 ```python
-import os
 import math
 import random
 from pathlib import Path
@@ -35,6 +38,54 @@ try:
 except Exception:
     pass
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+from matplotlib import font_manager
+
+# 让 Colab 和新环境优先使用支持中文的字体，避免标题和坐标轴显示成方框。
+def _configure_cjk_font():
+    preferred = [
+        "Noto Sans CJK SC",
+        "Noto Sans SC",
+        "Source Han Sans SC",
+        "Microsoft YaHei",
+        "SimHei",
+        "PingFang SC",
+        "WenQuanYi Micro Hei",
+    ]
+    for family in preferred:
+        try:
+            font_manager.findfont(family, fallback_to_default=False)
+            mpl.rcParams["font.family"] = "sans-serif"
+            mpl.rcParams["font.sans-serif"] = [family] + [f for f in mpl.rcParams.get("font.sans-serif", []) if f != family]
+            mpl.rcParams["axes.unicode_minus"] = False
+            return family
+        except Exception:
+            pass
+
+    font_path = Path.home() / ".cache" / "notebook-fonts" / "NotoSansCJKsc-Regular.otf"
+    if not font_path.exists():
+        try:
+            import urllib.request
+            font_path.parent.mkdir(parents=True, exist_ok=True)
+            url = "https://github.com/googlefonts/noto-cjk/raw/main/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf"
+            urllib.request.urlretrieve(url, font_path)
+        except Exception:
+            font_path = None
+
+    if font_path and font_path.exists():
+        font_manager.fontManager.addfont(str(font_path))
+        family = font_manager.FontProperties(fname=str(font_path)).get_name()
+        mpl.rcParams["font.family"] = "sans-serif"
+        mpl.rcParams["font.sans-serif"] = [family] + [f for f in preferred if f != family]
+        mpl.rcParams["axes.unicode_minus"] = False
+        return family
+
+    mpl.rcParams["font.family"] = "sans-serif"
+    mpl.rcParams["font.sans-serif"] = ["DejaVu Sans"]
+    mpl.rcParams["axes.unicode_minus"] = False
+    return None
+
+_CJK_FONT = _configure_cjk_font()
 
 torch.manual_seed(42)
 np.random.seed(42)

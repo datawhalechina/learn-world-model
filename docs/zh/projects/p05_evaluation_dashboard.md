@@ -2,15 +2,19 @@
 title: P05 世界模型评估仪表盘
 ---
 
-# P05: 世界模型评估仪表盘
+## 项目页面
 
-加载 P03 的 Dreamer 权重文件和 P04 的 Transformer 权重文件，在留出 episode 上进行评估，并将各项指标并排比较。本仪表盘有意保持保守风格：优先采用显式的权重文件加载和可见的回退机制，避免任何隐含假设。
-
-**前提条件**：P03 生成的 `dreamer.pt` 和 P04 生成的 `transformer_wm.pt`（如存在）；否则，每个缺失的权重文件将回退到随机初始化的模型，以便本 notebook 仍可作为冒烟测试运行。只有在加载了预训练权重文件时，所报告的指标才有实际意义，因此正式评估路径就是加载权重文件的路径。
+- [/zh/projects/p05_evaluation_dashboard/](/zh/projects/p05_evaluation_dashboard/)
 
 ## Notebook 源文件
 
 - [p05_evaluation_dashboard.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p05_evaluation_dashboard.ipynb)
+
+# P05: 世界模型评估仪表盘
+
+加载 P03 的 Dreamer 权重文件和 P04 的 Transformer 权重文件，在留出 episode 上进行评估，并将各项指标并排比较。本仪表盘有意保持保守风格：优先采用显式的权重文件加载和诚实的回退机制，避免任何隐含假设。
+
+**前提条件**：P03 生成的 `dreamer.pt` 和 P04 生成的 `transformer_wm.pt`（如存在）；否则，每个缺失的权重文件将回退到随机初始化的模型，以便本 notebook 仍可作为冒烟测试运行。只有在加载了预训练权重文件时，所报告的指标才有实际意义，因此正式评估路径即为加载权重文件的路径。
 
 **指标**：Dreamer 的奖励相关性、PSNR、潜在漂移；Transformer 的 token 预测损失、PSNR、潜在漂移。
 
@@ -22,7 +26,6 @@ title: P05 世界模型评估仪表盘
 
 ```python
 import math
-import os
 from pathlib import Path
 
 try:
@@ -31,6 +34,54 @@ try:
 except Exception:
     pass
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+from matplotlib import font_manager
+
+# 让 Colab 和新环境优先使用支持中文的字体，避免标题和坐标轴显示成方框。
+def _configure_cjk_font():
+    preferred = [
+        "Noto Sans CJK SC",
+        "Noto Sans SC",
+        "Source Han Sans SC",
+        "Microsoft YaHei",
+        "SimHei",
+        "PingFang SC",
+        "WenQuanYi Micro Hei",
+    ]
+    for family in preferred:
+        try:
+            font_manager.findfont(family, fallback_to_default=False)
+            mpl.rcParams["font.family"] = "sans-serif"
+            mpl.rcParams["font.sans-serif"] = [family] + [f for f in mpl.rcParams.get("font.sans-serif", []) if f != family]
+            mpl.rcParams["axes.unicode_minus"] = False
+            return family
+        except Exception:
+            pass
+
+    font_path = Path.home() / ".cache" / "notebook-fonts" / "NotoSansCJKsc-Regular.otf"
+    if not font_path.exists():
+        try:
+            import urllib.request
+            font_path.parent.mkdir(parents=True, exist_ok=True)
+            url = "https://github.com/googlefonts/noto-cjk/raw/main/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf"
+            urllib.request.urlretrieve(url, font_path)
+        except Exception:
+            font_path = None
+
+    if font_path and font_path.exists():
+        font_manager.fontManager.addfont(str(font_path))
+        family = font_manager.FontProperties(fname=str(font_path)).get_name()
+        mpl.rcParams["font.family"] = "sans-serif"
+        mpl.rcParams["font.sans-serif"] = [family] + [f for f in preferred if f != family]
+        mpl.rcParams["axes.unicode_minus"] = False
+        return family
+
+    mpl.rcParams["font.family"] = "sans-serif"
+    mpl.rcParams["font.sans-serif"] = ["DejaVu Sans"]
+    mpl.rcParams["axes.unicode_minus"] = False
+    return None
+
+_CJK_FONT = _configure_cjk_font()
 import numpy as np
 import torch
 import torch.nn as nn
@@ -157,7 +208,9 @@ print('奖励均值（应接近 0.5）:', eval_rew.mean().item())
 ```
 ## 2. 模型架构定义
 
-直接在 notebook 中定义 Dreamer 和 Transformer 组件，使用与 P03 和 P04 完全一致的维度：
+内联定义 Dreamer 和 Transformer 组件，使本仪表盘完全自包含。
+
+所有类均内联定义，确保本 notebook 自包含。架构维度与 P03 和 P04 完全一致：
 
 - `HIDDEN_DIM = 128`，`LATENT_DIM = 32`，`N_CATEGORIES = 32`
 - **Dreamer 侧：** CNN VAE 编码器/解码器、RSSM（GRU + 先验/后验网络）、Actor、Critic

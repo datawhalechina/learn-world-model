@@ -2,15 +2,19 @@
 title: P05 World Model Evaluation Dashboard
 ---
 
-# P05: World Model Evaluation Dashboard
+## Project page
 
-Load the P03 Dreamer and P04 Transformer checkpoints, evaluate them on held-out episodes, and compare the metrics side by side. The dashboard stays conservative on purpose: it prefers explicit checkpoint loading and visible fallback behavior over hidden assumptions.
-
-**Prerequisite**: P03 (`dreamer.pt`) and P04 (`transformer_wm.pt`) if present; otherwise each missing checkpoint falls back to a randomly initialized model so the notebook still runs as a smoke test. The reported metrics are only meaningful with the pretrained checkpoints, so the loaded-checkpoint path is the one that matters.
+- [/en/projects/p05_evaluation_dashboard/](/en/projects/p05_evaluation_dashboard/)
 
 ## Notebook source
 
 - [p05_evaluation_dashboard.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p05_evaluation_dashboard.ipynb)
+
+# P05: World Model Evaluation Dashboard
+
+Load the P03 Dreamer and P04 Transformer checkpoints, evaluate them on held-out episodes, and compare the P04 metrics side by side. The dashboard is intentionally conservative: it prefers explicit checkpoint loading and honest fallback behavior over hidden assumptions.
+
+**Prerequisite**: P03 (`dreamer.pt`) and P04 (`transformer_wm.pt`) if present; otherwise each missing checkpoint falls back to a randomly initialized model so the notebook still runs as a smoke test. The reported metrics are only meaningful with the pretrained checkpoints, so the ship-ready path is the loaded-checkpoint path.
 
 **Metrics**: Dreamer reward correlation, PSNR, latent drift; Transformer token loss, PSNR, latent drift.
 
@@ -22,7 +26,6 @@ With the environment ready, import the trajectory-generation and scoring utiliti
 
 ```python
 import math
-import os
 from pathlib import Path
 
 try:
@@ -157,7 +160,10 @@ print('Reward mean (should be ~0.5):', eval_rew.mean().item())
 ```
 ## 2. Model Architecture Definitions
 
-Define the Dreamer and Transformer components inline using the same dimensions as P03 and P04:
+Define the Dreamer and Transformer components inline so the dashboard is self-contained.
+
+All classes are defined inline so this notebook is self-contained. The architecture
+dimensions exactly match P03 and P04:
 
 - `HIDDEN_DIM = 128`, `LATENT_DIM = 32`, `N_CATEGORIES = 32`
 - **Dreamer side:** CNN VAE encoder/decoder, RSSM (GRU + prior/posterior nets), Actor, Critic

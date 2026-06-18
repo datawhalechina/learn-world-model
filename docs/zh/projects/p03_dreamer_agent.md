@@ -2,17 +2,21 @@
 title: P03：训练 Dreamer 智能体
 ---
 
-# P03：训练 Dreamer 智能体
+## 项目页面
 
-训练一个包含世界模型与潜在 Actor-Critic 策略的紧凑型 Dreamer 智能体。本 notebook 使用 `SyntheticEnv` 代替外部 gym 任务，因此重点始终放在训练循环、权重文件衔接方式和指标诊断上，而不是追求基准成绩。
-
-**前置条件**：若存在 P01 的 `vae_encoder.pt` 和 P02 的 `rssm.pt`，将自动加载；否则缺失部分退化为随机初始化，笔记本仍可运行，但只有在使用预训练权重文件的情况下，训练出的智能体才具有实际意义。本笔记本将完整智能体保存为 `dreamer.pt`，供 P05 使用。
+- [/zh/projects/p03_dreamer_agent/](/zh/projects/p03_dreamer_agent/)
 
 ## Notebook 源文件
 
 - [p03_dreamer_agent.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p03_dreamer_agent.ipynb)
 
-奖励曲线出现噪声是正常的。教程目标是构建一个可运行的世界模型加策略流水线，而非追求分数。
+# P03：训练 Dreamer 智能体
+
+训练一个包含世界模型与潜在 Actor-Critic 策略的紧凑型 Dreamer 智能体。本项目为教程规模的演示：目标是展示 Dreamer 训练循环、权重文件的衔接方式以及指标诊断流程，而非求解高难度控制基准。本项目不依赖外部 gym 库，由 `SyntheticEnv` 生成 64×64 RGB 帧并附带简单奖励信号。
+
+**前置条件**：若存在 P01 的 `vae_encoder.pt` 和 P02 的 `rssm.pt`，将自动加载；否则缺失部分退化为随机初始化，笔记本仍可运行，但只有在使用预训练权重文件的情况下，训练出的智能体才具有实际意义。本笔记本将完整智能体保存为 `dreamer.pt`，供 P05 使用。
+
+此处出现嘈杂的奖励曲线是可以接受的；教程目标是构建一个可运行的世界模型加策略流水线，而非追求基准得分。
 
 ```python
 # Install dependencies for a fresh environment.
@@ -23,8 +27,6 @@ title: P03：训练 Dreamer 智能体
 定义共享环境、模型维度与训练计划。
 
 ```python
-import os
-import math
 import random
 import numpy as np
 import torch
@@ -38,6 +40,54 @@ try:
 except Exception:
     pass
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+from matplotlib import font_manager
+
+# 让 Colab 和新环境优先使用支持中文的字体，避免标题和坐标轴显示成方框。
+def _configure_cjk_font():
+    preferred = [
+        "Noto Sans CJK SC",
+        "Noto Sans SC",
+        "Source Han Sans SC",
+        "Microsoft YaHei",
+        "SimHei",
+        "PingFang SC",
+        "WenQuanYi Micro Hei",
+    ]
+    for family in preferred:
+        try:
+            font_manager.findfont(family, fallback_to_default=False)
+            mpl.rcParams["font.family"] = "sans-serif"
+            mpl.rcParams["font.sans-serif"] = [family] + [f for f in mpl.rcParams.get("font.sans-serif", []) if f != family]
+            mpl.rcParams["axes.unicode_minus"] = False
+            return family
+        except Exception:
+            pass
+
+    font_path = Path.home() / ".cache" / "notebook-fonts" / "NotoSansCJKsc-Regular.otf"
+    if not font_path.exists():
+        try:
+            import urllib.request
+            font_path.parent.mkdir(parents=True, exist_ok=True)
+            url = "https://github.com/googlefonts/noto-cjk/raw/main/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf"
+            urllib.request.urlretrieve(url, font_path)
+        except Exception:
+            font_path = None
+
+    if font_path and font_path.exists():
+        font_manager.fontManager.addfont(str(font_path))
+        family = font_manager.FontProperties(fname=str(font_path)).get_name()
+        mpl.rcParams["font.family"] = "sans-serif"
+        mpl.rcParams["font.sans-serif"] = [family] + [f for f in preferred if f != family]
+        mpl.rcParams["axes.unicode_minus"] = False
+        return family
+
+    mpl.rcParams["font.family"] = "sans-serif"
+    mpl.rcParams["font.sans-serif"] = ["DejaVu Sans"]
+    mpl.rcParams["axes.unicode_minus"] = False
+    return None
+
+_CJK_FONT = _configure_cjk_font()
 from collections import deque
 
 torch.manual_seed(42)
