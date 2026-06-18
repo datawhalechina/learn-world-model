@@ -21,7 +21,7 @@ npm run docs:preview    # Preview built site
 - `docs/.vitepress/config.mts` -- Nav/sidebar config (EN + ZH locales)
 - `docs/zh/lectures/` -- 5 Chinese lectures, each split into sub-pages (`index.md` overview + numbered `.md` files)
 - `docs/en/lectures/` -- 5 English lectures, same structure (keep in sync with ZH)
-- `docs/zh/projects/` / `docs/en/projects/` -- 5 project pages
+- `docs/zh/projects/` / `docs/en/projects/` -- 5 project notebooks rendered as tracked markdown pages plus the source `.ipynb` files
 - `external/world-model-tutorial/` -- PyTorch source code referenced by projects
 - `external/world-model-tutorial/references.md` -- 4-era history + architecture survey
 
@@ -38,6 +38,9 @@ These rules apply to all lecture and project markdown files:
 - **No ASCII diagrams**: never use ASCII art (boxes drawn with `+`, `-`, `|`, spaces, or similar characters) to represent diagrams or flowcharts. Use a mermaid block instead.
 - **EN/ZH sync**: any layout, structural, or prose change made to an English file must be mirrored in its Chinese counterpart (same path under `docs/zh/`), and vice versa. Never change one locale without updating the other.
 - **File length**: keep each markdown file to 1-2 pages of readable content. If a file grows beyond that, split it at a logically separable boundary (a major section or topic shift) into multiple numbered files, then update the sidebar in `config.mts` accordingly.
+- **Project page policy**: project markdown pages are tracked deliverables, not ignored build artifacts. Keep `docs/*/projects/*.md` in git, keep `docs/*/projects/notebook-assets/` ignored, and make each project page point to its corresponding `.ipynb` source in the same locale directory.
+- **Project content scope**: project markdown pages should contain only narrative text and code blocks. Do not add notebook outputs, plots, tables, or other rendered artifacts to the markdown pages. Those belong in the source `.ipynb` files.
+- **Notebook editing**: for project work, do not modify notebook code cells unless the user explicitly asks for a notebook code change. Prefer changing markdown narrative and the generated markdown pages only.
 
 ---
 
@@ -70,7 +73,7 @@ Each lecture lives under `docs/en/lectures/<slug>/` and `docs/zh/lectures/<slug>
 
 ### Projects
 
-Source code in `external/world-model-tutorial/src/`. Projects build sequentially: P01 produces the encoder used in P02, P02 produces the RSSM used in P03, and P04 replaces the RSSM backbone so P05 can compare both trained systems.
+Source code in `external/world-model-tutorial/src/`. Projects build sequentially: P01 produces the encoder used in P02, P02 produces the RSSM used in P03, and P04 replaces the RSSM backbone so P05 can compare both trained systems. For every project page, keep the markdown summary concise and add a direct link to the matching locale notebook, for example `docs/en/projects/p02_rssm_dynamics.md` should link to `docs/en/projects/p02_rssm_dynamics.ipynb`, and `docs/zh/projects/p02_rssm_dynamics.md` should link to `docs/zh/projects/p02_rssm_dynamics.ipynb`.
 
 | # | Title | Prereq | Deliverable |
 |---|-------|--------|-------------|
@@ -85,7 +88,7 @@ Source code in `external/world-model-tutorial/src/`. Projects build sequentially
 ### Content Placement in VitePress
 
 - Lecture pages: `docs/en/lectures/lecture-0N-<slug>/index.md` (overview) + numbered sub-pages `01-*.md`, `02-*.md`, etc. Same structure for `docs/zh/`
-- Project pages: `docs/en/projects/project-0N-<slug>/index.md` + `docs/zh/projects/project-0N-<slug>/index.md`
+- Project pages: `docs/en/projects/p0N_<slug>.md` + `docs/zh/projects/p0N_<slug>.md`, with matching `.ipynb` source files in the same directories
 - World model landing: `docs/en/world-model/index.md` + `docs/zh/world-model/index.md`
 - Sidebar group: `enWorldModelItems` / `zhWorldModelItems` arrays in `docs/.vitepress/config.mts`
 

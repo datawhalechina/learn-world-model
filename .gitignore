@@ -38,5 +38,4 @@ external/
 *.pt
 
 # generated notebook pages (rendered from *.ipynb by scripts/build-notebook-pages.ts)
-docs/*/projects/p0*.md
 docs/*/projects/notebook-assets/
