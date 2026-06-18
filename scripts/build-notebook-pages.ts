@@ -22,6 +22,8 @@ const PROJECT_DIRS = [
   path.join(ROOT, "docs", "en", "projects"),
   path.join(ROOT, "docs", "zh", "projects"),
 ];
+const GITHUB_BLOB_BASE =
+  "https://github.com/datawhalechina/learn-world-model/blob/main/";
 
 interface NotebookCell {
   cell_type: "markdown" | "code" | "raw";
@@ -53,9 +55,15 @@ async function convertNotebook(nbPath: string): Promise<void> {
   const raw = await fs.readFile(nbPath, "utf8");
   const nb = JSON.parse(raw) as Notebook;
   const base = path.basename(nbPath, ".ipynb");
+  const relPath = path.relative(ROOT, nbPath).split(path.sep).join("/");
+  const isZh = relPath.startsWith("docs/zh/");
+  const sourceLabel = isZh ? "Notebook 源文件" : "Notebook source";
 
   const title = firstHeadingTitle(nb.cells, base);
   const parts: string[] = [`---\ntitle: ${title}\n---\n`];
+  parts.push(
+    `## ${sourceLabel}\n\n- [${base}.ipynb](${GITHUB_BLOB_BASE}${relPath})\n`
+  );
 
   for (const cell of nb.cells) {
     if (cell.cell_type === "markdown") {
