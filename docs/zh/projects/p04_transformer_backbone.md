@@ -8,7 +8,9 @@ title: P04：替换动力学骨干网络
 
 **前置条件**：若存在 P02 的权重文件（`rssm.pt`），则直接加载；否则将使用随机初始化的 RSSM 作为回退，notebook 仍可正常运行，但此时 RSSM 与 Transformer 的数值比较仅具有参考意义，而非基于预训练权重的有效对比。本 notebook 从头训练 CatVAE 和 Transformer，并将结果保存至 `transformer_wm.pt`，供 P05 使用。
 
-Notebook 源文件：[p04_transformer_backbone.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p04_transformer_backbone.ipynb)
+## Notebook 源文件
+
+- [p04_transformer_backbone.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p04_transformer_backbone.ipynb)
 
 ```python
 # Install dependencies for a fresh environment.

@@ -8,7 +8,9 @@ Compare GRU, MDN-RNN, and RSSM on synthetic pixel trajectories. P01's encoder de
 
 **Prerequisite**: P01 (`vae_encoder.pt`) if present; otherwise the notebook falls back to a randomly initialized encoder so it still runs, but the rollout comparison only becomes meaningful with the pretrained checkpoint. This notebook trains the dynamics models and saves the RSSM to `rssm.pt` for P03 and P04.
 
-Notebook source: [p02_rssm_dynamics.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p02_rssm_dynamics.ipynb)
+## Notebook source
+
+- [p02_rssm_dynamics.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p02_rssm_dynamics.ipynb)
 
 ```python
 # Install dependencies for a fresh environment.

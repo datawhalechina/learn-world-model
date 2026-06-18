@@ -8,7 +8,9 @@ title: P03：训练 Dreamer 智能体
 
 **前置条件**：若存在 P01 的 `vae_encoder.pt` 和 P02 的 `rssm.pt`，将自动加载；否则缺失部分退化为随机初始化，笔记本仍可运行，但只有在使用预训练权重文件的情况下，训练出的智能体才具有实际意义。本笔记本将完整智能体保存为 `dreamer.pt`，供 P05 使用。
 
-Notebook 源文件：[`p03_dreamer_agent.ipynb`](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p03_dreamer_agent.ipynb)
+## Notebook 源文件
+
+- [p03_dreamer_agent.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p03_dreamer_agent.ipynb)
 
 奖励曲线出现噪声是正常的。教程目标是构建一个可运行的世界模型加策略流水线，而非追求分数。
 

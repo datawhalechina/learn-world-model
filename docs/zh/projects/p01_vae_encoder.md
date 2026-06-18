@@ -8,7 +8,9 @@ title: P01：训练 VAE 编码器
 
 **输出**：本 notebook 从头训练（无需任何预置权重文件），并将训练好的权重保存至 `vae_encoder.pt`，P02 和 P03 将以此作为观测编码器加载。
 
-Notebook 源文件：[`p01_vae_encoder.ipynb`](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p01_vae_encoder.ipynb)
+## Notebook 源文件
+
+- [p01_vae_encoder.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p01_vae_encoder.ipynb)
 
 **内容大纲：**
 1. 准备：合成数据与 DataLoader

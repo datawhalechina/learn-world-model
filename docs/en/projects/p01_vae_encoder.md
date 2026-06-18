@@ -8,7 +8,9 @@ Train a compact convolutional Variational Autoencoder (VAE) on synthetic 64x64 R
 
 **Output**: this notebook trains from scratch (no prior checkpoint needed) and saves the trained weights to `vae_encoder.pt`, which P02 and P03 load as their observation encoder.
 
-Notebook source: [p01_vae_encoder.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p01_vae_encoder.ipynb)
+## Notebook source
+
+- [p01_vae_encoder.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p01_vae_encoder.ipynb)
 
 **Outline:**
 1. Setup: synthetic data and DataLoader

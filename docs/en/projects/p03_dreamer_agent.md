@@ -8,7 +8,9 @@ Train a compact Dreamer agent with a world model and a latent Actor-Critic polic
 
 **Prerequisite**: P01 (`vae_encoder.pt`) and P02 (`rssm.pt`) if present; otherwise the missing parts fall back to random initialization so the notebook still runs, but the trained agent is only meaningful with the pretrained checkpoints. This notebook saves the full agent to `dreamer.pt` for P05.
 
-Notebook source: [p03_dreamer_agent.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p03_dreamer_agent.ipynb)
+## Notebook source
+
+- [p03_dreamer_agent.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p03_dreamer_agent.ipynb)
 
 Expect a noisy reward trace. The tutorial goal is a working world-model plus policy pipeline, not a benchmark score.
 

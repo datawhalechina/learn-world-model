@@ -8,7 +8,9 @@ Load the P03 Dreamer and P04 Transformer checkpoints, evaluate them on held-out 
 
 **Prerequisite**: P03 (`dreamer.pt`) and P04 (`transformer_wm.pt`) if present; otherwise each missing checkpoint falls back to a randomly initialized model so the notebook still runs as a smoke test. The reported metrics are only meaningful with the pretrained checkpoints, so the loaded-checkpoint path is the one that matters.
 
-Notebook source: [p05_evaluation_dashboard.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p05_evaluation_dashboard.ipynb)
+## Notebook source
+
+- [p05_evaluation_dashboard.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p05_evaluation_dashboard.ipynb)
 
 **Metrics**: Dreamer reward correlation, PSNR, latent drift; Transformer token loss, PSNR, latent drift.
 

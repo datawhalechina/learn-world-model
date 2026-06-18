@@ -8,7 +8,9 @@ title: P05 世界模型评估仪表盘
 
 **前提条件**：P03 生成的 `dreamer.pt` 和 P04 生成的 `transformer_wm.pt`（如存在）；否则，每个缺失的权重文件将回退到随机初始化的模型，以便本 notebook 仍可作为冒烟测试运行。只有在加载了预训练权重文件时，所报告的指标才有实际意义，因此正式评估路径就是加载权重文件的路径。
 
-Notebook 源文件：[`p05_evaluation_dashboard.ipynb`](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p05_evaluation_dashboard.ipynb)
+## Notebook 源文件
+
+- [p05_evaluation_dashboard.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p05_evaluation_dashboard.ipynb)
 
 **指标**：Dreamer 的奖励相关性、PSNR、潜在漂移；Transformer 的 token 预测损失、PSNR、潜在漂移。
 
