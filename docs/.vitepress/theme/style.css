@@ -18,6 +18,8 @@
   --vp-c-brand-2: #C14E36;
   --vp-c-brand-3: #A8412B;
   --vp-c-brand-soft: rgba(217, 92, 65, 0.1);
+  --vp-notebook-output-bg: rgba(41, 98, 163, 0.06);
+  --vp-notebook-output-border: rgba(41, 98, 163, 0.18);
 
   /* Sidebar */
   --vp-sidebar-width: 296px;
@@ -48,6 +50,8 @@
   --vp-c-brand-2: #D95C41;
   --vp-c-brand-3: #C14E36;
   --vp-c-brand-soft: rgba(224, 122, 100, 0.15);
+  --vp-notebook-output-bg: rgba(128, 171, 255, 0.08);
+  --vp-notebook-output-border: rgba(128, 171, 255, 0.22);
 
   --vp-sidebar-bg-color: #141414;
   --vp-nav-bg-color: #1A1A1A;
@@ -125,6 +129,11 @@
   margin: 16px 0;
   border: 1px solid var(--vp-c-divider);
   background-color: var(--vp-c-bg-elv);
+}
+
+.vp-doc blockquote {
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .vp-doc div[class*='language-'] button.copy {

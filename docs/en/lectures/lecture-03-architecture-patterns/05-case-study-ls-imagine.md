@@ -328,7 +328,7 @@ GitHub link: https://github.com/qiwang067/LS-Imagine
 
 Citation:
 
-```bib
+```bibtex
 @inproceedings{li2025open,
     title={Open-World Reinforcement Learning over Long Short-Term Imagination},
     author={Jiajian Li and Qi Wang and Yunbo Wang and Xin Jin and Yang Li and Wenjun Zeng and Xiaokang Yang},

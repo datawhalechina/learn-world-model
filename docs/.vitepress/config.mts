@@ -74,11 +74,11 @@ const zhWorldModelItems = [
 
 const zhProjectItems = [
   { text: "欢迎", link: "/zh/projects/" },
-  { text: "P01：训练 VAE 编码器", link: "/zh/projects/project-01-vae-encoder/" },
-  { text: "P02：构建 RSSM 动力学模型", link: "/zh/projects/project-02-latent-dynamics/" },
-  { text: "P03：训练 Dreamer 智能体", link: "/zh/projects/project-03-dreamer-agent/" },
-  { text: "P04：替换动力学骨干网络", link: "/zh/projects/project-04-transformer-backbone/" },
-  { text: "P05：世界模型评估仪表盘", link: "/zh/projects/project-05-evaluation-dashboard/" },
+  { text: "P01：训练 VAE 编码器", link: "/zh/projects/p01_vae_encoder" },
+  { text: "P02：构建 RSSM 动力学模型", link: "/zh/projects/p02_rssm_dynamics" },
+  { text: "P03：训练 Dreamer 智能体", link: "/zh/projects/p03_dreamer_agent" },
+  { text: "P04：替换动力学骨干网络", link: "/zh/projects/p04_transformer_backbone" },
+  { text: "P05：世界模型评估仪表盘", link: "/zh/projects/p05_evaluation_dashboard" },
 ];
 
 const enWorldModelItems = [
@@ -149,11 +149,11 @@ const enWorldModelItems = [
 
 const enProjectItems = [
   { text: "Welcome", link: "/en/projects/" },
-  { text: "P01: Train a VAE Encoder", link: "/en/projects/project-01-vae-encoder/" },
-  { text: "P02: Build an RSSM Dynamics Model", link: "/en/projects/project-02-latent-dynamics/" },
-  { text: "P03: Train a Dreamer Agent", link: "/en/projects/project-03-dreamer-agent/" },
-  { text: "P04: Swap the Dynamics Backbone", link: "/en/projects/project-04-transformer-backbone/" },
-  { text: "P05: World Model Evaluation Dashboard", link: "/en/projects/project-05-evaluation-dashboard/" },
+  { text: "P01: Train a VAE Encoder", link: "/en/projects/p01_vae_encoder" },
+  { text: "P02: Build an RSSM Dynamics Model", link: "/en/projects/p02_rssm_dynamics" },
+  { text: "P03: Train a Dreamer Agent", link: "/en/projects/p03_dreamer_agent" },
+  { text: "P04: Swap the Dynamics Backbone", link: "/en/projects/p04_transformer_backbone" },
+  { text: "P05: World Model Evaluation Dashboard", link: "/en/projects/p05_evaluation_dashboard" },
 ];
 
 export default withMermaid(
@@ -180,6 +180,7 @@ export default withMermaid(
         light: 'github-light',
         dark: 'github-dark'
       },
+      languages: ['bibtex'],
       math: true
     },
     mermaid: {
