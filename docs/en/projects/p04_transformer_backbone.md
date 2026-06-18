@@ -8,6 +8,8 @@ Replace the P02 RSSM with a causal Transformer and compare both backbones on the
 
 **Prerequisite**: P02 (`rssm.pt`) if present; otherwise the rollout comparison falls back to a randomly initialized RSSM so the notebook still runs, but the RSSM-vs-Transformer numbers are only meaningful with the pretrained checkpoint. This notebook trains a CatVAE and Transformer from scratch and saves them to `transformer_wm.pt` for P05.
 
+> Notebook source: [p04_transformer_backbone.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p04_transformer_backbone.ipynb)
+
 ```python
 # Install dependencies for a fresh environment.
 !pip install torch torchvision matplotlib numpy

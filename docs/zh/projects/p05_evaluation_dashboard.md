@@ -10,6 +10,8 @@ title: P05 世界模型评估仪表盘
 
 **指标**：Dreamer 的奖励相关性、PSNR、潜在漂移；Transformer 的 token 预测损失、PSNR、潜在漂移。
 
+> Notebook 源文件: [p05_evaluation_dashboard.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p05_evaluation_dashboard.ipynb)
+
 ```python
 # Install dependencies for a fresh environment.
 !pip install torch torchvision matplotlib numpy

@@ -10,6 +10,8 @@ Load the P03 Dreamer and P04 Transformer checkpoints, evaluate them on held-out 
 
 **Metrics**: Dreamer reward correlation, PSNR, latent drift; Transformer token loss, PSNR, latent drift.
 
+> Notebook source: [p05_evaluation_dashboard.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p05_evaluation_dashboard.ipynb)
+
 ```python
 # Install dependencies for a fresh environment.
 !pip install torch torchvision matplotlib numpy

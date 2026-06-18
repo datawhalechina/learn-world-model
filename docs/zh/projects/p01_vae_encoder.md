@@ -15,6 +15,8 @@ title: P01：训练 VAE 编码器
 4. 训练：30 轮训练与损失曲线
 5. 检验：重建效果、潜在遍历与随机采样
 
+> Notebook 源文件: [p01_vae_encoder.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p01_vae_encoder.ipynb)
+
 ```python
 # 在全新环境中安装依赖。
 !pip install torch torchvision matplotlib numpy

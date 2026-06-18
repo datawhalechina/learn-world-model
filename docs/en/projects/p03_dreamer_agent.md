@@ -10,6 +10,8 @@ Train a compact Dreamer agent with a world model and a latent Actor-Critic polic
 
 A noisy reward trace is acceptable here; the tutorial goal is a working world-model + policy pipeline, not a benchmark score.
 
+> Notebook source: [p03_dreamer_agent.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p03_dreamer_agent.ipynb)
+
 ```python
 # Install dependencies for a fresh environment.
 !pip install torch torchvision matplotlib numpy

@@ -10,6 +10,8 @@ title: P03：训练 Dreamer 智能体
 
 此处出现嘈杂的奖励曲线是可以接受的；教程目标是构建一个可运行的世界模型加策略流水线，而非追求基准得分。
 
+> Notebook 源文件: [p03_dreamer_agent.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p03_dreamer_agent.ipynb)
+
 ```python
 # Install dependencies for a fresh environment.
 !pip install torch torchvision matplotlib numpy

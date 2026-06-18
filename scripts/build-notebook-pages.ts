@@ -82,13 +82,26 @@ async function convertNotebook(nbPath: string): Promise<void> {
   const projectUrl = projectPageUrl(nbPath);
   const notebookUrl = sourceNotebookUrl(nbPath);
 
+  // Ensure notebook metadata has project_url
   const metadata = nb.metadata ?? {};
-  const needsMetadataWrite = metadata.project_url !== projectUrl;
-  if (needsMetadataWrite) {
-    nb.metadata = {
-      ...metadata,
-      project_url: projectUrl,
-    };
+  let nbDirty = metadata.project_url !== projectUrl;
+  if (nbDirty) {
+    nb.metadata = { ...metadata, project_url: projectUrl };
+  }
+
+  // Ensure a GitHub source link cell exists in the notebook itself (after the first markdown cell)
+  const linkLine = `> ${sourceLabel}: [${base}.ipynb](${notebookUrl})`;
+  const hasLinkCell = nb.cells.some(
+    (c) => c.cell_type === "markdown" && joinSource(c.source).includes(notebookUrl)
+  );
+  if (!hasLinkCell) {
+    const firstMdIdx = nb.cells.findIndex((c) => c.cell_type === "markdown");
+    const insertAt = firstMdIdx >= 0 ? firstMdIdx + 1 : 0;
+    nb.cells.splice(insertAt, 0, { cell_type: "markdown", source: [linkLine] });
+    nbDirty = true;
+  }
+
+  if (nbDirty) {
     await fs.writeFile(nbPath, JSON.stringify(nb, null, 1) + "\n", "utf8");
   }
 

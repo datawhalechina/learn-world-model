@@ -15,6 +15,8 @@ Train a compact convolutional Variational Autoencoder (VAE) on synthetic 64x64 R
 4. Train: 30 epochs and loss curves
 5. Inspect: reconstructions, traversals, random samples
 
+> Notebook source: [p01_vae_encoder.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p01_vae_encoder.ipynb)
+
 ```python
 # Install dependencies for a fresh environment.
 !pip install torch torchvision matplotlib numpy
