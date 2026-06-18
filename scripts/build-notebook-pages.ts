@@ -97,7 +97,12 @@ async function convertNotebook(nbPath: string): Promise<void> {
   if (!hasLinkCell) {
     const firstMdIdx = nb.cells.findIndex((c) => c.cell_type === "markdown");
     const insertAt = firstMdIdx >= 0 ? firstMdIdx + 1 : 0;
-    nb.cells.splice(insertAt, 0, { cell_type: "markdown", source: [linkLine] });
+    nb.cells.splice(insertAt, 0, {
+      cell_type: "markdown",
+      id: "notebook-source-link",
+      metadata: {},
+      source: [linkLine],
+    } as unknown as NotebookCell);
     nbDirty = true;
   }
 
