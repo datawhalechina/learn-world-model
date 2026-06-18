@@ -4,11 +4,11 @@ title: Projects
 
 # Projects
 
-Five hands-on projects build a complete world-model pipeline from scratch. Each one is a self-contained Jupyter notebook that trains from synthetic data with no external downloads, runs on CPU, GPU, or TPU, and saves a checkpoint that the next project loads. Work through them in order: the encoder from P01 becomes the observation encoder in P02, the dynamics model from P02 becomes the backbone in P03 and the baseline in P04, and the two trained systems from P03 and P04 are compared in P05.
+Five hands-on projects build a complete world-model pipeline from scratch. Work through them in order: the encoder from P01 becomes the observation encoder in P02, the dynamics model from P02 becomes the backbone in P03 and the baseline in P04, and the two trained systems from P03 and P04 are compared in P05. Each project is a notebook-first tutorial that runs on CPU, GPU, or TPU, uses only synthetic data, and passes a checkpoint to the next stage.
 
 Markdown pages only include narrative text and code. Any outputs, plots, tables, or other artifacts live in the corresponding `.ipynb` notebook files.
 
-The notebooks live alongside these pages. Open one in Jupyter or Colab, run it top to bottom, and the trained weights land in the working directory for the downstream project to pick up. Each notebook also falls back to random initialization when an upstream checkpoint is missing, so any project still runs on its own as a smoke test, though the cross-project comparisons are only meaningful once the real checkpoints are present.
+Open any notebook in Jupyter or Colab and run it top to bottom. If an upstream checkpoint is missing, the notebook falls back to random initialization so it still works as a smoke test, but the cross-project comparisons only become meaningful once the real checkpoints are present.
 
 ## Project sequence
 
