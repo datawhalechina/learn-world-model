@@ -40,7 +40,7 @@
 
 ## What this course covers
 
-Five lectures and five projects that take you from the intuition behind world models to a working three-model evaluation dashboard.
+Five lectures and six projects that take you from the intuition behind world models to training, evaluating, and causally probing modern world-model systems.
 
 | # | Type | Title | Core Topics |
 |---|------|-------|-------------|
@@ -54,6 +54,7 @@ Five lectures and five projects that take you from the intuition behind world mo
 | P03 | Project | Train a Dreamer Agent | Full training loop: encoder + RSSM + latent Actor-Critic on a small pixel env |
 | P04 | Project | Swap the Dynamics Backbone | Replace RSSM with a small causal Transformer (STORM-style); architecture comparison |
 | P05 | Project | World Model Evaluation Dashboard | Per-model metrics side by side: FID, reward correlation, PSNR, latent drift |
+| P06 | Project | Counterfactual Action-Conditioned World Model | Interventional and counterfactual rollouts, inverse-dynamics regularization, action-influence metric |
 
 ---
 
@@ -72,12 +73,12 @@ flowchart TD
     L03A --> P04
     P03 & P04 --> L04["L04 Evaluation metrics"]
     L04 --> P05["P05 Evaluation dashboard"]
+    P03 & P04 --> P06["P06 Counterfactual action-conditioned WM"]
     P05 --> L05["L05 Frontier Debates"]
+    P06 --> L05
 ```
 
-Suggested path: L01, L02, P01, P02, L03, P03, P04, L04, P05, L05
-
-You do not need to finish all theory before starting a project. Build, then come back with questions.
+Suggested path: L01, L02, P01, P02, L03, P03, P04, L04, P05, P06, L05
 
 You do not need to finish all theory before starting a project. Build, then come back with questions.
 
@@ -109,8 +110,8 @@ learn-world-model/
 │   ├── .vitepress/config.mts             # nav and sidebar (EN + ZH)
 │   ├── en/lectures/                       # 5 English lecture pages
 │   ├── zh/lectures/                       # 5 Chinese lecture pages
-│   ├── en/projects/                       # 5 English project pages
-│   └── zh/projects/                       # 5 Chinese project pages
+│   ├── en/projects/                       # 6 English project pages
+│   └── zh/projects/                       # 6 Chinese project pages
 ├── external/world-model-tutorial/         # PyTorch source referenced by projects
 │   └── references.md                      # four-era history and architecture survey
 ├── scripts/                               # build utilities (screenshots, PDF)
