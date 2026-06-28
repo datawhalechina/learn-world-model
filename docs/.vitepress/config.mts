@@ -79,6 +79,7 @@ const zhProjectItems = [
   { text: "P03：训练 Dreamer 智能体", link: "/zh/projects/p03_dreamer_agent" },
   { text: "P04：替换动力学骨干网络", link: "/zh/projects/p04_transformer_backbone" },
   { text: "P05：世界模型评估仪表盘", link: "/zh/projects/p05_evaluation_dashboard" },
+  { text: "P06：反事实的动作条件世界模型", link: "/zh/projects/p06_counterfactual_world_model" },
 ];
 
 const enWorldModelItems = [
@@ -154,6 +155,7 @@ const enProjectItems = [
   { text: "P03: Train a Dreamer Agent", link: "/en/projects/p03_dreamer_agent" },
   { text: "P04: Swap the Dynamics Backbone", link: "/en/projects/p04_transformer_backbone" },
   { text: "P05: World Model Evaluation Dashboard", link: "/en/projects/p05_evaluation_dashboard" },
+  { text: "P06: Counterfactual Action-Conditioned World Model", link: "/en/projects/p06_counterfactual_world_model" },
 ];
 
 export default withMermaid(
