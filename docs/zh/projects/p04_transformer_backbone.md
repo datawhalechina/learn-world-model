@@ -10,9 +10,15 @@ title: P04：替换动力学骨干网络
 
 > Notebook 源文件: [p04_transformer_backbone.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p04_transformer_backbone.ipynb)
 
-```python
+```bash
+%%bash
 # Install dependencies for a fresh environment.
-!pip install torch torchvision matplotlib numpy
+if command -v rocm-smi >/dev/null || [ -d /opt/rocm ]; then
+  pip install torch torchvision --index-url https://download.pytorch.org/whl/rocm7.2
+  pip install matplotlib numpy
+else
+  pip install torch torchvision matplotlib numpy
+fi
 ```
 依赖已经准备好，先导入核心库并统一运行时设置，让 VAE 和 Transformer 两部分共用同一个运行环境。
 
