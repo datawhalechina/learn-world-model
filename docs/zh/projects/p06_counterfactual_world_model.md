@@ -14,9 +14,15 @@ P01 到 P05 一直在问同一个问题：模型能多准确地重构现实？�
 
 > Notebook 源文件: [p06_counterfactual_world_model.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p06_counterfactual_world_model.ipynb)
 
-```python
+```bash
+%%bash
 # 为全新环境安装依赖。
-!pip install torch torchvision matplotlib numpy
+if command -v rocm-smi >/dev/null || [ -d /opt/rocm ]; then
+  pip install torch torchvision --index-url https://download.pytorch.org/whl/rocm7.2
+  pip install matplotlib numpy
+else
+  pip install torch torchvision matplotlib numpy
+fi
 ```
 ## 1. 环境准备
 
