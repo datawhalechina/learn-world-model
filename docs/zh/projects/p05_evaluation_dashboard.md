@@ -12,9 +12,15 @@ title: P05 世界模型评估仪表盘
 
 > Notebook 源文件: [p05_evaluation_dashboard.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p05_evaluation_dashboard.ipynb)
 
-```python
+```bash
+%%bash
 # Install dependencies for a fresh environment.
-!pip install torch torchvision matplotlib numpy
+if command -v rocm-smi >/dev/null || [ -d /opt/rocm ]; then
+  pip install torch torchvision --index-url https://download.pytorch.org/whl/rocm7.2
+  pip install matplotlib numpy
+else
+  pip install torch torchvision matplotlib numpy
+fi
 ```
 环境准备完成后，先导入整块 dashboard 会用到的轨迹生成和打分工具。
 
