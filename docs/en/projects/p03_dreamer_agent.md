@@ -12,9 +12,15 @@ A noisy reward trace is acceptable here; the tutorial goal is a working world-mo
 
 > Notebook source: [p03_dreamer_agent.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p03_dreamer_agent.ipynb)
 
-```python
+```bash
+%%bash
 # Install dependencies for a fresh environment.
-!pip install torch torchvision matplotlib numpy
+if command -v rocm-smi >/dev/null || [ -d /opt/rocm ]; then
+  pip install torch torchvision --index-url https://download.pytorch.org/whl/rocm7.2
+  pip install matplotlib numpy
+else
+  pip install torch torchvision matplotlib numpy
+fi
 ```
 ## 1. Setup
 
