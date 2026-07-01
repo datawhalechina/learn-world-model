@@ -8,7 +8,7 @@ Six hands-on projects build a complete world-model pipeline from scratch. Work t
 
 ## Hardware requirements
 
-Every notebook in this section was developed and run on Google Colab with a single T4 GPU. If you have comparable or better compute, an Nvidia GPU or a TPU from the same or a later generation, you can run all five projects without any changes. On Colab, we recommend subscribing to [Colab Pro](https://colab.research.google.com/signup), because the free tier only occasionally has an idle T4 available, so a paid plan gives you the reliable access these projects assume.
+Every notebook in this section was developed and run on Google Colab with a single T4 GPU. If you have comparable or better compute, an Nvidia GPU, an AMD GPU, or a TPU from the same or a later generation, you can run all five projects without any changes. On Colab, we recommend subscribing to [Colab Pro](https://colab.research.google.com/signup), because the free tier only occasionally has an idle T4 available, so a paid plan gives you the reliable access these projects assume.
 
 Markdown pages only include narrative text and code. Any outputs, plots, tables, or other artifacts live in the corresponding `.ipynb` notebook files.
 
