@@ -17,9 +17,15 @@ title: P01：训练 VAE 编码器
 
 > Notebook 源文件: [p01_vae_encoder.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p01_vae_encoder.ipynb)
 
-```python
+```bash
+%%bash
 # 在全新环境中安装依赖。
-!pip install torch torchvision matplotlib numpy
+if command -v rocm-smi >/dev/null || [ -d /opt/rocm ]; then
+  pip install torch torchvision --index-url https://download.pytorch.org/whl/rocm7.2
+  pip install matplotlib numpy
+else
+  pip install torch torchvision matplotlib numpy
+fi
 ```
 ## 1. 准备
 
@@ -109,6 +115,7 @@ def _resolve_device():
 DEVICE = _resolve_device()
 USE_TPU = DEVICE.type == 'xla'
 USE_CUDA = DEVICE.type == 'cuda'
+IS_ROCM = USE_CUDA and torch.version.hip is not None
 LOAD_DEVICE = torch.device('cpu') if USE_TPU else DEVICE
 
 
@@ -124,15 +131,20 @@ def optimizer_step(optimizer, scaler=None):
 # CUDA 可用时使用更快的计算内核。
 if USE_CUDA:
     torch.backends.cudnn.benchmark = True
-    torch.backends.cuda.matmul.allow_tf32 = True
-    torch.backends.cudnn.allow_tf32 = True
+    if not IS_ROCM:
+        torch.backends.cuda.matmul.allow_tf32 = True
+        torch.backends.cudnn.allow_tf32 = True
 
 print(f'使用设备       : {DEVICE}')
 if USE_TPU:
     print('TPU 后端       : torch_xla')
 elif USE_CUDA:
     print(f'GPU            : {torch.cuda.get_device_name(0)}')
-    print(f'CUDA 计算能力  : {torch.cuda.get_device_capability(0)}')
+    if IS_ROCM:
+        print(f'ROCm/HIP       : {torch.version.hip}')
+        print(f'GPU arch       : {torch.cuda.get_device_properties(0).gcnArchName}')
+    else:
+        print(f'CUDA 计算能力  : {torch.cuda.get_device_capability(0)}')
 print(f'PyTorch 版本   : {torch.__version__}')
 ```
 运行环境已经准备好，先生成一个合成形状数据集，让 VAE 在没有外部下载的情况下完成训练。

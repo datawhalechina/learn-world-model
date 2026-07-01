@@ -14,9 +14,15 @@ One honest clarification up front. Pearl's do-calculus exists to decide whether 
 
 > Notebook source: [p06_counterfactual_world_model.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p06_counterfactual_world_model.ipynb)
 
-```python
+```bash
+%%bash
 # Install dependencies for a fresh environment.
-!pip install torch torchvision matplotlib numpy
+if command -v rocm-smi >/dev/null || [ -d /opt/rocm ]; then
+  pip install torch torchvision --index-url https://download.pytorch.org/whl/rocm7.2
+  pip install matplotlib numpy
+else
+  pip install torch torchvision matplotlib numpy
+fi
 ```
 ## 1. Setup
 

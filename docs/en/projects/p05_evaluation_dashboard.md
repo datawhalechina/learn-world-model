@@ -12,9 +12,15 @@ Load the P03 Dreamer and P04 Transformer checkpoints, evaluate them on held-out 
 
 > Notebook source: [p05_evaluation_dashboard.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p05_evaluation_dashboard.ipynb)
 
-```python
+```bash
+%%bash
 # Install dependencies for a fresh environment.
-!pip install torch torchvision matplotlib numpy
+if command -v rocm-smi >/dev/null || [ -d /opt/rocm ]; then
+  pip install torch torchvision --index-url https://download.pytorch.org/whl/rocm7.2
+  pip install matplotlib numpy
+else
+  pip install torch torchvision matplotlib numpy
+fi
 ```
 With the environment ready, import the trajectory-generation and scoring utilities used throughout the dashboard.
 

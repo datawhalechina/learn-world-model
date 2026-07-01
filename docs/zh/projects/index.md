@@ -8,7 +8,7 @@ title: 项目
 
 ## 硬件要求
 
-本章节的每个 notebook 都是在 Google Colab 上使用单块 T4 GPU 开发并运行的。如果你拥有相当或更高的算力，也就是同代或更新的 Nvidia GPU 或 TPU，便可以无需任何改动地运行全部五个项目。在 Colab 上，我们建议订阅 [Colab Pro](https://colab.research.google.com/signup)，因为免费版只是偶尔才会有闲置的 T4 可用，付费方案能提供这些项目所依赖的稳定算力。
+本章节的每个 notebook 都是在 Google Colab 上使用单块 T4 GPU 开发并运行的。如果你拥有相当或更高的算力，也就是同代或更新的 Nvidia GPU、AMD GPU 或 TPU，便可以无需任何改动地运行全部五个项目。在 Colab 上，我们建议订阅 [Colab Pro](https://colab.research.google.com/signup)，因为免费版只是偶尔才会有闲置的 T4 可用，付费方案能提供这些项目所依赖的稳定算力。
 
 这些 markdown 页面只保留叙述文字和代码。所有 output、图表、表格和其他产物都请到对应的 `.ipynb` 文件中查看。
 

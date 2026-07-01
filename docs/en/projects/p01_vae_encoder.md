@@ -17,9 +17,15 @@ Train a compact convolutional Variational Autoencoder (VAE) on synthetic 64x64 R
 
 > Notebook source: [p01_vae_encoder.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p01_vae_encoder.ipynb)
 
-```python
+```bash
+%%bash
 # Install dependencies for a fresh environment.
-!pip install torch torchvision matplotlib numpy
+if command -v rocm-smi >/dev/null || [ -d /opt/rocm ]; then
+  pip install torch torchvision --index-url https://download.pytorch.org/whl/rocm7.2
+  pip install matplotlib numpy
+else
+  pip install torch torchvision matplotlib numpy
+fi
 ```
 ## 1. Setup
 
@@ -60,6 +66,7 @@ def _resolve_device():
 DEVICE = _resolve_device()
 USE_TPU = DEVICE.type == 'xla'
 USE_CUDA = DEVICE.type == 'cuda'
+IS_ROCM = USE_CUDA and torch.version.hip is not None
 LOAD_DEVICE = torch.device('cpu') if USE_TPU else DEVICE
 
 
@@ -75,15 +82,20 @@ def optimizer_step(optimizer, scaler=None):
 # Use faster kernels when CUDA is available.
 if USE_CUDA:
     torch.backends.cudnn.benchmark = True
-    torch.backends.cuda.matmul.allow_tf32 = True
-    torch.backends.cudnn.allow_tf32 = True
+    if not IS_ROCM:
+        torch.backends.cuda.matmul.allow_tf32 = True
+        torch.backends.cudnn.allow_tf32 = True
 
 print(f'Using device   : {DEVICE}')
 if USE_TPU:
     print('TPU backend    : torch_xla')
 elif USE_CUDA:
     print(f'GPU            : {torch.cuda.get_device_name(0)}')
-    print(f'CUDA capability: {torch.cuda.get_device_capability(0)}')
+    if IS_ROCM:
+        print(f'ROCm/HIP       : {torch.version.hip}')
+        print(f'GPU arch       : {torch.cuda.get_device_properties(0).gcnArchName}')
+    else:
+        print(f'CUDA capability: {torch.cuda.get_device_capability(0)}')
 print(f'PyTorch version: {torch.__version__}')
 ```
 With the runtime ready, generate a synthetic-shape dataset that the VAE can learn from without external downloads.
