@@ -7,7 +7,7 @@ description: Five lectures covering world model theory systematically, from hist
 
 Learn World Models is a project-driven world models curriculum covering VAE encoders and latent dynamics, Dreamer, TD-MPC, STORM, and frontier debates on language versus the physical world.
 
-**Suggested learning order:** L01 → L02 → P01 → P02 → L03 → P03 → P04 → L04 → P05 → L05
+**Suggested learning order:** L01 → L02 → P01 → P02 → L03 → P03 → P04 → L04 → P05 → P06 → L05
 
 ## Lectures
 
@@ -21,7 +21,7 @@ Learn World Models is a project-driven world models curriculum covering VAE enco
 
 ## Projects
 
-<a href="./projects/" class="card-link">Build a VAE encoder, latent dynamics model, full Dreamer pipeline, TD-MPC planner, and STORM evaluation dashboard hands-on.</a>
+<a href="./projects/" class="card-link">Build a VAE encoder, latent dynamics model, full Dreamer pipeline, TD-MPC planner, STORM evaluation dashboard, and counterfactual world model hands-on.</a>
 
 ## What You Will Learn
 

@@ -7,7 +7,7 @@ description: 五讲系统讲授世界模型理论，从历史脉络到前沿思�
 
 Learn World Models 是一门以项目为驱动的世界模型课程，从 VAE 编码器与潜在动力学，到 Dreamer、TD-MPC、STORM，再到语言与物理世界的前沿争论。
 
-**建议学习顺序：** L01 → L02 → P01 → P02 → L03 → P03 → P04 → L04 → P05 → L05
+**建议学习顺序：** L01 → L02 → P01 → P02 → L03 → P03 → P04 → L04 → P05 → P06 → L05
 
 ## 讲义
 
@@ -21,7 +21,7 @@ Learn World Models 是一门以项目为驱动的世界模型课程，从 VAE �
 
 ## 项目
 
-<a href="./projects/" class="card-link">动手构建 VAE 编码器、潜在动力学模型、完整 Dreamer 流水线、TD-MPC 规划器与 STORM 评估仪表盘。</a>
+<a href="./projects/" class="card-link">动手构建 VAE 编码器、潜在动力学模型、完整 Dreamer 流水线、TD-MPC 规划器、STORM 评估仪表盘与反事实世界模型。</a>
 
 ## 你将学到什么
 
