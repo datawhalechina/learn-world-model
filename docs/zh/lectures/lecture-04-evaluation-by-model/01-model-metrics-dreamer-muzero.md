@@ -20,7 +20,6 @@ lecture: 4
 | Transformer 动力学（STORM）| teacher forcing 与 free-running 差距，长时域 token 漂移 |
 | 扩散世界模型（Diamond）| 物理一致性崩溃，物体凭空消失 |
 
----
 
 ## Dreamer（RNN/RSSM）
 

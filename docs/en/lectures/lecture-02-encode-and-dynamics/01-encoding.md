@@ -18,7 +18,6 @@ The solution is to compress the raw observation $\mathbf{o}_t$ (pixel image) int
 
 The encoder compresses the redundant high-dimensional pixel space (12,288 dimensions) into a compact, actionable latent space (32 dimensions), so that the downstream dynamics model only needs to process semantic information.
 
----
 
 ## VAE Intuition: Learning to Compress and Reconstruct
 
@@ -38,7 +37,6 @@ The data flows in one direction: the CNN Encoder compresses the raw image into a
 
 > **📖 Transposed Convolution (also called deconvolution)**: A standard convolution compresses a large feature map into a smaller one (reducing spatial resolution); a transposed convolution does the reverse, upsampling a small feature map into a larger one (increasing spatial resolution). The decoder uses transposed convolutions to progressively "restore" the low-dimensional latent vector back to the original image size.
 
----
 
 ## ELBO Loss: Balancing Two Objectives
 
@@ -61,7 +59,6 @@ Training maximizes the ELBO (equivalently, minimizes the negative ELBO). The two
 
 > **📖 Reparameterization Trick**: After the encoder outputs mean $\mu$ and standard deviation $\sigma$, we need to **sample** $\mathbf{z}$ from the distribution $\mathcal{N}(\mu, \sigma^2)$. The problem with direct sampling is that the sampling operation itself is not differentiable, so gradients cannot flow from $\mathbf{z}$ back to $\mu$ and $\sigma$, preventing the encoder from being trained. The solution is to rewrite sampling as: $\mathbf{z} = \mu + \sigma \cdot \varepsilon$, where $\varepsilon \sim \mathcal{N}(0, I)$ is independently sampled noise (independent of the network parameters). Now $\mathbf{z}$ is differentiable with respect to $\mu$ and $\sigma$, gradients flow normally, and the encoder can be trained end-to-end.
 
----
 
 ## CNN Encoder Structure
 
@@ -73,7 +70,6 @@ In practice, the encoder uses a **Convolutional Neural Network (CNN)** to proces
 
 Typical structure: 64×64×3 → Conv(4×4, s=2) → Conv(4×4, s=2) → Conv(4×4, s=2) → Flatten → Linear → ($\mu$, $\sigma$)
 
----
 
 ## Try It Yourself: VAE Visualization
 

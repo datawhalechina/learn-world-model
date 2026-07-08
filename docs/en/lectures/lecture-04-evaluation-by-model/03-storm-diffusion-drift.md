@@ -54,7 +54,6 @@ The formula has the same form as FID; the difference is that the feature extract
 
 **Division of labor**: use PSNR for debugging (fast, pixel-level, suited for monitoring during training); use FVD for policy evaluation and paper reporting (captures sequential dynamics quality and correlates better with human perceptual judgment). Both are necessary: high PSNR but poor FVD means per-frame pixel alignment is acceptable but the overall motion trajectory is incoherent; good FVD but low PSNR means the model has learned reasonable dynamic patterns but per-frame generation is noisy.
 
----
 
 ## Further Reading
 

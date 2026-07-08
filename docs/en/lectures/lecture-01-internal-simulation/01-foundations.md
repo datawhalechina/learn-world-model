@@ -18,7 +18,6 @@ Perception feeds the internal model, which generates predictions to guide decisi
 
 Tragically, Craik died in a bicycle accident in 1945 at only 31 years old. His ideas lay dormant for decades, only to be rediscovered with the rise of cognitive science and neuroscience.
 
----
 
 ## The Brain's Prediction Mechanism: Predictive Coding (1990s)
 
@@ -34,7 +33,6 @@ When you walk into a familiar room, the brain hardly needs to process anything b
 
 This mechanism explains why we are so sensitive to change and so oblivious to familiar backgrounds: **the accurately predicted parts are compressed away, and only errors are worth transmitting**.
 
----
 
 ## The Insight from Control Theory: The Internal Model Principle (1960s)
 
@@ -46,7 +44,6 @@ This sounds like engineering jargon, but the intuition is clear: a self-driving 
 
 This principle appears throughout robotics, spacecraft control, and economic modeling, and it became the theoretical foundation for model-based methods in reinforcement learning. To control something, you must first understand it. The Internal Model Principle turns this commonsense observation into a mathematical necessity.
 
----
 
 ## A Common Confusion: Broad vs. Narrow World Models
 

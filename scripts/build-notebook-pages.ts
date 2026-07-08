@@ -47,6 +47,12 @@ const joinSource = (src: string[] | string): string =>
 const fence = (lang: string, body: string): string =>
   "```" + lang + "\n" + body.replace(/\n+$/, "") + "\n```";
 
+function codeFenceLanguage(code: string): string {
+  const firstLine = code.trimStart().split(/\r?\n/, 1)[0]?.trim() ?? "";
+  if (/^%%(?:bash|sh)\b/.test(firstLine)) return "bash";
+  return "python";
+}
+
 function projectPageUrl(nbPath: string): string {
   const relPath = path.relative(ROOT, nbPath).split(path.sep).join("/");
   const match = relPath.match(/^docs\/(en|zh)\/projects\/([^/]+)\.ipynb$/);
@@ -125,7 +131,7 @@ async function convertNotebook(nbPath: string): Promise<void> {
     // code cell
     const code = joinSource(cell.source).replace(/\n+$/, "");
     if (code.trim().length > 0) {
-      parts.push(fence("python", code));
+      parts.push(fence(codeFenceLanguage(code), code));
     }
   }
 

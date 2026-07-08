@@ -17,7 +17,6 @@ This design, validated in Dreamer V1/V2, achieves solid policy performance on co
 
 The five architecture families that follow each address this limitation, but take different directions.
 
----
 
 ## Architecture 1: RNN / RSSM (Your Baseline)
 
@@ -31,7 +30,6 @@ The GRU incrementally updates the hidden state with **O(1)** per-step cost, inde
 
 **Limitations**: Weak long-term memory, with the effective memory window of the GRU hidden state typically between 50-100 steps; generation quality inferior to Diffusion; data collection on real robots remains expensive.
 
----
 
 ## Architecture 2: Transformer-based (2022, 2023)
 
@@ -82,7 +80,6 @@ Compared to DreamerV3's GRU-based RSSM, STORM's Transformer sequence model is st
 
 **Limitations**: Computation scales quadratically with sequence length ($O(T^2)$); inference latency is higher than RNN; requires more data to converge.
 
----
 
 ## Architecture 3: Diffusion-based (2023, 2024)
 

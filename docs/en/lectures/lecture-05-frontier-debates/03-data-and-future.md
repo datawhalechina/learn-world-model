@@ -49,7 +49,6 @@ If world models ultimately require sensor data from everyone's daily life -- the
 
 Going deeper: is that choice genuinely one you can "agree to" or "refuse"? Or will this become infrastructure like the smartphone, where not participating means being excluded?
 
----
 
 ## Further Reading
 

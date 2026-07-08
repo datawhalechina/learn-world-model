@@ -16,7 +16,6 @@ lecture: 4
 | **STORM** (Transformer) | Token prediction loss, long-horizon PSNR | FVD (I3D features, sequential dynamics quality) | Teacher forcing gap, autoregressive drift | PSNR sudden drop: shorten context window; use PSNR for debugging, FVD for policy evaluation |
 | **Diffusion World Model** (Diamond) | FVD, physics consistency, action-conditioned fidelity | Depth violation rate (DepthAnything + DINO automated evaluation) | Object persistence loss, inverted 3D relationships | High depth violation rate: introduce 3D constraints; low fidelity: inject action information at each layer |
 
----
 
 ## Three Pragmatic Deployment Strategies
 
@@ -34,7 +33,6 @@ The policy first proposes multiple candidate actions (such as N trajectories fro
 
 The world model enters the MPC rollout or imagined rollout, used directly for online planning or offline policy training. This is the standard usage in Dreamer and TD-MPC. The potential gains are highest here (vast numbers of states can be explored in imagination without real-world interaction), but so are the risks: model exploitation, safety exploits, and distribution shift all directly affect policy quality. This strategy is recommended only after the world model has been thoroughly validated via the shadow evaluator phase.
 
----
 
 ## Curriculum Summary
 
@@ -60,7 +58,6 @@ But the content covered in this curriculum is primarily laboratory-scale world m
 
 These questions have no standard answers. But you now have the tools needed to ask them correctly: understanding architectures, diagnosing failures, and selecting metrics. That is the core capability this curriculum aims to convey, not telling you what the right world model is, but teaching you how to determine where a world model is wrong.
 
----
 
 ## Next Lecture
 

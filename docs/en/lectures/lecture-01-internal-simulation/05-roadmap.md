@@ -20,7 +20,6 @@ flowchart TD
 
 Each step has a corresponding code project. When you get stuck, returning to the relevant section is more effective than reading everything through before writing any code.
 
----
 
 ## Next Lecture
 
@@ -28,11 +27,9 @@ L02 starts from a concrete problem: **how do you compress a 64×64 pixel image i
 
 Once the compression is in place, z is fed into the dynamics model, which learns to predict "what z will look like at the next timestep." That is the RSSM. By the end of L02, you will have written the two most critical modules of a world model by hand, and you will be able to see from real loss curves how they learn.
 
----
 
 *This lecture requires no mathematical or coding background. If you are interested in the original papers by Craik, Ha & Schmidhuber, or Dreamer, see the further reading in L05.*
 
----
 
 ## Further Reading
 

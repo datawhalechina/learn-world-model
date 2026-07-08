@@ -14,7 +14,6 @@ Transformer takes a different approach. Instead of summarizing history with a si
 
 STORM (2023) replaced the GRU backbone in RSSM with a Transformer, achieving measurable gains in prediction accuracy and policy return on long-sequence Atari tasks. Dreamer V4 (2025) made the same replacement and combined it with offline policy learning, making long-horizon imagined trajectories more coherent and reliable. Lecture 03 will use RSSM as a baseline and compare these two backbone types side by side across different task constraints.
 
----
 
 ## Architecture Iterations of the Dreamer Series
 
@@ -42,7 +41,6 @@ Each version targets a specific bottleneck of its predecessor rather than redesi
 <figcaption>Open-loop state diagnostics from Hafner et al. (2019): the RSSM dynamics model is frozen and small neural networks are trained to predict the simulator's ground-truth positions, velocities, and reward from the learned latent states. Accurate long-horizon prediction of these quantities confirms that the latent space captures most of the information present in the underlying system, further than the planning horizons used in the paper.</figcaption>
 </figure>
 
----
 
 ## The Encoder's Role as a Bridge in Dreamer
 
@@ -55,7 +53,6 @@ The encoder is more than a compression tool. It is the **bridge** connecting the
 
 The quality of the encoder directly determines the upper bound of RSSM: the more semantically clear the latent space, the easier it is for the dynamics model to learn meaningful transition patterns.
 
----
 
 ## Summary
 
@@ -70,7 +67,6 @@ The quality of the encoder directly determines the upper bound of RSSM: the more
 
 A good world model equals a good encoder (perceptual compression) plus a good dynamics model (temporal prediction). RSSM achieves an elegant balance between expressiveness and computational efficiency by separating the two types of state. The evolution across the four Dreamer versions shows that beyond the architecture itself, the type of latent variable and the training recipe are equally decisive factors.
 
----
 
 ## Next Lecture
 
@@ -78,7 +74,6 @@ The question for Lecture 03 is: RSSM is not the only option. How do Transformer-
 
 After completing P01 and P02, you have a working RSSM baseline. Lecture 03 uses it as an anchor to compare six architecture families side by side, including Transformer dynamics, diffusion models, and JEPA, and explains where Dreamer V4 sits on that map. The comparison is not a ranking of better versus worse, but a map of where each architecture applies given different task constraints.
 
----
 
 ## Further Reading
 

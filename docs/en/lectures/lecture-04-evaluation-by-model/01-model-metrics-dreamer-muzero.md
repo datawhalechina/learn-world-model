@@ -19,7 +19,6 @@ Different world models break down at different points:
 | Latent MPC (TD-MPC) | Latent representation inconsistency, representation collapse, low planning efficiency |
 | Transformer dynamics (STORM) | Gap between teacher forcing and free-running, long-horizon token drift |
 | Diffusion world model (Diamond) | Physical consistency collapse, objects disappearing from the scene |
----
 
 ## Dreamer (RNN/RSSM)
 

@@ -25,7 +25,6 @@ With a world model, an agent can mentally rehearse several candidate action sequ
 **3. Safety**
 In robotics, autonomous driving, and industrial control, the cost of trial-and-error can be catastrophic. World models make it possible to stress-test and repair a policy in a sandbox before deploying it on real hardware.
 
----
 
 ## The Gap: Why World Models Went Quiet
 
@@ -112,7 +111,6 @@ This is not a trend driven by a single paper. Three independent tracks, large-sc
 
 The previous wave of world model interest (2018 to 2020) was largely academic: researchers demonstrated feasibility in game environments, but practical deployment remained distant. In the current wave (2024 onward) both industry and academia entered simultaneously, because world models now address real cost bottlenecks and safety requirements. The two waves differ substantially in character.
 
----
 
 ## Next Lecture
 

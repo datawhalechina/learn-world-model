@@ -43,7 +43,6 @@ This is the most concrete automated diagnostic metric in the Diamond evaluation 
 
 **Diagnostic rule**: If the depth violation rate exceeds 10%, inject action information at every resolution level of the U-Net (rather than only at the bottleneck), and consider adding a depth consistency constraint to the loss function (an L1 penalty on the difference between depth maps of adjacent frames).
 
----
 
 ## Horizon Drift: The Universal Failure Mode Across All World Models
 
@@ -82,7 +81,6 @@ Periodically insert real trajectories into the minibatches used for imagined rol
 
 Start training with a short rollout (e.g., 1-2 steps), and gradually increase the rollout length as single-step accuracy improves (e.g., add 1 step every 10k training steps, up to a maximum of 8 steps). This avoids supervising the model on its own low-quality predictions early in training and reduces bootstrapping error.
 
----
 
 ## Further Reading
 

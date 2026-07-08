@@ -41,7 +41,6 @@ As long as these three prediction heads are accurate, the exact form of the late
 
 > **📖 MCTS** (Monte Carlo Tree Search): Starting from the current state, repeatedly perform four steps: (1) **Select**: traverse down the tree, selecting the node with the highest **UCB score** (Upper Confidence Bound, $\text{UCB} = Q(s,a) + c\sqrt{\ln N / n_a}$, where $Q$ is the average value of that action, $N$ is the total visit count of the parent node, $n_a$ is the visit count of that action, and $c$ is the exploration coefficient; UCB balances "choosing known good actions" with "exploring less-visited actions"); (2) **Expand**: try a new action at a leaf node; (3) **Simulate/Evaluate**: use the neural network to estimate the value of the new node (MuZero uses the value head directly, without rollout); (4) **Backpropagate**: update the value estimate upward along the path. After hundreds of repetitions, the most-visited action is the one "deemed optimal after sufficient search." MuZero's key extension over AlphaZero: support for single-agent domains (not just two-player games) and intermediate step rewards (Atari), with value targets constructed via $n$-step bootstrapping rather than terminal win/loss.
 
----
 
 ## Mechanism 1: CEM Shooting-Method MPC
 
@@ -79,7 +78,6 @@ The first round of sampling covers a broad range with low precision, identifying
 
 **Advantages**: simple, gradient-free, easy to implement, with no differentiability requirements on the world model.
 
----
 
 ## Mechanism 2: Actor-Critic in Latent Space (Dreamer's Approach)
 

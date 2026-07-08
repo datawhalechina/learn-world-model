@@ -27,7 +27,6 @@ Genie 在 3 万小时的平台游戏视频上训练（无动作标注），11B �
 
 **局限**：latent action 是自动归纳的，不与真实物理动作对齐，无法直接用于机器人控制。从 latent action 到真实 policy 仍需额外的对齐步骤。
 
----
 
 ## 架构六：从 World Model 到 World Action Model（WAM）
 
@@ -56,7 +55,6 @@ Genie 证明了"从视频隐式发现动作表征"这条路可行。WAM 系列�
 
 **这批论文揭示的新趋势**：world model 不再只是 policy 旁边的 simulator，而是 policy 本身的一部分。传统 model-based RL 框架里，world model 和 policy 是两个分离的模块。WAM 系列正在打破这个分离，训练一个同时建模世界动态和决策逻辑的**统一模型**。[Cosmos](https://arxiv.org/abs/2501.03575)（NVIDIA 2025）则走得更远：作为通用物理 AI 基础模型，它在海量真实世界视频上预训练，然后针对自动驾驶、机器人等下游任务微调，把 world model 的概念从"单任务模拟器"推向"通用物理世界基础设施"。
 
----
 
 ## 对比总结表
 

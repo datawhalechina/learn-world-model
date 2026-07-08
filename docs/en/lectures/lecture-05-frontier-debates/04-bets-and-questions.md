@@ -23,7 +23,6 @@ These six bets are not mutually exclusive, but their answers to "what is the cor
 
 This debate will not be settled in papers. It will be forced toward an answer by benchmarks over the next several years.
 
----
 
 ## CWM: World Models for Code Execution Space
 
@@ -43,7 +42,6 @@ This design maps almost one-to-one onto the RSSM framework from physical-world m
 
 **Why is this a boundary question?** The existence of CWM blurs the boundary between the language camp and the world model camp. It uses a Transformer architecture (the language camp's primary tool), trains on natural language text plus code (the language camp's data), yet the training objective is to predict the dynamic changes in program execution state (the world model camp's core claim). If CWM ultimately demonstrates that "understanding code = being able to make predictions inside an interpreter," the next question becomes: does understanding physics also mean "being able to make predictions inside a physics engine"? The answer to that question bears on the future of both camps.
 
----
 
 ## Harnesses Getting Thinner: An Engineering Prophecy for World Models
 
@@ -67,7 +65,6 @@ Neither property is something that LLM scaling directly delivers, because larger
 
 Boris Cherny at Sequoia AI Ascent 2026: [youtube.com/watch?v=SlGRN8jh2RI](https://www.youtube.com/watch?v=SlGRN8jh2RI)
 
----
 
 ## The Bet of the Unpopular Side
 
@@ -87,7 +84,6 @@ The world model researcher's bet is: language is not the substrate of thought; p
 
 If they are wrong, scaling laws will continue to hold, and LLMs will gradually approach physical understanding through more data and larger models: not via world models, but via language.
 
----
 
 ## Three Questions to Carry Forward
 
@@ -105,7 +101,6 @@ Perhaps the final answer is not "who won," but that different application domain
 
 If that is the case, the significance of this debate lies not in determining a winner, but in helping us understand more clearly: **what problem are we actually trying to solve, and where does the path we are on lead.**
 
----
 
 ## Further Reading
 

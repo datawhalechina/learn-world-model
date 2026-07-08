@@ -27,7 +27,6 @@ Genie was trained on 30,000 hours of platformer game video (no action annotation
 
 **Limitations**: latent actions are induced automatically and are not aligned with real physical actions, so they cannot be used directly for robot control. An additional alignment step is still required to go from latent actions to a real policy.
 
----
 
 ## Architecture Six: From World Model to World Action Model (WAM)
 
@@ -56,7 +55,6 @@ The traditional World Model takes actions as input and predicts future states, f
 
 **Emerging trend revealed by this line of work**: the world model is no longer just a simulator sitting beside the policy; it is becoming part of the policy itself. In the traditional model-based RL framework, the world model and the policy are two separate modules. The WAM family is dismantling this separation by training a **unified model** that jointly captures world dynamics and decision logic. [Cosmos](https://arxiv.org/abs/2501.03575) (NVIDIA 2025) goes further still: as a general-purpose physical AI foundation model, it is pretrained on massive real-world video and then fine-tuned for downstream tasks such as autonomous driving and robotics, pushing the concept of a world model from "single-task simulator" toward "general-purpose physical world infrastructure."
 
----
 
 ## Comparative Summary Table
 

@@ -10,7 +10,6 @@ lecture: 1
 
 Saining Xie's statement carries an implicit premise: the "world model" he is talking about is not necessarily the same thing most people mean when they use the term. This is not a terminological quibble; it is a real conceptual fracture. In 2025, Fei-Fei Li and the World Labs team published an article that systematically clarified this confusion.
 
----
 
 ## Three Functional Types of World Models
 
@@ -40,7 +39,6 @@ The planner outputs actions — given current observations and a goal, what shou
 
 VLA (Vision-Language-Action) models, which take visual observations and language instructions as input and output robot actions directly, are planners. CEM-MPC and TD-MPC (two planning algorithms built on top of world models, covered in detail in L03) are planners. The latent Actor-Critic inside Dreamer is a planner. The planner is the hardest of the three to get right. The impressive-looking robot demonstrations of recent years are almost uniformly confined to tightly controlled laboratory settings; the gap between a demo video and a robot that reliably works in a real kitchen, warehouse, or operating room remains large.
 
----
 
 ## Why the Simulator Is the Missing Link
 
@@ -54,7 +52,6 @@ The planner is the most attractive target, but without an internal model of how 
 
 The simulator is the bridge between the two. If language is an abstraction of the world and pixels are a projection of the world, then geometry, physics, and dynamics are the world itself. The simulator operates at that level, providing the structural skeleton from which visual representations can be derived for human consumption and action consequences can be derived for agent use.
 
----
 
 ## The Frontier: Boundaries Dissolving
 
@@ -64,7 +61,6 @@ World Labs' Marble, a generative model that reconstructs three-dimensional scene
 
 Both lines point in the same direction: one model that can render, simulate, and plan, switching output depending on what the downstream task needs.
 
----
 
 ## A Philosophical Aside
 
@@ -78,7 +74,6 @@ The World Labs three-part taxonomy is not coincidental. It maps onto a classical
 
 When Craik described the human mind as a "small-scale model of external reality" in 1943, he was pointing at exactly this unified structure: a system that reasons at the ontological level, presents at the phenomenological level, and outputs action recommendations at the practical level. What Xie Saining calls "the destination everyone will reach" has, in this sense, been the destination all along. It took eighty years of engineering to catch up with the intuition.
 
----
 
 ## Further Reading
 

@@ -25,7 +25,6 @@ Language models predict the **next token**. World models predict the **next stat
 
 It sounds like a single word has been swapped. But behind it lie two fundamentally different conceptions of intelligence: what "understanding" means, and where AI is ultimately headed.
 
----
 
 ## Debate One: Is Language a Tool, or "Opium"?
 
@@ -68,7 +67,6 @@ Do you believe LLMs genuinely "understand" the physical world, or are they perfo
 
 If a system performs indistinguishably from genuine understanding on every physical reasoning test we can devise, do we still have grounds to insist it is "merely matching patterns"?
 
----
 
 ## Debate Two: What Does the Bitter Lesson Actually Say?
 

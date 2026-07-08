@@ -14,7 +14,6 @@ With a VAE encoder, we can compress the current frame $\mathbf{o}_t$ into $\math
 
 This prediction capability lets the agent "simulate" the future internally, enabling planning without actually executing actions in the environment. This is the key reason world models reduce sample complexity.
 
----
 
 ## The Simplest Dynamics Model: GRU
 
@@ -28,7 +27,6 @@ $$
 
 The GRU's strengths are simplicity and stable training. Its limitation is that it produces deterministic predictions and cannot express **uncertainty**. In real environments, the same action can lead to multiple different outcomes (for example, pushing a box might succeed or might get stuck).
 
----
 
 ## MDN-RNN: Modeling Uncertainty
 
@@ -48,7 +46,6 @@ MDN-RNN can capture **multimodal distributions**: the environment may transition
 <figcaption>MDN-RNN architecture from Ha & Schmidhuber (2018): the RNN hidden state is passed through a fully connected layer to produce K parameter groups (π_k, μ_k, σ_k), representing mixture weights, means, and variances, which together define the Gaussian mixture distribution over the next latent state.</figcaption>
 </figure>
 
----
 
 ## RSSM: Separating Deterministic and Stochastic Components
 
@@ -89,7 +86,6 @@ After separation, the model can roll forward using only the prior $p(\mathbf{z}_
 
 The PlaNet paper (Hafner et al., ICML 2019) verified this design through **ablation studies** (systematically removing one component of the model and observing the change in performance, thereby confirming the component's necessity): a purely stochastic path (no deterministic $h_t$) struggles to reliably retain information across multiple steps, and training optimization may fail to find solutions where some dimensions collapse to near-zero variance to store long-term information; a purely deterministic path (no stochastic $z_t$) cannot express the inherent stochasticity of the environment, and the distribution gap between imagined and real trajectories grows larger. **Both paths are indispensable.** The observation model is therefore conditioned on both $h_t$ and $z_t$: $o_t \sim p(o_t | h_t, z_t)$, with deterministic memory and stochastic perception jointly determining the reconstructed image.
 
----
 
 ## Comparison of Three Dynamics Models
 

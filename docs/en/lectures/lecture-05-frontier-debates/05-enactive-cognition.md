@@ -10,7 +10,6 @@ The debates in this lecture have mostly been conducted inside the field: languag
 
 In 2025, Banafsheh Rafiee and Richard Sutton published a paper, *Toward Enactive Artificial Intelligence* ([arXiv:2605.24238](https://arxiv.org/abs/2605.24238)), that takes stock of where all current AI, including LLMs, vision models, and world models, actually stands relative to the kind of cognition that biological agents exhibit. Their framework comes from cognitive science, not AI research. That outside vantage point makes some things visible that internal debates tend to obscure.
 
----
 
 ## The Passive Representation Problem
 
@@ -24,7 +23,6 @@ This is not a new observation. What Rafiee and Sutton add is a systematic altern
 
 To understand what this demands, it helps to look at what enactive cognition actually requires.
 
----
 
 ## Four Pillars
 
@@ -38,7 +36,6 @@ The framework rests on four properties that jointly characterize genuinely enact
 
 **Embodiment**: the body is not a platform for executing plans computed elsewhere. The specific shape, sensor placement, and motor capacities of the body determine what the environment means and what affordances are available. The same chair is "sittable" for a human, an obstacle for an ant, and a function of joint geometry and control bandwidth for a robot. Intelligence is not substrate-independent in the way classical AI assumes.
 
----
 
 ## Where World Models Stand
 
@@ -54,7 +51,6 @@ On **autonomy**: the reward function in Dreamer and TD-MPC is provided externall
 
 On **embodiment**: the world models in this curriculum operate mostly on pixel observations from fixed-viewpoint cameras or standardized sensors. The specific structure of a body, the way it can be moved to reveal new information, the affordances that follow from its particular configuration, these are not part of what current world models learn to exploit.
 
----
 
 ## What the Framework Reveals
 
@@ -68,7 +64,6 @@ Where Rafiee and Sutton and the world model camp converge: the path forward runs
 
 Where they diverge: world model researchers focus on architecture and scale; Rafiee and Sutton argue that the missing ingredient is not architectural but relational, a different kind of coupling between agent, body, and environment than any current system instantiates.
 
----
 
 ## For You to Consider
 
@@ -76,7 +71,6 @@ Rafiee and Sutton argue that even reinforcement learning, the paradigm closest t
 
 And a harder question: if cognition is fundamentally enactive, if it is generated in action rather than stored in representation, does the concept of a "world model" as a separable internal module even make sense? Or is the world model, in the end, not a thing you build but a property you acquire through the right kind of living in the world?
 
----
 
 ## Further Reading
 

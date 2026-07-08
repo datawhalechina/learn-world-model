@@ -46,7 +46,6 @@ When Meta released V-JEPA 2 in 2025, it was explicitly positioned as a "**world 
 
 **Limitations**: produces no visualizable output; evaluation metrics are non-intuitive; using JEPA representations for MPC or actor-critic remains an open problem.
 
----
 
 ## Architecture Five: Robotic World Model (RWM), the Hard Problem of Robot Control
 

@@ -29,7 +29,6 @@ Dreamer V3 sits squarely in the world model row: it consumes actions, predicts l
 <figcaption>Hafner et al. (2023) Dreamer V3 world model architecture: RSSM separates the deterministic path (GRU) from the stochastic path (discrete latent variables), combined with symlog reward transformation and percentile normalization, allowing the same set of hyperparameters to run directly across 7 completely different domains without any task-specific tuning. This represents a concrete realization of the world-model camp's goal of "unified physical representations."</figcaption>
 </figure>
 
----
 
 ## WAM: The Joint-Modeling Approach
 
@@ -47,7 +46,6 @@ To understand the existing world models with a matrix, consider the horizontal a
 
 These three paradigms were compared from an engineering perspective in L03. The question here is different: what assumption is WAM betting on? **World models and policies should not be two separate modules; video itself is the supervisory signal for action learning.** If this assumption holds, joint training will dissolve the division between model foundation and policy learning, producing new emergent capabilities.
 
----
 
 ## JEPA: A Different Path
 
@@ -65,7 +63,6 @@ A 17-year-old learning to drive in 20 hours does not memorize road situations. T
 
 JEPA and WAM represent another debate within the world-model camp: in which space should prediction happen? Prediction in pixel space is interpretable but computationally expensive and easily distracted by irrelevant details. Prediction in representation space is efficient, but the quality of the representation determines everything.
 
----
 
 ## The Central Tension: Will They Converge?
 
@@ -79,7 +76,6 @@ The starting point may differ, leading to fundamental differences in system arch
 
 Xie Saining's answer to this question is embodied in AMI Labs' technical choices: start from physical perception, use language as an interface rather than as a foundation. The cost of this choice is clear: you need a completely different kind of data, not Common Crawl, but sensor recordings from the physical world.
 
----
 
 ## For You to Consider
 

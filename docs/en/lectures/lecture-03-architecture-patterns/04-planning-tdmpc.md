@@ -35,7 +35,6 @@ TD learning uses the Bellman equation to substitute "current reward + next-step 
 | Applicable task scope | Visually complex tasks requiring rich observations | State-observation tasks, efficient continuous control |
 | Interpretability | Can visualize reconstructions | Latent space has no direct semantics |
 
----
 
 ## Comparison of Three Planning Mechanisms
 
@@ -49,7 +48,6 @@ TD learning uses the Bellman equation to substitute "current reward + next-step 
 | Model exploitation risk | Medium (myopic) | High (policy can exploit model) | Medium (TD suppresses accumulated error) |
 | Typical scenario | Simple continuous control | Visually complex tasks | Efficient continuous control |
 
----
 
 ## Lecture Summary
 
@@ -59,13 +57,11 @@ TD learning uses the Bellman equation to substitute "current reward + next-step 
 - Dreamer = interaction-based paradigm + RSSM + latent Actor-Critic, and is the core reference system for this curriculum.
 - TD-MPC = counterfactual-based paradigm + CEM + TD, and will be implemented hands-on and compared with Dreamer in P04.
 
----
 
 ## Next Lecture
 
 After building and running world models, the next question is: how do we judge whether they are good? Lecture 4 provides dedicated evaluation metrics for each architecture: FID and reward correlation for Dreamer, MCTS visit entropy for MuZero, latent consistency loss for TD-MPC, long-horizon PSNR for STORM, and one universal failure mode that all models encounter: **horizon drift**.
 
----
 
 ## Further Reading
 

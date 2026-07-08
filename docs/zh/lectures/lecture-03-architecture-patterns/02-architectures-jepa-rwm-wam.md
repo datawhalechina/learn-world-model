@@ -46,7 +46,6 @@ Meta 在 2025 年发布 V-JEPA 2 时，明确把它定位为"**迈向 AGI 的世
 
 **局限**：不产生可视化输出；评估指标非直观；基于 JEPA 表示做 MPC 或 actor-critic 仍是开放问题。
 
----
 
 ## 架构五：Robotic World Model（RWM），机器人控制的硬问题
 

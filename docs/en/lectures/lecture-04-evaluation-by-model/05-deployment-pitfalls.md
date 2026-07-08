@@ -47,7 +47,6 @@ Robots in homes and factories require **hard safety layers**: joint velocity lim
 
 The world model can play the role of **risk prediction** ("if this action is executed, there is a 40% probability of a collision within the next 3 steps"), but the final hard safety guarantees must come from an independent, learning-free control layer. Safety constraints are a software engineering problem, not only an ML training problem.
 
----
 
 ## Further Reading
 
