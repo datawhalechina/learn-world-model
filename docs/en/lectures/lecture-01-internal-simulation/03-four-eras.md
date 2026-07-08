@@ -49,4 +49,4 @@ Around 2023, two parallel lines of research converged on the same question: **ca
 
 The evolutionary logic across the four eras is clear: from "how to predict states in a sequence" (Era 1), to "how to train a policy in dreams" (Era 2), to "how to compress perception in latent space" (Era 3), to "how to retain only semantics and discard noise" (Era 4). Each step is a direct response to the bottleneck of the previous one.
 
-The next page discusses why this evolution suddenly accelerated around 2024.
+Once this evolutionary line is clear, the key question becomes why world models suddenly accelerated around 2024.

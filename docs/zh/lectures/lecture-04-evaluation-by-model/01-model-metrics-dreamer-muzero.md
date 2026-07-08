@@ -31,7 +31,7 @@ Dreamer 是一个强化学习算法，不是生成模型。Dreamer V1/V2/V3 论�
 
 这是 Dreamer 系列论文的首要指标。Hafner et al. 2019 在 DMControl 上报告每个任务的 episode return；Hafner et al. 2020 在 Atari 200M 帧上报告 episode return；Hafner et al. 2023 横跨 7 个领域用单一超参数报告 episode return。三篇论文的核心 figure 都是**训练步数 vs. 累计奖励曲线**，与 model-free 基线（如 **SAC**，Soft Actor-Critic，一种基于最大熵框架的 off-policy Actor-Critic 算法，在连续控制任务上是强力的无模型基线；**DrQ-v2**，Data-regularized Q，在 SAC 基础上加入数据增强和 n 步回报，是像素输入连续控制的代表性基线）和 model-based 基线（如 **MBPO**，Model-Based Policy Optimization，用学到的世界模型生成短程合成轨迹来提高样本效率的基线算法；**PlaNet**，Planning with Latent Dynamics，RSSM 的前身，只做 MPC 规划不做 Actor-Critic）对比数据效率。
 
-**诊断规则**：训练曲线长期停滞或下降有两种来源。第一，奖励预测失真（世界模型在撒谎），Actor-Critic 在错误的想象奖励上优化；第二，RSSM 动力学预测漂移，想象轨迹越来越偏离真实环境分布。区分两者的办法是同时观察奖励相关性（见下节）。
+**诊断规则**：训练曲线长期停滞或下降有两种来源。第一，奖励预测失真（世界模型在撒谎），Actor-Critic 在错误的想象奖励上优化；第二，RSSM 动力学预测漂移，想象轨迹越来越偏离真实环境分布。区分两者的办法是同时观察奖励相关性。
 
 **如何在 P03 实验中追踪**：每隔固定训练步数（如每 10k 步）暂停训练，在真实环境中跑若干完整 episode，记录平均 episode return，画出曲线。这条曲线是判断 Dreamer 是否正常训练的最终标准。
 
@@ -80,4 +80,3 @@ $$H_{\text{traj}} = \mathbb{E}_t\!\left[H\!\left(q(z_t \mid h_t, o_t)\right)\rig
 **缓解策略**：
 - 使用 **KL 退火**（KL annealing，训练初期将损失函数中 KL 散度项的权重系数从 0 缓慢线性升至目标值，例如前 10k 步权重从 0 升到 1，给编码器时间先学会重建，再逐渐被迫向随机潜变量编码信息）：训练初期将 KL 权重从 0 缓慢升至目标值，给编码器时间先学会重建，再学会编码随机性
 - 设置 **KL 自由比特**（free bits，在计算 KL 损失时，对 KL 值低于阈值 $\lambda$（如 1 nat）的维度不施加任何梯度，即 $\max(0, \text{KL} - \lambda)$，强制模型至少为每个潜变量维度保留 $\lambda$ nats 的信息量，防止所有维度同时坍缩为零）：强制 KL 项至少达到某个最小值，防止过早崩塌
-

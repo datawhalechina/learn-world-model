@@ -92,7 +92,7 @@ LS-Imgaine 包含以下的关键的算法步骤：
 此外，为了评估想象过程中跳跃式转换的必要性，我们引入了一个跳跃标志（jumping flag）。如 *图 5* 所示，当智能体的观察中出现远距离的任务相关目标时，会在功用性图上体现为高价值区域高度集中，这也会导致功用性图的峰度（kurtosis）显著升高。在这种情况下，智能体应采用跳跃式状态转换（也称作长期转换），以高效抵达目标区域。
 
 <figure style="text-align: center;">
-  <img src="https://notes.sjtu.edu.cn/uploads/upload_8c0cb4bbb7171d1315b62f4c8f7f1e3a.png" alt="jp_flag" width="480">
+  <img src="https://notes.sjtu.edu.cn/uploads/upload_8c0cb4bbb7171d1315b62f4c8f7f1e3a.png" alt="基于功用性图峰度的跳跃标志" width="480">
   <figcaption style="font-size: 14px; color: gray;">图 5：跳跃式状态转换必要性评估</figcaption>
 </figure>
 
@@ -101,7 +101,7 @@ LS-Imgaine 包含以下的关键的算法步骤：
 在 LS-Imagine 中，世界模型需要能够同时支持即时状态转换（短期状态转换）和跳跃式状态转换（长期状态转换）。所以，如 *图 6 (a)* 所示，我们在状态转换模型中设计了短期和长期两个分支，短期状态转换模型将结合当前时刻的状态和动作来执行单步的即时状态转换以预测下一相邻时间步的状态；长期转换模型则模拟目标导向的跳跃式状态转换，引导智能体快速想象向目标探索。智能体可以根据当前的状态决定采用哪种类型的转换，并通过所选的转换分支预测下一状态。
 
 <figure style="text-align: center;">
-  <img src="https://notes.sjtu.edu.cn/uploads/upload_7aba677832aaeecff96e1a91a0f9932b.png" alt="jp_flag" width="800">
+  <img src="https://notes.sjtu.edu.cn/uploads/upload_7aba677832aaeecff96e1a91a0f9932b.png" alt="长短期世界模型架构与行为学习" width="800">
   <figcaption style="font-size: 14px; color: gray;">图 6：长短期世界模型架构以及基于长短期想象的行为学习</figcaption>
 </figure>
 
@@ -114,7 +114,7 @@ LS-Imgaine 包含以下的关键的算法步骤：
 如 *图 6 (b)* 所示，LS-Imagine 采用**演员-评论家（actor-critic）算法**，通过世界模型预测的潜在状态序列来学习行为。其中，演员（actor）的目标是优化策略，以最大化折扣累积奖励 $R_t$，而评论家（critic）的作用则是基于当前策略估算每个状态的折扣累积奖励。
 
 <figure style="text-align: center;">
-  <img src="https://notes.sjtu.edu.cn/uploads/upload_f97361fef42f533d4d71c44ce522febb.png" alt="jp_flag" width="800">
+  <img src="https://notes.sjtu.edu.cn/uploads/upload_f97361fef42f533d4d71c44ce522febb.png" alt="长短期想象序列展开" width="800">
   <figcaption style="font-size: 14px; color: gray;">图 7：动态选择使用长期转移模型或短期转移模型预测长短期想象序列</figcaption>
 </figure>
 
@@ -181,18 +181,7 @@ $$
     </table>
 </div>
 
-我们将 LS-Imagine 和 VPT、STEVE-1、PTGM、Director、DreamerV3 等多种方法进行了比对，评估的指标包括**在指定步数内完成任务的成功率**以及**平均完成任务所需要的交互步数**。实验的结果如 *图 8*、*图 9* 和 *表 2* 所示。
-
-
-<figure style="text-align: center;">
-  <img src="https://notes.sjtu.edu.cn/uploads/upload_1cabaf4f93530a8d62d654621c2b7aef.png" alt="jp_flag" width="800">
-  <figcaption style="font-size: 14px; color: gray;">图 8：各项任务上成功率的对比</figcaption>
-</figure>
-
-<figure style="text-align: center;">
-  <img src="https://notes.sjtu.edu.cn/uploads/upload_720f53ae4b1740b1da34c270de4694bc.png" alt="jp_flag" width="800">
-  <figcaption style="font-size: 14px; color: gray;">图 9：完成各项任务所需交互步数的对比</figcaption>
-</figure>
+我们将 LS-Imagine 和 VPT、STEVE-1、PTGM、Director、DreamerV3 等多种方法进行了比对，评估的指标包括**在指定步数内完成任务的成功率**以及**平均完成任务所需要的交互步数**。数值结果如 *表 2* 所示。
 
 <center><figcaption style="font-size: 14px; color: gray;">表 2：成功率和完成任务所需交互步数的数值结果</figcaption></center>
 <div align="center">
@@ -307,7 +296,7 @@ $$
 同时，我们在 *图 10* 中展示了基于长短期想象状态序列重建的观测图像和功用性图的可视化结果。其中第一行显示了**跳跃式状态转换前后的潜在状态，并将其解码回像素空间**，以直观呈现状态变化；第二行可视化了**由潜在状态重建的功用性图**，以更清晰地理解功用性图如何促进跳跃式状态转换，以及它们是否能够提供有效的目标导向指导；最后一行**通过透明叠加的方式将功用性图覆盖在重建的观测图像上**，从而更直观的凸显出智能体关注的区域。
 
 <figure style="text-align: center;">
-  <img src="https://notes.sjtu.edu.cn/uploads/upload_1fbb8ad05b0fc85b35061e41fb057206.gif" alt="jp_flag" width="800">
+  <img src="https://notes.sjtu.edu.cn/uploads/upload_1fbb8ad05b0fc85b35061e41fb057206.gif" alt="长短期想象序列可视化" width="800">
   <figcaption style="font-size: 14px; color: gray;">图 10：长短期想象序列可视化</figcaption>
 </figure>
 
@@ -340,7 +329,6 @@ GitHub链接：https://github.com/qiwang067/LS-Imagine
     year={2025}
 }
 ```
-
 
 
 

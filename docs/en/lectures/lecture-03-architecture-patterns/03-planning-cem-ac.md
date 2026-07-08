@@ -97,4 +97,4 @@ Dreamer's core insight: rather than collecting large amounts of data in the real
 
 **Model exploitation problem**: the policy may discover actions that yield high rewards inside the model but are invalid in the real world, such as high-frequency jitter actions that score highly in the world model but would only damage motors on a real robot. The Dreamer series addresses this by periodically updating the world model with real environment data and limiting the number of imagination rollout steps, but the problem has not been fundamentally solved.
 
-CEM is inefficient in high-dimensional action spaces, and Actor-Critic carries model exploitation risk. TD-MPC combines both approaches to address these two problems, as described in the next section.
+CEM is inefficient in high-dimensional action spaces, and Actor-Critic carries model exploitation risk. TD-MPC's core value is combining both approaches to mitigate these two problems at the same time.

@@ -88,7 +88,7 @@ As shown in *Figure 4*, to leverage the task-relevant prior knowledge provided b
 Furthermore, to assess the necessity of jump-style transitions during imagination, we introduce a jumping flag. As shown in *Figure 5*, when a distant task-relevant target appears in the agent's observation, it manifests as highly concentrated high-value regions on the affordance map, which also causes the kurtosis of the affordance map to increase significantly. In such cases, the agent should adopt jump-style state transitions (also called long-term transitions) to efficiently reach the target region.
 
 <figure style="text-align: center;">
-  <img src="https://notes.sjtu.edu.cn/uploads/upload_8c0cb4bbb7171d1315b62f4c8f7f1e3a.png" alt="jp_flag" width="480">
+  <img src="https://notes.sjtu.edu.cn/uploads/upload_8c0cb4bbb7171d1315b62f4c8f7f1e3a.png" alt="Jumping flag based on affordance map kurtosis" width="480">
   <figcaption style="font-size: 14px; color: gray;">Figure 5: Assessment of jump-style state transition necessity</figcaption>
 </figure>
 
@@ -97,7 +97,7 @@ Furthermore, to assess the necessity of jump-style transitions during imaginatio
 In LS-Imagine, the world model needs to simultaneously support immediate state transitions (short-term state transitions) and jump-style state transitions (long-term state transitions). Therefore, as shown in *Figure 6 (a)*, we designed short-term and long-term branches in the state transition model. The short-term state transition model combines the current state and action to perform single-step immediate state transitions to predict the next adjacent time step's state. The long-term transition model simulates goal-oriented jump-style state transitions, guiding the agent to rapidly imagine exploration toward the goal. The agent can decide which type of transition to adopt based on the current state and predict the next state through the selected transition branch.
 
 <figure style="text-align: center;">
-  <img src="https://notes.sjtu.edu.cn/uploads/upload_7aba677832aaeecff96e1a91a0f9932b.png" alt="jp_flag" width="800">
+  <img src="https://notes.sjtu.edu.cn/uploads/upload_7aba677832aaeecff96e1a91a0f9932b.png" alt="Long short-term world model architecture and behavior learning" width="800">
   <figcaption style="font-size: 14px; color: gray;">Figure 6: Long short-term world model architecture and behavior learning based on long short-term imagination</figcaption>
 </figure>
 
@@ -110,7 +110,7 @@ Based on this architecture, the agent interacts with the environment and collect
 As shown in *Figure 6 (b)*, LS-Imagine employs an **actor-critic algorithm** to learn behavior through latent state sequences predicted by the world model. The actor's objective is to optimize the policy to maximize the discounted cumulative reward $R_t$, while the critic's role is to estimate the discounted cumulative reward for each state based on the current policy.
 
 <figure style="text-align: center;">
-  <img src="https://notes.sjtu.edu.cn/uploads/upload_f97361fef42f533d4d71c44ce522febb.png" alt="jp_flag" width="800">
+  <img src="https://notes.sjtu.edu.cn/uploads/upload_f97361fef42f533d4d71c44ce522febb.png" alt="Long short-term imagination sequence rollout" width="800">
   <figcaption style="font-size: 14px; color: gray;">Figure 7: Dynamically selecting long-term or short-term transition models to predict long short-term imagination sequences</figcaption>
 </figure>
 
@@ -177,18 +177,7 @@ We conducted experiments in the Minecraft game environment to test the LS-Imagin
     </table>
 </div>
 
-We compared LS-Imagine with various methods including VPT, STEVE-1, PTGM, Director, and DreamerV3. The evaluation metrics include **success rate in completing tasks within specified steps** and **average interaction steps required to complete tasks**. The experimental results are shown in *Figure 8*, *Figure 9*, and *Table 2*.
-
-
-<figure style="text-align: center;">
-  <img src="https://notes.sjtu.edu.cn/uploads/upload_1cabaf4f93530a8d62d654621c2b7aef.png" alt="jp_flag" width="800">
-  <figcaption style="font-size: 14px; color: gray;">Figure 8: Comparison of success rates across tasks</figcaption>
-</figure>
-
-<figure style="text-align: center;">
-  <img src="https://notes.sjtu.edu.cn/uploads/upload_720f53ae4b1740b1da34c270de4694bc.png" alt="jp_flag" width="800">
-  <figcaption style="font-size: 14px; color: gray;">Figure 9: Comparison of interaction steps required to complete tasks</figcaption>
-</figure>
+We compared LS-Imagine with various methods including VPT, STEVE-1, PTGM, Director, and DreamerV3. The evaluation metrics include **success rate in completing tasks within specified steps** and **average interaction steps required to complete tasks**. The numerical results are shown in *Table 2*.
 
 <center><figcaption style="font-size: 14px; color: gray;">Table 2: Numerical results for success rate and interaction steps required to complete tasks</figcaption></center>
 <div align="center">
@@ -303,7 +292,7 @@ We found that **LS-Imagine** performs significantly better than comparison model
 Additionally, we present visualization results of reconstructed observation images and affordance maps based on long short-term imagination state sequences in *Figure 10*. The first row shows **latent states before and after jump-style state transitions, decoded back to pixel space** to intuitively present state changes. The second row visualizes **affordance maps reconstructed from latent states** to more clearly understand how affordance maps facilitate jump-style state transitions and whether they can provide effective goal-oriented guidance. The last row **overlays affordance maps on reconstructed observation images through transparent superposition** to more intuitively highlight the regions the agent focuses on.
 
 <figure style="text-align: center;">
-  <img src="https://notes.sjtu.edu.cn/uploads/upload_1fbb8ad05b0fc85b35061e41fb057206.gif" alt="jp_flag" width="800">
+  <img src="https://notes.sjtu.edu.cn/uploads/upload_1fbb8ad05b0fc85b35061e41fb057206.gif" alt="Visualization of long short-term imagination sequences" width="800">
   <figcaption style="font-size: 14px; color: gray;">Figure 10: Visualization of long short-term imagination sequences</figcaption>
 </figure>
 

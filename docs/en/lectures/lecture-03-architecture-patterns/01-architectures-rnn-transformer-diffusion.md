@@ -1,6 +1,6 @@
 ---
 title: "Part A: RNN, Transformer, and Diffusion Architectures"
-description: Using RSSM as a baseline, this page examines the core mechanisms, learning paradigms, and applicable scenarios of Transformer-based and Diffusion-based world models.
+description: RSSM serves as the baseline for comparing the core mechanisms, learning paradigms, and applicable scenarios of Transformer-based and Diffusion-based world models.
 lecture: 3
 ---
 
