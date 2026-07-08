@@ -90,6 +90,7 @@ const enWorldModelItems = [
     items: [
       { text: "Overview", link: "/en/lectures/lecture-01-internal-simulation/" },
       { text: "Foundations", link: "/en/lectures/lecture-01-internal-simulation/01-foundations" },
+      { text: "World Model Taxonomy", link: "/en/lectures/lecture-01-internal-simulation/02-world-model-taxonomy" },
       { text: "What Is a World Model", link: "/en/lectures/lecture-01-internal-simulation/02-what-is-a-world-model" },
       { text: "Four Eras", link: "/en/lectures/lecture-01-internal-simulation/03-four-eras" },
       { text: "Why Now", link: "/en/lectures/lecture-01-internal-simulation/04-why-now" },
