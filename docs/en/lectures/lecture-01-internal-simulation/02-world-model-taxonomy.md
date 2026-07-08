@@ -4,6 +4,48 @@ title: A Rigorous Taxonomy of World Models
 
 # A Rigorous Taxonomy of World Models: From Technical Labels to Cognitive Function
 
+## The clean separation: history is not taxonomy
+
+A rigorous tutorial should not confuse two useful but different questions:
+
+1. **Historical lineage**: how did world-model research evolve?
+2. **Functional capability**: what can a given world model actually do?
+
+The “four eras” framing belongs to the first question. It is a narrative arc: early recurrent prediction, the Ha and Schmidhuber formulation, Dreamer-style latent imagination, and JEPA-style representation/prediction. This is useful for orientation, but it is not the deepest classification of world models.
+
+The L1-L5 ladder belongs to the second question. It classifies a model by its operational capability: whether it merely compresses the present, predicts the future, supports action-conditioned counterfactuals, couples prediction to value and planning, or improves itself through error-driven interaction.
+
+So the tutorial uses a two-axis view:
+
+| Axis | What it answers | Role in the course |
+| --- | --- | --- |
+| Historical eras | “How did the field get here?” | Pedagogical framing |
+| L1-L5 capability ladder | “What kind of world model is this?” | Main taxonomy |
+
+This avoids a common mistake: treating every famous technique as a separate kind of world model. DINO, MAE, JEPA, NeRF, video prediction, Dreamer, MuZero, and simulators are not peers in a flat list. They occupy different capability levels and often solve different parts of the world-model problem.
+
+The strict taxonomy of this course is therefore:
+
+```text
+History explains origin.
+Capability explains essence.
+```
+
+## How the four eras map onto L1-L5
+
+The historical eras and the capability ladder can be combined without contradiction:
+
+| Historical framing | Typical contribution | Capability interpretation |
+| --- | --- | --- |
+| Early recurrent prediction | Learn compact hidden states and predict sequences | L1-L2 |
+| Ha and Schmidhuber world models | Separate representation, memory/dynamics, and controller | L1-L3, with an agent interface |
+| Dreamer-style latent imagination | Plan and learn policies inside a learned latent dynamics model | L3-L4 |
+| JEPA-style representation/prediction | Learn abstract predictive representations without reconstructing every pixel | L1-L2, potentially a foundation for L3-L5 |
+
+This table also shows why a single method should not be overclaimed. JEPA is extremely important, but by itself it is not automatically an agentic world model. Dreamer is closer to the agentic sense because its learned dynamics model is used for policy learning. A simulator such as MuJoCo is runnable, but it is not a learned internal world model unless the agent internalizes or approximates its dynamics.
+
+In this course, the phrase **world model** is used strictly when a system contains an internal model that supports prediction, counterfactual evaluation, planning, or self-correction. Systems that only provide representations are treated as **world-model components** unless they are integrated into a larger predictive or agentic loop.
+
 The term “world model” is used very broadly. Self-supervised vision, video generation, 3D reconstruction, physical simulation, reinforcement learning, and embodied AI all sometimes claim to build world models. To avoid conceptual inflation, this course uses a stricter framework.
 
 The closer a system is to a complete world model, the more it should answer three questions:
