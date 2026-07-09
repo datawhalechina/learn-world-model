@@ -136,7 +136,7 @@ Contributions are welcome. Before submitting a pull request, read [CLAUDE.md](./
 
 ---
 
-## Contributors (Tutorial)
+## Contributors
 
 | Name | Role | Affiliation | GitHub |
 | ---- | ---- | ----------- | ------ |
