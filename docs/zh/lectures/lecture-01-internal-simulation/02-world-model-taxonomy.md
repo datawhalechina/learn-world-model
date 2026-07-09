@@ -24,6 +24,8 @@ L1-L5 属于第二个问题。它按照模型的操作能力分类：模型只�
 
 这样可以避免一个常见误区：把每个著名技术都当成一种并列的“世界模型类型”。DINO、MAE、JEPA、NeRF、视频预测、Dreamer、MuZero 和 simulator 并不是一个扁平列表里的同类项。它们处在不同能力层级，也常常只解决世界模型问题的不同子模块。
 
+> **📖 DINO、MAE、CLIP、ViT**：这四个名字会在本分类体系中反复出现，作为 L1 表征学习的典型例子，有必要先在这里讲清楚。**ViT**（Vision Transformer，[Dosovitskiy et al., 2021](https://arxiv.org/abs/2010.11929)）把 Transformer 的自注意力机制（在 L03 详细介绍）直接用于图像：把图像切成固定大小的 patch，每个 patch 当作一个 token，在 patch 序列上做自注意力，而不是用卷积。**DINO**（self-DIstillation with NO labels，[Caron et al., 2021](https://arxiv.org/abs/2104.14294)，Meta AI）用纯自监督的方式训练 ViT，不需要任何标签：学生网络在同一张图片的不同增强视角上，学习去匹配一个缓慢更新的教师网络（通过 EMA，也就是 JEPA 中用到的同一种机制）的输出，训练出来的特征会按物体语义自动聚类，即使模型从未被告知“这是什么物体”。**CLIP**（Contrastive Language-Image Pretraining，[Radford et al., 2021](https://arxiv.org/abs/2103.00020)，OpenAI）联合训练一个图像编码器和一个文本编码器，让匹配的图文对表征互相靠近，不匹配的图文对表征互相远离，从而得到视觉和语言两个模态对齐的表征。**MAE**（Masked Autoencoder，掩码自编码器，[He et al., 2021](https://arxiv.org/abs/2111.06377)）的训练方式是遮住图像中很大一部分 patch（通常 75%），只用剩下可见的 patch 重建被遮住的像素，思路和 BERT 遮住文本中的词类似。这四者都是表征学习方法：它们产出的是图像的压缩、语义化编码，这也是它们在本分类体系中停留在 L1 而不是更高层级的原因——它们本身并不预测未来，也不以动作为条件。
+
 因此，本教程的严格版本是：
 
 ```text

@@ -67,6 +67,8 @@ Specifically, for a single-frame observation image, we use a sliding bounding bo
 
 Subsequently, we use the pre-trained MineCLIP model to evaluate the correlation between the simulated exploration video and the task text description, using this as the potential exploration value of that region. After the sliding bounding box scans the entire image, we fuse the correlation values from all bounding box positions to generate a complete affordance map, providing guidance for the agent's exploration.
 
+> **📖 MineCLIP** ([Fan et al., 2022](https://arxiv.org/abs/2206.08853)): a CLIP-style model (see L01 for CLIP) pretrained specifically on Minecraft gameplay videos paired with narration text, so that it can score how well a short video clip matches a natural-language task description. Here it is repurposed as a reward signal: instead of classifying images, it evaluates whether a simulated exploration trajectory is moving toward the goal described in text.
+
 ### 2. Fast Affordance Map Generation
 
 The affordance map computation process in step 1 above involves extensive window traversal and computation using a pre-trained video-text alignment model for each window position. This method is computationally intensive and time-consuming, making it difficult to apply to real-time tasks. To address this, we designed a multimodal U-Net architecture based on Swin-Unet, and trained this multimodal U-Net architecture using the virtual exploration-based affordance map computation method described above to annotate data as supervision signals, enabling it to efficiently generate affordance maps at each time step using visual observations and language instructions, as shown in *Figure 3*.
@@ -178,6 +180,8 @@ We conducted experiments in the Minecraft game environment to test the LS-Imagin
 </div>
 
 We compared LS-Imagine with various methods including VPT, STEVE-1, PTGM, Director, and DreamerV3. The evaluation metrics include **success rate in completing tasks within specified steps** and **average interaction steps required to complete tasks**. The numerical results are shown in *Table 2*.
+
+> **📖 Baseline methods in this comparison**: **VPT** (Video PreTraining, [Baker et al., 2022](https://arxiv.org/abs/2206.11795)) pretrains a Minecraft policy on unlabeled YouTube gameplay video by first learning to infer actions from video with a small labeled dataset, then using that inverse dynamics model to pseudo-label millions of hours of unlabeled footage for behavior cloning. **STEVE-1** ([Lifshitz et al., 2023](https://arxiv.org/abs/2306.00937)) builds a text-conditioned or visual-goal-conditioned policy on top of VPT, following the instruction-tuning recipe used for language models. **PTGM** (Pretraining with Task-Guided Merging, [Yuan et al., 2024](https://arxiv.org/abs/2405.14684)) discretizes VPT's action space into a small skill codebook so that high-level task instructions can be mapped to short reusable action sequences. **Director** ([Hafner et al., 2022](https://arxiv.org/abs/2206.04114)) is a hierarchical extension of Dreamer where a manager policy sets latent-space subgoals and a worker policy learns to reach them, aimed at exactly the same long-horizon "myopia" problem that LS-Imagine addresses with jump-style transitions. All four serve here as prior model-free or model-based baselines that LS-Imagine is compared against.
 
 <center><figcaption style="font-size: 14px; color: gray;">Table 2: Numerical results for success rate and interaction steps required to complete tasks</figcaption></center>
 <div align="center">
