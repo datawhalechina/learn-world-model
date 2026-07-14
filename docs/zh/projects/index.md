@@ -8,7 +8,7 @@ title: 项目
 
 ## 硬件要求
 
-本章节的每个 notebook 都是在 Google Colab 上使用单块 T4 GPU（16 GB）开发并运行的。任何显存和算力相当或更高的加速卡，包括同代或更新的 Nvidia GPU、AMD GPU 或 TPU，都能无需任何改动地运行全部六个项目。一块中端消费级 GPU 就足够，所有项目都不需要多卡训练。
+本章节的每个 notebook 都是在 Google Colab 上使用单块 T4 GPU（16 GB）开发并运行的。任何显存和算力相当或更高的加速卡，无论是同代或更新的 Nvidia GPU、AMD GPU 还是 TPU，都能无需任何改动地运行全部六个项目。一块中端消费级 GPU 就足够，所有项目都不需要多卡训练。
 
 如果你手头没有合适的 GPU 机器，以下云平台都可以满足需求：
 
@@ -16,16 +16,16 @@ title: 项目
 |---|---|---|---|
 | Google Colab | T4、L4、A100 | 本课程的参考环境；免费版可用于冒烟测试，Pro 版提供稳定的 T4/L4 算力 | [colab.research.google.com/signup](https://colab.research.google.com/signup) |
 | Kaggle Notebooks | 双 T4、P100 | 每周 30 小时免费 GPU 时长，无需订阅 | [kaggle.com/docs/notebooks](https://www.kaggle.com/docs/notebooks) |
-| AMD Developer Cloud | MI300X | 提供免费试用额度，可用于测试 AMD GPU 上的 ROCm 兼容性 | [amd.com/en/developer/resources/cloud-access.html](https://www.amd.com/en/developer/resources/cloud-access.html) |
+| AMD Developer Cloud | MI300X | 免费试用额度，用于测试 AMD GPU 上的 ROCm 兼容性 | [amd.com/en/developer/resources/cloud-access.html](https://www.amd.com/en/developer/resources/cloud-access.html) |
 | Lambda Cloud | A10、A100、H100 | 按小时计费的 Nvidia 按需实例，无需长期承诺 | [lambda.ai/service/gpu-cloud](https://lambda.ai/service/gpu-cloud) |
 | RunPod | 型号覆盖广，社区版与安全云两档 | 短期训练任务性价比最高的按需与抢占式定价 | [runpod.io](https://www.runpod.io/) |
-| Google Cloud TPU | TPU v4/v5e | 如果你想专门验证 TPU 代码路径 | [cloud.google.com/tpu](https://cloud.google.com/tpu) |
+| Google Cloud TPU | TPU v4/v5e | 专门验证 TPU 代码路径 | [cloud.google.com/tpu](https://cloud.google.com/tpu) |
 
-以上平台均已验证可以无需改动直接运行这些 notebook。代码只使用标准的 PyTorch 算子，不含任何 CUDA 专用调用，因此在 AMD 硬件的 ROCm 环境下也能无需修改直接运行。特别是 Colab，免费版只是偶尔才会有闲置的 T4 可用，如果你打算一次性完整跑完这些项目，Colab Pro 能提供更稳定的算力。
+以上平台均已验证可以无需改动直接运行这些 notebook。代码只使用标准的 PyTorch 算子，不含任何 CUDA 专用调用，因此在 AMD 硬件的 ROCm 环境下也能无需修改直接运行。
 
-这些 markdown 页面只保留叙述文字和代码。所有 output、图表、表格和其他产物都请到对应的 `.ipynb` 文件中查看。
+这些 markdown 页面只保留叙述文字和代码，output、图表、表格等产物都在对应的 `.ipynb` 文件中查看。
 
-打开任意 notebook 并从头到尾运行即可；如果上游权重缺失，notebook 会回退到随机初始化，仍可作为冒烟测试，但只有在真实权重就位后，跨项目的对比结果才具有意义。
+打开任意 notebook 并从头到尾运行即可。如果上游权重缺失，notebook 会回退到随机初始化，仍可作为冒烟测试，但只有在真实权重就位后，跨项目的对比结果才具有意义。
 
 ## 项目流程
 
@@ -40,7 +40,7 @@ title: 项目
 
 ## 权重文件如何串联
 
-各项目共享一组在流水线中向前传递的权重文件。P01 训练 VAE 并写出 `vae_encoder.pt`。P02 加载该编码器，训练动力学模型，写出 `rssm.pt`。此后路径分叉：P03 把编码器和 RSSM 组合成 Dreamer 智能体，保存为 `dreamer.pt`；P04 则复用 RSSM 作为基线，训练 Transformer 骨干，保存为 `transformer_wm.pt`。P05 加载 `dreamer.pt` 与 `transformer_wm.pt` 完成准确度评估。P06 再加载同样的两套权重来探查因果保真度，并训练一个自有的动作正则化模型，保存为 `causal_wm.pt`。
+各项目共享一组在流水线中向前传递的权重文件。P01 训练 VAE 并写出 `vae_encoder.pt`；P02 加载该编码器，训练动力学模型，写出 `rssm.pt`。此后路径分叉：P03 把编码器和 RSSM 组合成 Dreamer 智能体，保存为 `dreamer.pt`；P04 则复用 RSSM 作为基线，训练 Transformer 骨干，保存为 `transformer_wm.pt`。P05 加载 `dreamer.pt` 与 `transformer_wm.pt` 完成准确度评估，P06 再加载同样的两套权重探查因果保真度，并训练一个自有的动作正则化模型，保存为 `causal_wm.pt`。
 
 ```mermaid
 graph TD

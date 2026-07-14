@@ -8,24 +8,24 @@ Six hands-on projects build a complete world-model pipeline from scratch. Work t
 
 ## Hardware requirements
 
-Every notebook in this section was developed and run on Google Colab with a single T4 GPU (16 GB). Any accelerator with comparable or greater memory and compute, an Nvidia GPU, an AMD GPU, or a TPU from the same or a later generation, runs all six projects without any changes. A single mid-range consumer GPU is enough; none of the projects need multi-GPU training.
+Every notebook in this section was developed and run on Google Colab with a single T4 GPU (16 GB). Any accelerator with comparable or greater memory and compute, whether an Nvidia GPU, an AMD GPU, or a TPU from the same or a later generation, runs all six projects unchanged. A single mid-range consumer GPU is enough; none of the projects require multi-GPU training.
 
 If you do not already have access to a machine with a suitable GPU, here are cloud options that work well:
 
 | Provider | Hardware | Good for | Link |
 |---|---|---|---|
 | Google Colab | T4, L4, A100 | The reference environment for this course; free tier works for smoke tests, Pro gives reliable T4/L4 access | [colab.research.google.com/signup](https://colab.research.google.com/signup) |
-| Kaggle Notebooks | T4 x2, P100 | Free 30 GPU-hours/week, no subscription needed | [kaggle.com/docs/notebooks](https://www.kaggle.com/docs/notebooks) |
+| Kaggle Notebooks | T4 x2, P100 | Free 30 GPU-hours per week, no subscription needed | [kaggle.com/docs/notebooks](https://www.kaggle.com/docs/notebooks) |
 | AMD Developer Cloud | MI300X | Free trial credits for testing ROCm compatibility on AMD GPUs | [amd.com/en/developer/resources/cloud-access.html](https://www.amd.com/en/developer/resources/cloud-access.html) |
 | Lambda Cloud | A10, A100, H100 | On-demand Nvidia instances billed by the hour, no long-term commitment | [lambda.ai/service/gpu-cloud](https://lambda.ai/service/gpu-cloud) |
-| RunPod | Wide range, community and secure cloud tiers | Cheapest on-demand and spot pricing for short training runs | [runpod.io](https://www.runpod.io/) |
-| Google Cloud TPU | TPU v4/v5e | If you want to validate the TPU code path specifically | [cloud.google.com/tpu](https://cloud.google.com/tpu) |
+| RunPod | Wide range of GPUs, community and secure cloud tiers | Cheap on-demand and spot pricing for short training runs | [runpod.io](https://www.runpod.io/) |
+| Google Cloud TPU | TPU v4/v5e | Validating the TPU code path specifically | [cloud.google.com/tpu](https://cloud.google.com/tpu) |
 
-All of the providers above have been verified to run these notebooks without changes. The code only uses standard PyTorch operations with no CUDA-specific calls, so it also runs unmodified under ROCm on AMD hardware. On Colab specifically, the free tier only occasionally has an idle T4 available, so Colab Pro gives more reliable access if you plan to work through the projects in one sitting.
+All of the providers above have been verified to run these notebooks without changes. The code only uses standard PyTorch operations with no CUDA-specific calls, so it also runs unmodified under ROCm on AMD hardware.
 
-Markdown pages only include narrative text and code. Any outputs, plots, tables, or other artifacts live in the corresponding `.ipynb` notebook files.
+Markdown pages only include narrative text and code. Outputs, plots, tables, and other artifacts live in the corresponding `.ipynb` notebook files.
 
-Open any notebook in Jupyter or Colab and run it top to bottom. If an upstream checkpoint is missing, the notebook falls back to random initialization so it still works as a smoke test, but the cross-project comparisons only become meaningful once the real checkpoints are present.
+Open any notebook in Jupyter or Colab and run it top to bottom. If an upstream checkpoint is missing, the notebook falls back to random initialization so it still works as a smoke test, but the cross-project comparisons only become meaningful once the real checkpoints are in place.
 
 ## Project sequence
 
@@ -40,7 +40,7 @@ Open any notebook in Jupyter or Colab and run it top to bottom. If an upstream c
 
 ## How the checkpoints chain together
 
-The projects share a single set of weight files passed forward through the pipeline. P01 trains the VAE and writes `vae_encoder.pt`. P02 loads that encoder, trains the dynamics models, and writes `rssm.pt`. From there the path forks: P03 combines the encoder and RSSM into a Dreamer agent saved as `dreamer.pt`, while P04 reuses the RSSM as a baseline and trains a Transformer backbone saved as `transformer_wm.pt`. P05 loads both `dreamer.pt` and `transformer_wm.pt` for the accuracy evaluation. P06 then loads the same two checkpoints to probe causal fidelity, training one action-regularized model of its own that it saves as `causal_wm.pt`.
+The projects share a single set of weight files passed forward through the pipeline. P01 trains the VAE and writes `vae_encoder.pt`. P02 loads that encoder, trains the dynamics models, and writes `rssm.pt`. From there the path forks: P03 combines the encoder and RSSM into a Dreamer agent saved as `dreamer.pt`, while P04 reuses the RSSM as a baseline and trains a Transformer backbone saved as `transformer_wm.pt`. P05 loads both `dreamer.pt` and `transformer_wm.pt` for the accuracy evaluation. P06 then loads the same two checkpoints to probe causal fidelity, training its own action-regularized model saved as `causal_wm.pt`.
 
 ```mermaid
 graph TD
