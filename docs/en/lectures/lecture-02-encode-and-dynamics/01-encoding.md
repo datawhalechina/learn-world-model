@@ -42,10 +42,10 @@ The data flows in one direction: the CNN Encoder compresses the raw image into a
 
 The training objective of a VAE is the **ELBO (Evidence Lower Bound)**, which contains two terms:
 
-> **📖 What is the ELBO?** What we truly want to maximize is the probability that the model generates the real image, $\log p(\mathbf{o})$, but this quantity is intractable to compute directly (it requires integrating over all possible $\mathbf{z}$). The ELBO is a **tractable lower bound** on this quantity: maximizing the ELBO is equivalent to approximating this objective under a constraint. The "lower bound" in the name means exactly this: $\text{ELBO} \leq \log p(\mathbf{o})$.
+> **📖 What is the ELBO?** What we truly want to maximize is the probability that the model generates the real image, $\log p(\mathbf{o})$, but this quantity is intractable to compute directly (it requires integrating over all possible $\mathbf{z}$). The ELBO is a **tractable lower bound** on this quantity: maximizing the ELBO is equivalent to approximating this objective under a constraint. The "lower bound" in the name means exactly this: $\text{ELBO} \leq \log p(\mathbf{o})$. In practice, we train by minimizing the negative ELBO as a loss function $\mathcal{L}$:
 
 $$
-\mathcal{L}_{\text{ELBO}} = \underbrace{\mathbb{E}_{q(\mathbf{z}|\mathbf{o})}\left[\log p(\mathbf{o}|\mathbf{z})\right]}_{\text{reconstruction loss}} - \underbrace{D_{\text{KL}}\left(q(\mathbf{z}|\mathbf{o}) \| p(\mathbf{z})\right)}_{\text{KL divergence}}
+\mathcal{L} = \underbrace{-\mathbb{E}_{q(\mathbf{z}|\mathbf{o})}\left[\log p(\mathbf{o}|\mathbf{z})\right]}_{\text{reconstruction loss}} + \underbrace{D_{\text{KL}}\left(q(\mathbf{z}|\mathbf{o}) \| p(\mathbf{z})\right)}_{\text{KL divergence}}
 $$
 
 > **📖 What is KL divergence?** $D_{\text{KL}}(q \| p)$ measures the "gap" between two probability distributions: the more similar $q$ is to $p$, the closer the KL value is to 0; the larger the gap, the larger the KL value (always ≥ 0). Here it constrains the encoder's output distribution $q(\mathbf{z}|\mathbf{o})$ from straying too far from the standard normal prior $p(\mathbf{z}) = \mathcal{N}(0, I)$, ensuring that different regions of the latent space can be smoothly interpolated without "holes" (regions where interpolated points decode to incoherent outputs).
@@ -55,7 +55,7 @@ $$
 | **Reconstruction loss** | The decoded image should resemble the original | "Compression must still allow recovery" |
 | **KL divergence** | The latent distribution should stay close to standard normal $\mathcal{N}(0, I)$ | "The latent space should be well-organized and continuous" |
 
-Training maximizes the ELBO (equivalently, minimizes the negative ELBO). The two terms work together: the reconstruction loss ensures $\mathbf{z}$ retains useful information, while the KL divergence keeps the latent space structured, preventing "holes" (discontinuous regions).
+The two terms work together: the reconstruction loss ensures $\mathbf{z}$ retains useful information, while the KL divergence keeps the latent space structured, preventing "holes" (discontinuous regions).
 
 > **📖 Reparameterization Trick**: After the encoder outputs mean $\mu$ and standard deviation $\sigma$, we need to **sample** $\mathbf{z}$ from the distribution $\mathcal{N}(\mu, \sigma^2)$. The problem with direct sampling is that the sampling operation itself is not differentiable, so gradients cannot flow from $\mathbf{z}$ back to $\mu$ and $\sigma$, preventing the encoder from being trained. The solution is to rewrite sampling as: $\mathbf{z} = \mu + \sigma \cdot \varepsilon$, where $\varepsilon \sim \mathcal{N}(0, I)$ is independently sampled noise (independent of the network parameters). Now $\mathbf{z}$ is differentiable with respect to $\mu$ and $\sigma$, gradients flow normally, and the encoder can be trained end-to-end.
 

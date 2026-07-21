@@ -42,10 +42,10 @@ lecture: 2
 
 VAE 的训练目标是**ELBO（证据下界，Evidence Lower Bound）**，包含两项：
 
-> **📖 什么是 ELBO？** 我们真正想最大化的是"模型生成真实图像的概率" $\log p(\mathbf{o})$，但这个量直接计算很困难（需要对所有可能的 $\mathbf{z}$ 积分）。ELBO 是它的一个**可计算下界**，最大化 ELBO 等价于在约束下尽量接近这个目标。名字里的"下界"正是这个意思：$\text{ELBO} \leq \log p(\mathbf{o})$。
+> **📖 什么是 ELBO？** 我们真正想最大化的是"模型生成真实图像的概率" $\log p(\mathbf{o})$，但这个量直接计算很困难（需要对所有可能的 $\mathbf{z}$ 积分）。ELBO 是它的一个**可计算下界**，最大化 ELBO 等价于在约束下尽量接近这个目标。名字里的"下界"正是这个意思：$\text{ELBO} \leq \log p(\mathbf{o})$。训练时通常把负 ELBO 当作损失函数 $\mathcal{L}$ 来最小化：
 
 $$
-\mathcal{L}_{\text{ELBO}} = \underbrace{\mathbb{E}_{q(\mathbf{z}|\mathbf{o})}\left[\log p(\mathbf{o}|\mathbf{z})\right]}_{\text{重建损失}} - \underbrace{D_{\text{KL}}\left(q(\mathbf{z}|\mathbf{o}) \| p(\mathbf{z})\right)}_{\text{KL 散度}}
+\mathcal{L} = \underbrace{-\mathbb{E}_{q(\mathbf{z}|\mathbf{o})}\left[\log p(\mathbf{o}|\mathbf{z})\right]}_{\text{重建损失}} + \underbrace{D_{\text{KL}}\left(q(\mathbf{z}|\mathbf{o}) \| p(\mathbf{z})\right)}_{\text{KL 散度}}
 $$
 
 > **📖 什么是 KL 散度？** $D_{\text{KL}}(q \| p)$ 衡量两个概率分布之间的"差距"：$q$ 与 $p$ 越相似，KL 值越接近 0；差距越大，KL 值越大（永远 ≥ 0）。这里用它来约束编码器输出的分布 $q(\mathbf{z}|\mathbf{o})$ 不要偏离标准正态分布 $p(\mathbf{z}) = \mathcal{N}(0, I)$ 太远，使得潜在空间的不同区域之间可以平滑插值，而不会出现"空洞"（插值出来的点解码后是乱码）。
@@ -55,7 +55,7 @@ $$
 | **重建损失** | 解码后的图像要像原图 | "压缩后还能还原" |
 | **KL 散度** | 潜在分布要接近标准正态 $\mathcal{N}(0, I)$ | "潜在空间要整齐、连续" |
 
-训练时最大化 ELBO（等价于最小化负 ELBO）。两项共同作用：重建损失让 $\mathbf{z}$ 保留有用信息，KL 散度让潜在空间结构规整，避免"打洞"（不连续区域）。
+两项共同作用：重建损失让 $\mathbf{z}$ 保留有用信息，KL 散度让潜在空间结构规整，避免"打洞"（不连续区域）。
 
 > **📖 重参数化技巧（Reparameterization Trick）**：编码器输出均值 $\mu$ 和标准差 $\sigma$ 后，需要从分布 $\mathcal{N}(\mu, \sigma^2)$ 中**采样** $\mathbf{z}$。直接采样的问题是：采样操作本身不可微，梯度无法从 $\mathbf{z}$ 流回 $\mu$ 和 $\sigma$，编码器就无法被训练。解决方法是把采样改写为：$\mathbf{z} = \mu + \sigma \cdot \varepsilon$，其中 $\varepsilon \sim \mathcal{N}(0, I)$ 是独立采样的噪声（与网络参数无关）。现在 $\mathbf{z}$ 对 $\mu$ 和 $\sigma$ 是可微的，梯度可以正常流过，编码器可以被端到端训练。
 
