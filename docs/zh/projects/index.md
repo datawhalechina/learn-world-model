@@ -16,7 +16,7 @@ title: 项目
 |---|---|---|---|
 | Google Colab | T4、L4、A100 | 本课程的参考环境；免费版可用于冒烟测试，Pro 版提供稳定的 T4/L4 算力 | [colab.research.google.com/signup](https://colab.research.google.com/signup) |
 | Kaggle Notebooks | 双 T4、P100 | 每周 30 小时免费 GPU 时长，无需订阅 | [kaggle.com/docs/notebooks](https://www.kaggle.com/docs/notebooks) |
-| AMD Developer Cloud | MI300X | 免费试用额度，用于测试 AMD GPU 上的 ROCm 兼容性 | [amd.com/en/developer/resources/cloud-access.html](https://www.amd.com/en/developer/resources/cloud-access.html) |
+| AMD Radeon Cloud | Radeon | 免费 150 小时 GPU 时长，一键启动本课程 notebook | [developer.amd.com.cn](https://developer.amd.com.cn/login?source=eHjyREaw5) |
 | Lambda Cloud | A10、A100、H100 | 按小时计费的 Nvidia 按需实例，无需长期承诺 | [lambda.ai/service/gpu-cloud](https://lambda.ai/service/gpu-cloud) |
 | RunPod | 型号覆盖广，社区版与安全云两档 | 短期训练任务性价比最高的按需与抢占式定价 | [runpod.io](https://www.runpod.io/) |
 | Google Cloud TPU | TPU v4/v5e | 专门验证 TPU 代码路径 | [cloud.google.com/tpu](https://cloud.google.com/tpu) |
