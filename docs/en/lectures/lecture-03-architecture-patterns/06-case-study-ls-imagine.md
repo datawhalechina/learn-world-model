@@ -1,3 +1,9 @@
+---
+title: "Case Study: LS-Imagine"
+description: "ICLR 2025 Oral. A long short-term world model with affordance-map-driven jump-style state transitions, letting a Minecraft agent imagine directly toward distant, sparsely distributed goals."
+lecture: 3
+---
+
 # ICLR 2025 Oral | Playing MineCraft with Pure Vision on a Single 3090: LS-Imagine for Reinforcement Learning over Long Short-Term Imagination in Open Worlds
 
 LS-Imagine plays Minecraft through pure visual observation, learning RL control policies by mimicking human players without cheats or privileged information.

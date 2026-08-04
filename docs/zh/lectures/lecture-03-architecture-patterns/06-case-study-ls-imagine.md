@@ -1,3 +1,9 @@
+---
+title: "案例研究：LS-Imagine"
+description: "ICLR 2025 Oral。一个长短期世界模型，通过功用性图驱动的跳跃式状态转换，让 Minecraft 智能体直接向稀疏分布的远期目标想象前进。"
+lecture: 3
+---
+
 # ICLR 2025 Oral | 单卡3090纯视觉玩 MineCraft：LS-Imagine 在开放世界中基于长短期想象进行强化学习
 
 LS-Imagine 通过纯视觉观测来玩 Minecraft，仿照人类玩家的做法来学习 RL 控制策略，不开外挂，不使用特权信息。

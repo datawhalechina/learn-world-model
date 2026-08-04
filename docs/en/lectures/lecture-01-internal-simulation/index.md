@@ -14,5 +14,5 @@ A world model is the computational version of this mechanism: a sketch of "how t
 This lecture is organized in three parts:
 
 - **Conceptual foundations**: from Craik (1943) to predictive coding, the internal model principle, and the boundary between broad and narrow definitions of world models
-- **Four eras**: the evolutionary arc from RNN beginnings to Ha & Schmidhuber, Dreamer, and JEPA
+- **Taxonomy and the four eras**: the evolutionary arc from RNN beginnings to Ha & Schmidhuber, Dreamer, and JEPA, and the L1-L5 capability ladder that classifies world models by what they can actually do
 - **Why now**: the converging context of video generation, embodied intelligence, and autonomous driving, plus the course roadmap

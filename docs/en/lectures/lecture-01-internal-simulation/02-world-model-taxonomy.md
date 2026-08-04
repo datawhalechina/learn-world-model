@@ -33,7 +33,19 @@ History explains origin.
 Capability explains essence.
 ```
 
-## How the four eras map onto L1-L5
+## The Four Eras, Briefly
+
+**Era One: Theoretical Foundations (1950s-2017)**. Recurrent neural networks, Kalman filters, hidden Markov models: over seven decades, researchers across control theory, speech recognition, and robotics independently built tools for predicting future states, but this work was never unified under the name "world model."
+
+**Era Two: Ha and Schmidhuber's "Learning in Dreams" (2018)**. Ha and Schmidhuber's [World Models](https://arxiv.org/abs/1803.10122) unified these scattered ideas with a three-module framework: a **V**ision encoder compresses each frame into a latent vector, an **M**emory module (MDN-RNN) predicts how that vector evolves given past latents and actions, and a **C**ontroller maps the current latent and the memory module's hidden state directly to an action. Training the controller entirely inside a hallucinated environment produced by the memory module, then transferring the policy to the real game, brought the world-model idea into mainstream awareness for the first time.
+
+**Era Three: Dreamer and Latent Space (2019)**. Hafner et al.'s [Dreamer V1](https://arxiv.org/abs/1912.01603) introduced RSSM (Recurrent State Space Model, full mechanism in Lecture 2), splitting state into a deterministic history path and a stochastic uncertainty path. Unlike Ha and Schmidhuber's approach, Dreamer never reconstructs images in pixel space: prediction, planning, and reward learning all happen directly in latent space, substantially outperforming prior model-free methods on Atari and continuous control.
+
+**Era Four: Video as World (2023+)**. JEPA (Joint Embedding Predictive Architecture, LeCun's team, [2022](https://openreview.net/forum?id=BZ5a1r-kVsf)) abandons pixel reconstruction entirely and predicts purely in a semantic embedding space: "I don't need to draw your face; I just need to know who you are."
+
+The evolutionary logic across the four eras: from "how to predict states in a sequence" (Era 1), to "how to train a policy in dreams" (Era 2), to "how to compress perception in latent space" (Era 3), to "how to retain only semantics and discard noise" (Era 4). Each step is a direct response to the bottleneck of the previous one.
+
+## How the Four Eras Map Onto L1-L5
 
 The historical eras and the capability ladder can be combined without contradiction:
 
@@ -178,8 +190,8 @@ There is also a class of systems commonly mislabeled as world models: physics si
 
 A popular meme grid, the "world model nine-grid" (reconstruction / predict-next-step / runnable-simulation on one axis, features-latents / objects-3D / pixels-video on the other), captures exactly the intuition in this section: DINO, JEPA, and Dreamer each occupy one cell; NeRF, scene flow, and MuJoCo occupy others. This is the same idea as the three-question table in [Foundations](./01-foundations): "what does it predict / does it condition on actions / what purpose does it serve," laid out differently. It arranges models along two orthogonal axes:
 
-- **Horizontal: modeling space** — what the representation is over: features/latents, objects/3D, pixels/video, or physical state.
-- **Vertical: capability level** — what the model can do in that space: reconstruction, prediction, or action-conditioned closure, corresponding to L1-L4 above.
+- **Horizontal: modeling space**, what the representation is over: features/latents, objects/3D, pixels/video, or physical state.
+- **Vertical: capability level**, what the model can do in that space: reconstruction, prediction, or action-conditioned closure, corresponding to L1-L4 above.
 
 | Representation object | Reconstruction (L1) | Prediction (L2) | Action closure (L3-L4) | Representative formula |
 | --- | --- | --- | --- | --- |

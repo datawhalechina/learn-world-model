@@ -15,10 +15,9 @@ const zhWorldModelItems = [
       { text: "导读", link: "/zh/lectures/lecture-01-internal-simulation/" },
       { text: "思想基石", link: "/zh/lectures/lecture-01-internal-simulation/01-foundations" },
       { text: "世界模型是什么：渲染、模拟与规划", link: "/zh/lectures/lecture-01-internal-simulation/02-what-is-a-world-model" },
-      { text: "世界模型的严格分类", link: "/zh/lectures/lecture-01-internal-simulation/02-world-model-taxonomy" },
-      { text: "四个时代", link: "/zh/lectures/lecture-01-internal-simulation/03-four-eras" },
-      { text: "世界模型的价值与时代背景", link: "/zh/lectures/lecture-01-internal-simulation/04-why-now" },
-      { text: "课程路线图", link: "/zh/lectures/lecture-01-internal-simulation/05-roadmap" },
+      { text: "世界模型的严格分类与四个时代", link: "/zh/lectures/lecture-01-internal-simulation/02-world-model-taxonomy" },
+      { text: "世界模型的价值与时代背景", link: "/zh/lectures/lecture-01-internal-simulation/03-why-now" },
+      { text: "课程路线图", link: "/zh/lectures/lecture-01-internal-simulation/04-roadmap" },
     ]
   },
   {
@@ -39,9 +38,9 @@ const zhWorldModelItems = [
       { text: "Part A：RNN、Transformer、Diffusion", link: "/zh/lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion" },
       { text: "Part A（续）：JEPA 与 RWM", link: "/zh/lectures/lecture-03-architecture-patterns/02-architectures-jepa-rwm-wam" },
       { text: "Part A（续二）：Genie、WAM 与选型", link: "/zh/lectures/lecture-03-architecture-patterns/03-architectures-genie-wam" },
-      { text: "Part B：CEM-MPC 与 Actor-Critic", link: "/zh/lectures/lecture-03-architecture-patterns/03-planning-cem-ac" },
-      { text: "Part B（续）：TD-MPC 与规划对比", link: "/zh/lectures/lecture-03-architecture-patterns/04-planning-tdmpc" },
-      { text: "案例研究：LS-Imagine", link: "/zh/lectures/lecture-03-architecture-patterns/05-case-study-ls-imagine" },
+      { text: "Part B：CEM-MPC 与 Actor-Critic", link: "/zh/lectures/lecture-03-architecture-patterns/04-planning-cem-ac" },
+      { text: "Part B（续）：TD-MPC 与规划对比", link: "/zh/lectures/lecture-03-architecture-patterns/05-planning-tdmpc" },
+      { text: "案例研究：LS-Imagine", link: "/zh/lectures/lecture-03-architecture-patterns/06-case-study-ls-imagine" },
     ]
   },
   {
@@ -49,14 +48,14 @@ const zhWorldModelItems = [
     collapsed: false,
     items: [
       { text: "导读", link: "/zh/lectures/lecture-04-evaluation-by-model/" },
-      { text: "Dreamer 指标", link: "/zh/lectures/lecture-04-evaluation-by-model/01-model-metrics-dreamer-muzero" },
+      { text: "Dreamer 指标", link: "/zh/lectures/lecture-04-evaluation-by-model/01-model-metrics-dreamer" },
       { text: "MuZero 指标", link: "/zh/lectures/lecture-04-evaluation-by-model/02-model-metrics-muzero" },
-      { text: "TD-MPC 指标", link: "/zh/lectures/lecture-04-evaluation-by-model/02-model-metrics-tdmpc" },
-      { text: "STORM 指标", link: "/zh/lectures/lecture-04-evaluation-by-model/03-storm-diffusion-drift" },
-      { text: "扩散模型与时程漂移", link: "/zh/lectures/lecture-04-evaluation-by-model/04-diffusion-drift" },
-      { text: "真实部署评测", link: "/zh/lectures/lecture-04-evaluation-by-model/04-deployment-metrics" },
-      { text: "七个常见坑与落地策略", link: "/zh/lectures/lecture-04-evaluation-by-model/05-deployment-pitfalls" },
-      { text: "总结、落地策略与展望", link: "/zh/lectures/lecture-04-evaluation-by-model/06-summary" },
+      { text: "TD-MPC 指标", link: "/zh/lectures/lecture-04-evaluation-by-model/03-model-metrics-tdmpc" },
+      { text: "STORM 指标", link: "/zh/lectures/lecture-04-evaluation-by-model/04-storm-diffusion-drift" },
+      { text: "扩散模型与时程漂移", link: "/zh/lectures/lecture-04-evaluation-by-model/05-diffusion-drift" },
+      { text: "真实部署评测", link: "/zh/lectures/lecture-04-evaluation-by-model/06-deployment-metrics" },
+      { text: "七个常见坑与落地策略", link: "/zh/lectures/lecture-04-evaluation-by-model/07-deployment-pitfalls" },
+      { text: "总结、落地策略与展望", link: "/zh/lectures/lecture-04-evaluation-by-model/08-summary" },
     ]
   },
   {
@@ -92,10 +91,9 @@ const enWorldModelItems = [
       { text: "Overview", link: "/en/lectures/lecture-01-internal-simulation/" },
       { text: "Foundations", link: "/en/lectures/lecture-01-internal-simulation/01-foundations" },
       { text: "What Is a World Model", link: "/en/lectures/lecture-01-internal-simulation/02-what-is-a-world-model" },
-      { text: "World Model Taxonomy", link: "/en/lectures/lecture-01-internal-simulation/02-world-model-taxonomy" },
-      { text: "Four Eras", link: "/en/lectures/lecture-01-internal-simulation/03-four-eras" },
-      { text: "Why Now", link: "/en/lectures/lecture-01-internal-simulation/04-why-now" },
-      { text: "Course Roadmap", link: "/en/lectures/lecture-01-internal-simulation/05-roadmap" },
+      { text: "World Model Taxonomy & Four Eras", link: "/en/lectures/lecture-01-internal-simulation/02-world-model-taxonomy" },
+      { text: "Why Now", link: "/en/lectures/lecture-01-internal-simulation/03-why-now" },
+      { text: "Course Roadmap", link: "/en/lectures/lecture-01-internal-simulation/04-roadmap" },
     ]
   },
   {
@@ -116,9 +114,9 @@ const enWorldModelItems = [
       { text: "Part A: RNN, Transformer & Diffusion", link: "/en/lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion" },
       { text: "Part A (cont): JEPA & RWM", link: "/en/lectures/lecture-03-architecture-patterns/02-architectures-jepa-rwm-wam" },
       { text: "Part A (cont): Genie, WAM & Selection", link: "/en/lectures/lecture-03-architecture-patterns/03-architectures-genie-wam" },
-      { text: "Part B: CEM-MPC & Actor-Critic", link: "/en/lectures/lecture-03-architecture-patterns/03-planning-cem-ac" },
-      { text: "Part B (cont): TD-MPC & Comparison", link: "/en/lectures/lecture-03-architecture-patterns/04-planning-tdmpc" },
-      { text: "Case Study: LS-Imagine", link: "/en/lectures/lecture-03-architecture-patterns/05-case-study-ls-imagine" },
+      { text: "Part B: CEM-MPC & Actor-Critic", link: "/en/lectures/lecture-03-architecture-patterns/04-planning-cem-ac" },
+      { text: "Part B (cont): TD-MPC & Comparison", link: "/en/lectures/lecture-03-architecture-patterns/05-planning-tdmpc" },
+      { text: "Case Study: LS-Imagine", link: "/en/lectures/lecture-03-architecture-patterns/06-case-study-ls-imagine" },
     ]
   },
   {
@@ -126,14 +124,14 @@ const enWorldModelItems = [
     collapsed: false,
     items: [
       { text: "Overview", link: "/en/lectures/lecture-04-evaluation-by-model/" },
-      { text: "Dreamer Metrics", link: "/en/lectures/lecture-04-evaluation-by-model/01-model-metrics-dreamer-muzero" },
+      { text: "Dreamer Metrics", link: "/en/lectures/lecture-04-evaluation-by-model/01-model-metrics-dreamer" },
       { text: "MuZero Metrics", link: "/en/lectures/lecture-04-evaluation-by-model/02-model-metrics-muzero" },
-      { text: "TD-MPC Metrics", link: "/en/lectures/lecture-04-evaluation-by-model/02-model-metrics-tdmpc" },
-      { text: "STORM Metrics", link: "/en/lectures/lecture-04-evaluation-by-model/03-storm-diffusion-drift" },
-      { text: "Diffusion & Horizon Drift", link: "/en/lectures/lecture-04-evaluation-by-model/04-diffusion-drift" },
-      { text: "Real-World Deployment Metrics", link: "/en/lectures/lecture-04-evaluation-by-model/04-deployment-metrics" },
-      { text: "Seven Pitfalls & Deployment Strategies", link: "/en/lectures/lecture-04-evaluation-by-model/05-deployment-pitfalls" },
-      { text: "Summary & Outlook", link: "/en/lectures/lecture-04-evaluation-by-model/06-summary" },
+      { text: "TD-MPC Metrics", link: "/en/lectures/lecture-04-evaluation-by-model/03-model-metrics-tdmpc" },
+      { text: "STORM Metrics", link: "/en/lectures/lecture-04-evaluation-by-model/04-storm-diffusion-drift" },
+      { text: "Diffusion & Horizon Drift", link: "/en/lectures/lecture-04-evaluation-by-model/05-diffusion-drift" },
+      { text: "Real-World Deployment Metrics", link: "/en/lectures/lecture-04-evaluation-by-model/06-deployment-metrics" },
+      { text: "Seven Pitfalls & Deployment Strategies", link: "/en/lectures/lecture-04-evaluation-by-model/07-deployment-pitfalls" },
+      { text: "Summary & Outlook", link: "/en/lectures/lecture-04-evaluation-by-model/08-summary" },
     ]
   },
   {
