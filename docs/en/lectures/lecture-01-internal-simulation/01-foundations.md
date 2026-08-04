@@ -1,6 +1,6 @@
 ---
 title: "Intellectual Foundations: Craik, Predictive Coding, and the Internal Model Principle"
-description: Starting from Craik's 1943 miniature model, understand predictive coding and the Internal Model Principle, and clarify the conceptual boundary between broad and narrow world models.
+description: Starting from Craik's 1943 miniature model, understand predictive coding and the Internal Model Principle, see Brooks' 1991 challenge resolved by a 2025 proof, and clarify the conceptual boundary between broad and narrow world models.
 lecture: 1
 ---
 
@@ -43,6 +43,17 @@ Around the same time, the field of control engineering independently arrived at 
 This sounds like engineering jargon, but the intuition is clear: a self-driving car maintaining its lane through a curve must have an algorithm that "knows" how the vehicle behaves dynamically in a curve, not through reaction, but through **anticipation**.
 
 This principle appears throughout robotics, spacecraft control, and economic modeling, and it became the theoretical foundation for model-based methods in reinforcement learning. To control something, you must first understand it. The Internal Model Principle turns this commonsense observation into a mathematical necessity.
+
+
+## The Skeptic's Reply, and a 2025 Proof
+
+Not everyone agreed. In 1991, roboticist Rodney Brooks argued the opposite in *Intelligence without Representation*: "the world is its own best model." His claim was that an agent does not need to carry a model of its environment at all; it can act intelligently through a tight, reflexive loop of sensing and acting, letting the real world serve as its own always-up-to-date map. For decades this was not just a philosophical position. Model-free agents genuinely did generalize across diverse tasks without anyone building an explicit world model into them, which made Brooks' challenge hard to dismiss.
+
+In 2025, researchers at Google DeepMind settled the question with a proof rather than another argument. In *General Agents Need World Models*, Richens, Abel, Bellot, and Everitt showed that any agent capable of generalizing across a broad range of goals must have implicitly learned a predictive model of its environment, and that this model can always be recovered from the agent's behavior alone, without ever inspecting its internals. Craik's 1943 intuition turns out to be a theorem about modern learned agents, not just a metaphor about brains.
+
+> **📖 The theorem, for the curious**: the paper formalizes the environment as a controlled Markov process with transition function $P_{ss'}(a)$, and considers a *bounded* goal-conditioned agent, one whose failure rate on composite goals of depth up to $n$ is at most $\delta$ relative to the best possible policy. Its central result is that such an agent's policy alone determines a world model $\hat{P}_{ss'}(a)$ with error bounded by $\left|\hat{P}_{ss'}(a) - P_{ss'}(a)\right| \le \sqrt{2P_{ss'}(a)(1 - P_{ss'}(a)) / \big((n-1)(1-\delta)\big)}$. As the agent grows more competent ($\delta \to 0$) or is asked to handle longer-horizon goals (larger $n$), the recoverable world model becomes more accurate: learning a sufficiently general policy is informationally equivalent to learning an accurate world model. The paper also gives an algorithm that extracts this model purely by querying the agent with pairs of goals that differ in an either-or branch, such as "reach a state within $r$ attempts" versus "reach it in more than $r$ attempts," and reading off which goal the agent prefers. This result holds only for agents that plan over multi-step horizons; a purely myopic agent optimizing immediate reward can in principle avoid learning a world model, since it never needs to predict long-term consequences. It also does not overturn Brooks so much as bound his claim: agents that only ever face short-horizon goals genuinely can get by without a rich internal model, but no agent that generalizes across a *broad* range of long-horizon goals can avoid building one.
+
+The practical upshot for this course: when a later chapter shows a system winning on some benchmark without an explicit, human-designed world model, the right question is not "does it have one?" but "where is it hiding?" A sufficiently competent goal-directed policy, including one produced by an LLM, is now known to encode a recoverable simulation of its environment even when no one trained it to.
 
 
 ## A Common Confusion: Broad vs. Narrow World Models

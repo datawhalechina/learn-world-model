@@ -58,120 +58,162 @@ The closer a system is to a complete world model, the more it should answer thre
 
 These questions define three increasingly strong meanings of “world model”. They clean up many confusions in the literature, but they are still not the final taxonomy we want. A more powerful taxonomy should not only ask which paper family a model belongs to. It should ask: **what operational capability does this model give the agent?**
 
-## Level 1: Representational World-Model Components
+## L1-L5: Classification by Operational Capability
 
-Representational models compress high-dimensional observations into computable, memorable, comparable internal states. They answer the question: “What is here?”
+“Reconstruct the world,” “predict the next step,” and “it runs” are useful intuitive entry points, but they still describe surface behavior. A stronger taxonomy should start from what the agent can actually do. This course uses a five-level capability ladder as its main taxonomy. Each level below gives its core question, a formal expression, typical examples, and its limits.
 
-Typical examples:
+### L1 Compression Models: What is here?
 
-- **DINO / CLIP-like visual representations**: learn semantic and object-level visual structure.
-- **MAE / masked reconstruction**: learn latent variables by reconstructing missing image or video content.
-- **Autoencoder / VAE encoder**: compress high-dimensional observations into latent state.
-- **Object-centric representation**: decompose scenes into persistent objects and attributes.
+Compression models turn high-dimensional observations into computable, memorable, comparable internal states. They answer "what can the world I currently see be represented as." They typically do not unroll the future or serve action directly, so they are better described as world-model components rather than complete world models.
 
-These models answer the first question: they have internal state representations. But without explicit dynamics and action interfaces, they are better described as world-model components rather than complete world models.
+Formally:
 
-## Level 2: Predictive World Models
+$$z_t = \text{Encoder}(o_t)$$
 
-Predictive models represent the current world and predict what will happen next. Prediction may happen in pixel space, feature space, object space, 3D space, or physical state space.
+where $o_t$ is the high-dimensional observation at time $t$ (pixels, point clouds, etc.) and $z_t$ is the compressed internal state.
 
 Typical examples:
 
-- **JEPA**: predicts target representations in latent space rather than reconstructing every pixel.
-- **Video diffusion / video prediction**: predicts future frames or possible visual trajectories.
-- **Scene flow / optical flow models**: predict motion of 3D points, pixels, or objects.
-- **Dynamics model**: learns a transition function such as `s_{t+1} = f(s_t, a_t)`.
+- DINO / MAE / CLIP-style representation
+- autoencoder / VAE encoder
+- object-centric representation
 
-These models answer the first two questions: they represent state and predict future state. But if prediction is not connected to action selection or planning, they remain predictive world models rather than agentic world models.
+Core capabilities: pixels to latent state, local observations to stable objects, noisy detail to task-relevant variables.
 
-## Level 3: Action-Conditioned World Models
+Limits: it knows "what is here," but not necessarily "what happens next."
 
-Action-conditioned models include the agent’s action in world evolution. They do not merely predict what will naturally happen next. They predict: “What if I act?”
+### L2 Dynamics Models: What happens next?
 
-Typical examples:
+Dynamics models do more than represent the current world; they learn how state changes over time, predicting "if the world keeps evolving, what happens next." Prediction can happen in pixel space, feature space, object space, or 3D space.
 
-- **Model-based RL dynamics models**
-- **Robotics forward models**
-- **Controllable video generation**
-- **Action-conditioned latent transitions**
+Formally:
 
-Core capabilities:
+$$z_{t+1} = \text{Predictor}(z_{\le t})$$
 
-- `s_{t+1} = f(s_t, a_t)`
-- action-conditioned counterfactual prediction
-- imagined trajectories under candidate policies
-
-These models can answer local counterfactuals, but they do not necessarily support long-horizon planning or value-aware decision-making.
-
-## Level 4: Value-Coupled World Models
-
-Value-coupled models bind world prediction to goals, rewards, preferences, costs, or survival constraints. They answer: “What matters?”
+JEPA is the canonical example at this level, and it further restricts prediction to a mapping between visible and masked patches: $z_{\text{masked}} = \text{Predictor}(z_{\text{visible}}, \Delta)$, where $\Delta$ encodes the position of the masked region. Video world models take the pixel-space version of the same idea: $I_{t+1} = \text{Generator}(I_{\le t}, c)$, generating the next frame directly from history frames $I_{\le t}$ and an optional semantic prompt $c$.
 
 Typical examples:
 
-- **Dreamer-style actor-critic learning in imagination**
-- **MuZero-style reward and value prediction**
-- **Learned cost models for control**
-- **Preference-conditioned world models**
+- JEPA / latent dynamics
+- video prediction / video diffusion
+- scene flow / object dynamics
 
-Core capabilities:
+Core capabilities: temporal prediction, latent rollout, uncertainty over futures.
 
-- reward and value prediction
-- planning over imagined futures
-- credit assignment through latent rollouts
+Limits: it can predict the future, but not necessarily "what my action would change."
 
-These models know which imagined futures are better or worse. They are agentic world models because prediction is used for planning, control, and decision-making.
+### L3 Action-Conditioned Models: What if I act?
 
-## Level 5: Self-Correcting World Models
+Action-conditioned models fold the agent's action into world evolution. They do not merely predict what naturally happens next; they predict "what happens if I take this action."
 
-Self-correcting models close the loop between prediction error, exploration, and model update. They do not just use a world model. They actively improve it.
+Formally:
+
+$$s_{t+1} = f(s_t, a_t)$$
+
+where $a_t$ is the action the agent takes at time $t$. This single condition turns the world model from a bystander into a participant.
 
 Typical examples:
 
-- **Active inference**
-- **Curiosity-driven model learning**
-- **Uncertainty-guided exploration**
-- **Lifelong world-model learning**
-- **Scientific discovery agents**
+- model-based RL dynamics model
+- robotics forward model
+- controllable video generation
+- action-conditioned latent transition
 
-Core capabilities:
+Core capabilities: action-conditioned counterfactual prediction, imagined trajectories under candidate policies.
 
-- detect model error
-- choose experiments that reduce uncertainty
-- update beliefs after intervention
-- maintain a growing world model across tasks
+Limits: it can answer single-step or short-horizon counterfactuals, but not necessarily long-horizon planning, and it does not necessarily know which consequences are worth pursuing.
 
-This is a higher-order world model. It not only simulates the world, but also notices where its simulation is unreliable and actively collects information to repair it.
+### L4 Value-Coupled Models: What matters?
+
+Value-coupled models bind world prediction to goals, rewards, preferences, or survival constraints, answering "which futures are better, which are more dangerous." This is the strictest sense of an agentic world model used in this course: prediction is used directly for planning, control, and decision-making.
+
+Formally:
+
+$$a^* = \arg\max_{a} \; \text{Value}\big(\text{Rollout}_{\text{WM}}(s, a)\big)$$
+
+That is, the world model rolls out multiple candidate actions in parallel imagination, a value function or evaluator scores them, and the best action is selected. Dreamer does this with a learned actor-critic inside latent imagination; MuZero does the same thing with search.
+
+Typical examples:
+
+- Dreamer-style actor-critic in imagination
+- MuZero-style reward/value prediction
+- learned cost models for control
+- preference-conditioned world models
+
+Core capabilities: reward / value prediction, planning over imagined futures, credit assignment through latent rollouts.
+
+Limits: it knows which futures are more valuable, but does not necessarily keep revising its own world assumptions, and errors in the model itself can be amplified by the planning process.
+
+### L5 Self-Correcting Models: How do I improve my model of the world?
+
+Self-correcting models close the loop between prediction error, exploration, and model update. They do not just use a world model; they actively improve it: detecting model error, choosing experiments that reduce uncertainty, updating beliefs after intervention, and maintaining a growing world model across tasks. This is a higher-order world model, one that not only simulates the world but also notices where its simulation is unreliable.
+
+Typical examples:
+
+- active inference
+- curiosity-driven model learning
+- uncertainty-guided exploration
+- lifelong world-model learning
+- scientific discovery agents
+
+Core capabilities: detect model error, choose experiments that reduce uncertainty, update beliefs after intervention, maintain a growing world model across tasks.
 
 ## The Final Ability Ladder
 
 This course does not use a binary label such as “is this a world model or not?” Instead, it uses an ability ladder:
 
-| Level | Core Question | Minimal Capability | Typical Examples | Strict Term |
+| Level | Core Question | Formalization | Typical Examples | Strict Term |
 | --- | --- | --- | --- | --- |
-| L1 Compression | What is here? | Represent current state | DINO, MAE, NeRF encoder | world-model component |
-| L2 Dynamics | What happens next? | Predict future state | JEPA, video prediction, scene flow | predictive world model |
-| L3 Action-Conditioning | What if I act? | Predict consequences of actions | robotics forward model, action-conditioned dynamics | controllable world model |
-| L4 Value-Coupling | What matters? | Use prediction for planning and decision-making | Dreamer, MuZero | agentic world model |
-| L5 Self-Correction | How do I improve? | Explore, detect error, and update the model | active inference, curiosity, lifelong agents | self-improving world model |
+| L1 Compression | What is here? | $z_t = \text{Encoder}(o_t)$ | DINO, MAE, NeRF encoder | world-model component |
+| L2 Dynamics | What happens next? | $z_{t+1} = \text{Predictor}(z_{\le t})$ | JEPA, video prediction, scene flow | predictive world model |
+| L3 Action-Conditioning | What if I act? | $s_{t+1} = f(s_t, a_t)$ | robotics forward model, action-conditioned dynamics | controllable world model |
+| L4 Value-Coupling | What matters? | $a^* = \arg\max_a \text{Value}(\text{Rollout}_{\text{WM}}(s,a))$ | Dreamer, MuZero | agentic world model |
+| L5 Self-Correction | How do I improve? | Active exploration and model update (no single closed form) | active inference, curiosity, lifelong agents | self-improving world model |
 
 This taxonomy is stronger than the common “reconstruct / predict / run the world” grid because it classifies models by agent capability rather than surface behavior. A system can implement these abilities over pixels, objects, 3D scenes, language, physical states, or abstract latent variables. The modality is not the essence. **Operational counterfactual ability is the essence.**
 
-## Relation to the Common Grid
+There is also a class of systems commonly mislabeled as world models: physics simulators such as MuJoCo, Brax, and Isaac Gym; rule-based or procedurally generated environments such as Atari, Snake, and Minecraft; and game engines in general. They genuinely "contain a world," and they matter a great deal for training world models because they supply data and evaluation environments. But they are usually not internal models the agent has learned itself. Unless the agent has internalized their regularities into its own internal model, they count as **external simulators** and sit outside the L1-L5 ladder.
 
-Common grids arrange models by axes such as “reconstruction, prediction, runnable simulation” and “features, objects, pixels, 3D.” This intuition is useful, but it mixes two different questions:
+## Two-Dimensional Classification: Object × Capability
 
-- What space is being modeled? Features, objects, 3D, pixels, physical states.
-- What can the model do in that space? Compress, predict, answer action-conditioned counterfactuals, plan, self-correct.
+A popular meme grid, the "world model nine-grid" (reconstruction / predict-next-step / runnable-simulation on one axis, features-latents / objects-3D / pixels-video on the other), captures exactly the intuition in this section: DINO, JEPA, and Dreamer each occupy one cell; NeRF, scene flow, and MuJoCo occupy others. This is the same idea as the three-question table in [Foundations](./01-foundations): "what does it predict / does it condition on actions / what purpose does it serve," laid out differently. It arranges models along two orthogonal axes:
 
-This course keeps “modeling space” as a horizontal dimension, but uses the ability ladder as the main vertical axis. This explains why:
+- **Horizontal: modeling space** — what the representation is over: features/latents, objects/3D, pixels/video, or physical state.
+- **Vertical: capability level** — what the model can do in that space: reconstruction, prediction, or action-conditioned closure, corresponding to L1-L4 above.
 
-- DINO and MAE are important, but usually remain at L1.
-- JEPA and video prediction enter L2.
-- Action-conditioned dynamics enter L3.
-- Dreamer and MuZero enter L4.
-- Agents that actively design experiments and revise their own assumptions enter L5.
-- MuJoCo and game engines are external simulators; they are not automatically internal world models learned by the agent.
+| Representation object | Reconstruction (L1) | Prediction (L2) | Action closure (L3-L4) | Representative formula |
+| --- | --- | --- | --- | --- |
+| Features / latents | MAE, autoencoder | JEPA, latent dynamics | Dreamer latent imagination | $z_{\text{masked}} = \text{Predictor}(z_{\text{visible}}, \Delta)$ |
+| Objects / 3D | NeRF, 3D Gaussian Splatting | scene flow, object dynamics | model-based manipulation | $I = \text{Renderer}(\Theta, c)$ |
+| Pixels / video | image/video reconstruction | video diffusion, video prediction | visual model predictive control | $I_{t+1} = \text{Generator}(I_{\le t}, c)$ |
+| State / physical quantities | state estimator | learned dynamics | MPC, model-based RL | $s_{t+1} = f(s_t, a_t)$ |
+
+In the NeRF / 3D Gaussian Splatting formula, $\Theta$ is the scene representation (NeRF weights or a 3DGS Gaussian set), $c$ is the query condition (viewpoint, timestamp, or pose), and $I$ is the rendered image.
+
+The key point of this table is: **the object axis does not determine whether something is a complete world model; the capability axis determines the strict level**. NeRF can be an excellent 3D world representation, but if it is only static reconstruction, it stays at the L1 representational level. Dreamer is closer to a complete world model precisely because it connects latent prediction to action learning, reaching L3-L4. This is also why DINO and MAE usually stay at L1, JEPA and video prediction reach L2, action-conditioned dynamics reach L3, Dreamer and MuZero reach L4, and only agents that actively design experiments and revise their own assumptions reach L5, a level with no corresponding cell in the nine-grid, since it goes beyond what the "modeling space" axis alone can describe.
+
+## Application: From the L1-L5 Ladder to Seven Planning Architectures
+
+The ladder above answers "what kind of world-modeling capability does this system have." For people building planning pipelines for robots or autonomous vehicles, the more practical question is "how does a world model actually get wired into planning." The seven paths below, drawn from Zhijian Qiao's (HKUST UAV Group) survey of current literature, each map back to a level on the L1-L5 ladder, connecting the abstract ladder to concrete architecture choices.
+
+| Path | One-line summary | Corresponding capability level |
+| --- | --- | --- |
+| 1. Representation pretraining | Pretrain an encoder on unlabeled video, then attach only the encoder to a planner at inference | L1, the foundation for higher levels |
+| 2. Slow-fast hierarchy | A VLM issues high-level instructions at low frequency while an end-to-end planner executes at high frequency | L1-L3 combined, with the instruction as an external condition rather than an internal prediction |
+| 3. VLA with Chain-of-Causality (CoC) | A single autoregressive stream outputs a chain of thought before the action, supervising *how* vision maps to action, not just the outcome | L3, folding both action-conditioned prediction and the decision process itself into the training signal |
+| 4. Dense supervision | Train a future-scene-prediction branch and an action/trajectory branch jointly; only the action branch runs at inference | L2's dense gradient feeds back into L3's planning head |
+| 5. Generative goal / visual trace | First “imagine” a goal image or visual trace, then use an inverse dynamics model to turn the imagined trace into actions | L2 produces a visual chain of thought, L3 converts it into action |
+| 6. Action selection via world model (evaluator) | Treat the world model as a black-box simulator, roll out multiple candidate actions in parallel, score them with pixels, point clouds, latents, or a VLM, then execute the best one under a receding horizon | L4, directly matching the $a^* = \arg\max_a \text{Value}(\text{Rollout}_{\text{WM}}(s,a))$ formula from the previous section |
+| 7. Closed-loop simulation | Use the world model offline to manufacture out-of-distribution scenarios: for imitation learning, perturb trajectories and let an expert planner correct them to augment the dataset; for reinforcement learning, sample at high throughput inside imagination to train the policy | L4-L5, the world model continuously improves training data and the policy itself |
+
+A few things worth noting:
+
+- Paths one through three are really the same idea at three levels of coupling. Path one swaps out the prediction head after pretraining; path two keeps two separate systems that cooperate; path three fuses prediction and decision-making into a single autoregressive stream. Tighter coupling means training-time and test-time behavior match more closely, but engineering complexity rises accordingly.
+- Paths four and five both provide “dense supervision,” but the form of the supervision differs. Path four directly predicts the future scene itself; path five first generates a visual goal or trace and hands it to an inverse dynamics model to convert into actions. Both aim to mitigate the sparsity of action labels.
+- The key difference between paths six and seven is **online** versus **offline** use of the world model. Path six calls the world model at deployment time to evaluate candidate actions in real time. Path seven uses the world model offline, before training, to generate or augment data; the world model does not participate in inference once training is done.
+- Whether a language world model (closer to paths two and three) or a video world model (closer to path five) is better suited for “imagination” is still an open question. Language models are information-dense but depend on large amounts of manually labeled causal chains and may filter out details a planner actually needs. Video models preserve raw pixels and are cheaper to label, but cost more to compute and can more easily latch onto background noise that has nothing to do with planning.
+
+Together, these seven paths make one point: **a world model's value for planning is not just “predicting accurately,” but whether it can be properly wired into one of three places: the training signal, action selection, or data generation.** This is also why L4 (value-coupling) and L5 (self-correction) are rarely a property of a single model in practice. They are usually “an L1-L3 world model plus a way of wiring it in.”
 
 ## Course Definition
 

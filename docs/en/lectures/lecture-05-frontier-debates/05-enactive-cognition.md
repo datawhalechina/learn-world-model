@@ -17,7 +17,7 @@ The dominant paradigm in AI, whether symbolic or neural, follows a common archit
 
 Rafiee and Sutton call this **representationalism**, and they argue it has a structural ceiling.
 
-The world is open, dynamic, and infinitely complex. No finite internal model can fully capture it. Rodney Brooks, the roboticist, put the same point more bluntly: "The world is its own best model." The most current, richest, most accurate information about any situation is always in the world itself, not in any internal copy of it.
+The world is open, dynamic, and infinitely complex. No finite internal model can fully capture it. Rodney Brooks, the roboticist, put the same point more bluntly in 1991: "The world is its own best model." This is a claim about completeness, not about necessity: Lecture 1 already established that a general, goal-directed agent cannot avoid learning some internal model. Brooks' point here is sharper and survives that result intact: whatever model such an agent learns, it will always be a lossy compression, and the most current, richest, most accurate information about any situation remains in the world itself, not in any internal copy of it.
 
 This is not a new observation. What Rafiee and Sutton add is a systematic alternative framework: **enactive cognition**. Its central claim is that cognition is not the processing of pre-formed representations; it is generated in the ongoing interaction between an embodied agent and its environment. Perception, cognition, and action are not a pipeline; they are mutually constitutive, inseparable in practice.
 
