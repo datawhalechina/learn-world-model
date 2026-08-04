@@ -231,4 +231,4 @@ $$a^* = \arg\max_{a} \; \text{Value}\big(\text{Rollout}_{\text{WM}}(s, a)\big)$$
 - **self-improving world model**：能通过探索和误差修正持续改进自身。
 - **external simulator**：提供可交互世界，但不是智能体学到的内部模型。
 
-因此，“DINO 是世界模型”“NeRF 是世界模型”“MuJoCo 是世界模型”这些说法只有在宽泛语境下成立。严格地说，DINO 和 NeRF 更像世界模型组件，MuJoCo 是外部模拟器，而 Dreamer / MuZero 这类系统才是本课程核心意义上的世界模型。
+因此，“DINO 是世界模型”“NeRF 是世界模型”“MuJoCo 是世界模型”“Sora 是世界模型”这些说法只有在宽泛语境下成立。严格地说，DINO 和 NeRF 更像世界模型组件，MuJoCo 是外部模拟器，Sora 这类视频扩散模型至多算 L2 级别的预测式世界模型（它不以离散动作为条件，也不服务于规划），而 Dreamer / MuZero 这类系统才是本课程核心意义上的世界模型。

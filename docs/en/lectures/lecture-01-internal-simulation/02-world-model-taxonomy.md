@@ -231,4 +231,4 @@ In this course, “world model” by default means **an agent-internal, predicti
 - **self-improving world model**: improves itself through exploration, prediction error, and model revision.
 - **external simulator**: provides an interactive world but is not an internal model learned by the agent.
 
-So claims such as “DINO is a world model,” “NeRF is a world model,” or “MuJoCo is a world model” are only valid in a broad sense. More strictly, DINO and NeRF are usually world-model components, MuJoCo is an external simulator, and systems such as Dreamer or MuZero are closer to the core meaning of world model in this course.
+So claims such as “DINO is a world model,” “NeRF is a world model,” “MuJoCo is a world model,” or “Sora is a world model” are only valid in a broad sense. More strictly, DINO and NeRF are usually world-model components, MuJoCo is an external simulator, a video diffusion model such as Sora is at most an L2 predictive world model (it is not conditioned on discrete actions and does not serve planning), and systems such as Dreamer or MuZero are closer to the core meaning of world model in this course.

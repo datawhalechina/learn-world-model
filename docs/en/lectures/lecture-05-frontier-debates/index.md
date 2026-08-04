@@ -13,7 +13,7 @@ difficulty: debate
 
 This is a technical judgment: a judgment about a fundamental dispute over two competing definitions of "intelligence," a dispute that is shaping the direction of AI research for the next decade.
 
-This lecture gives no verdict. Four debates, each laying out the sharpest arguments on every side, with the questions left for you to answer.
+This lecture gives no verdict. Four debates, each laying out the sharpest arguments on every side, followed by a look at what each architecture is betting on and a philosophical coda, with the questions left for you to answer.
 
 - **Debates 1 and 2** (see "Language as Opium and the Bitter Lesson"): Is language a tool, or "opium"? What did the Bitter Lesson actually say, and have LLMs followed it or violated it?
 - **Debate 3** (see "Division of Labor and Convergence between World Models and LLMs"): Are world models and LLMs competitors or complements? What is WAM betting on, and what is JEPA betting on? Will the two paths eventually converge?

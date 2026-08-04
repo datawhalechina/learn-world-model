@@ -68,7 +68,7 @@ Broadly speaking, any model that can predict "what happens next" can be called a
 - A video generation model predicting the next frame is a broad world model.
 - A weather forecasting model predicting tomorrow's temperature is a broad world model.
 
-Under this definition, Veo, Genie, and Cosmos all fit under the "world model" umbrella. They genuinely learn statistical regularities of the world: how light and shadow change, how objects move, how scenes evolve.
+Under this definition, Veo, Sora, Genie, and Cosmos all fit under the "world model" umbrella. They genuinely learn statistical regularities of the world: how light and shadow change, how objects move, how scenes evolve.
 
 ### Narrow World Models: Must Be Action-Conditioned
 
