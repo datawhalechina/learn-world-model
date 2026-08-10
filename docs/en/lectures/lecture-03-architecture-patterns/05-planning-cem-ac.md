@@ -46,9 +46,7 @@ As long as these three prediction heads are accurate, the exact form of the late
 
 ## Mechanism 1: CEM Shooting-Method MPC
 
-> **📖 CEM** (Cross-Entropy Method): A sampling-based optimization algorithm. The core idea: sample a large number of candidate solutions from a distribution (e.g., Gaussian), evaluate the objective value of each candidate, retain the best fraction (elite samples), refit the distribution using these elite samples (update the mean and variance), and repeat. With each iteration, the sampling distribution narrows and concentrates toward high-quality regions. Here it is used to search for optimal action sequences in the action sequence space, hence the name "shooting method."
-
-> **📖 MPC** (Model Predictive Control): At each time step, use the model to predict $H$ steps into the future ($H$ is called the planning horizon), select the optimal action sequence, execute only the first action, then re-plan at the next step. Even if the model is imperfect, frequent re-planning corrects errors promptly, preventing them from accumulating indefinitely.
+> **📖 CEM and MPC**: **CEM** (Cross-Entropy Method) is a sampling-based optimizer: sample many candidate solutions from a distribution such as a Gaussian, retain the best fraction as elite samples, refit the distribution to those samples, and repeat so that sampling increasingly concentrates on high-quality regions. Here CEM searches over action sequences, hence the name "shooting method." **MPC** (Model Predictive Control) specifies how the result is used: at each time step, predict $H$ steps ahead, select the best action sequence, execute only its first action, and then re-plan. Frequent re-planning can correct errors even when the model is imperfect.
 
 **In one sentence**: randomly sample a batch of action sequences, "imagine" executing them in the model, select the sequence with the highest expected return, execute only the first step, and repeat.
 

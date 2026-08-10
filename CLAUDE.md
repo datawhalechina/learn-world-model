@@ -96,6 +96,7 @@ P04 does not implement TD-MPC. P05 applies L04 and is not a prerequisite for rea
 - Keep prerequisites truthful. A page must not claim that a project implements a model or metric it does not contain.
 - Separate core prerequisites from optional frontier material explicitly.
 - Keep pages reasonably short. Split a long page at a clear conceptual boundary and update both sidebars.
+- Do not place two `> **📖` learning-note blocks consecutively. Merge closely related definitions into one note; when a passage carries the main explanation, present it as ordinary prose instead of using a note as decoration.
 - Do not use em dashes.
 - Do not use arrow-chain prose such as `A -> B -> C` or `A → B → C`. Use sentences, lists, or tables.
 - Do not use ASCII diagrams.
