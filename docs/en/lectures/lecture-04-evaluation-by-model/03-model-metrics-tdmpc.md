@@ -1,14 +1,14 @@
 ---
-title: TD-MPC-Specific Metrics
+title: "Latent Dynamics and Planning Efficiency: TD-MPC"
 description: Consistency loss, representation collapse diagnosis, latent space visualization, and plan efficiency evaluation for latent MPC architectures.
 lecture: 4
 ---
 
-# TD-MPC-Specific Metrics
+# Latent Dynamics and Planning Efficiency: TD-MPC as a Worked Example
 
 ## TD-MPC (Latent MPC)
 
-*In P04 you implemented TD-MPC with CEM shooting and compared its reward curve against the Dreamer Actor-Critic from P03.*
+*TD-MPC is a conceptual comparison in L03, not an implementation in P04. Use it here to learn diagnostics that apply whenever planning depends on an implicit latent transition model.*
 
 The core requirement of TD-MPC is that representations produced by the encoder `h = enc(o)` at different time steps must be **mutually consistent**, so that MPC can plan effectively in latent space.
 
@@ -18,7 +18,7 @@ $$\mathcal{L}_{\text{consist}} = \|\text{sg}(h_{t+1}) - f(h_t, a_t)\|^2$$
 
 where `f` is the dynamics function and `sg` denotes stop-gradient. This loss measures the distance between "the next state predicted by the dynamics function" and "the next observation directly encoded by the encoder."
 
-**Diagnostic rule (representation collapse):** If the consistency loss decreases further after removing `sg`, the encoder has degenerated into an identity mapping, compressing all states to a single point. Formal diagnosis: on the validation set, inspect the rank of the covariance matrix of the latent vectors; a rank close to 1 indicates collapse. (The `sg` mechanism is discussed in Lecture 3 Part B, TD-MPC section.)
+**Diagnostic rule (representation collapse):** If the consistency loss decreases further after removing `sg`, the encoder has degenerated into an identity mapping, compressing all states to a single point. Formal diagnosis: on the validation set, inspect the rank of the covariance matrix of the latent vectors; a rank close to 1 indicates collapse. (The `sg` mechanism is discussed in Lecture 3 Part A, TD-MPC section.)
 
 **Diagnostic rule (training oscillation):** If the consistency loss oscillates during training (unstable up-and-down fluctuations) rather than decreasing monotonically, the learning rate is too high, or the gradient scales of the encoder and dynamics function are mismatched. Try reducing the learning rate by one order of magnitude, or using a separate (smaller) learning rate for the encoder.
 

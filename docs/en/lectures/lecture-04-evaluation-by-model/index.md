@@ -1,20 +1,21 @@
 ---
-title: "Evaluation by Model: Metrics and Diagnostic Methods"
-description: A systematic review of model-specific evaluation metrics for Dreamer, MuZero, TD-MPC, STORM, and diffusion world models. Understand horizon drift as the universal failure mode, master real-world deployment evaluation, and learn to diagnose world models by targeting the right metrics.
+title: "Diagnosing World Models: From Components to Deployment"
+description: A model-independent diagnostic framework for representations, dynamics, task signals, planning, rollouts, calibration, and deployment, followed by worked model examples.
 lecture: 4
 difficulty: Advanced
 ---
 
-# L04 · Evaluation by Model: Metrics and Diagnostic Methods
+# L04 · Diagnosing World Models: From Components to Deployment
 
-Many tutorials default to a universal metric checklist: FID, PSNR, reward curves, then score every model against the same rubric. This appears fair but in practice conceals the true failure modes of each architecture.
+Evaluation should begin with the role a component plays in the agent loop, not with the name of the architecture. A low reconstruction loss cannot prove that actions change predicted futures correctly. A high episode return cannot reveal whether success depends on an exploitable model error. A visually convincing rollout cannot establish that a planner chooses safe actions.
 
-**Core principle**: *Metrics must align with the failure modes of the architecture.*
+**Core principle**: *first locate the failed interface, then choose a metric that can expose that failure.*
 
-This lecture is organized into three parts:
+This lecture is organized into four layers:
 
-- **Model-specific metrics**: Dreamer (FID + reward correlation), MuZero (value accuracy + visit entropy), TD-MPC (latent consistency loss), STORM (token loss + long-horizon PSNR), diffusion world models (physics consistency)
-- **Universal failure mode**: horizon drift and mitigation strategies
-- **Real-world deployment evaluation**: limitations of paper metrics, seven common pitfalls, three pragmatic deployment strategies
+- **Diagnostic framework**: representation, one-step dynamics, long-horizon rollout, task signal, planning, and deployment
+- **Worked examples**: Dreamer, TD-MPC, MuZero, STORM, and Diamond show how the framework changes with the model interface
+- **Cross-model failures**: horizon drift, physical inconsistency, action-conditioning failure, and model exploitation
+- **Deployment evaluation**: calibration, latency, transfer, safety, and system-level reliability
 
-It is recommended to complete P03 through P05 before reading this lecture. Having run your own numbers makes many of the diagnostic rules immediately clear.
+Complete P03 and P04 before reading this lecture. Then use the framework while completing P05, rather than treating P05 as a prerequisite. Having two trained systems makes the diagnostic rules concrete.

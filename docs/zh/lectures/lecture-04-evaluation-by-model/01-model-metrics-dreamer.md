@@ -1,12 +1,12 @@
 ---
-title: Dreamer 的专属指标
+title: 表示与任务信号：Dreamer
 description: 针对 RNN/RSSM 架构的专属评估指标与诊断规则，包括奖励相关性、FID 与 KL 崩塌预警。
 lecture: 4
 ---
 
-# Dreamer 的专属指标
+# 表示与任务信号：以 Dreamer 为例
 
-## 为什么要"按模型评估"？
+## 为什么指标必须匹配接口？
 
 **反例**：用 FID 衡量 MuZero。MuZero 根本不生成像素图像，它的世界模型是隐式的，FID 对它毫无意义。同理，用"Token 预测损失"衡量 Dreamer，只会让人误以为 Dreamer 是个语言模型。
 
@@ -23,7 +23,7 @@ lecture: 4
 
 ## Dreamer（RNN/RSSM）
 
-*你在 P03 亲手实现了 Dreamer 的完整流水线，编码器 → RSSM 预测 → 潜在 Actor-Critic → 执行动作。*
+*你在 P03 亲手实现了 Dreamer 的完整流水线：编码器产生供 RSSM 使用的表示，RSSM 预测进入潜在 Actor-Critic，策略再选择最终执行的动作。*
 
 Dreamer 是一个强化学习算法，不是生成模型。Dreamer V1/V2/V3 论文的核心评估问题只有一个：**策略能不能在真实环境中获得高奖励？** 所有指标都服务于这个问题，而不是服务于"图像重建有多好看"。
 

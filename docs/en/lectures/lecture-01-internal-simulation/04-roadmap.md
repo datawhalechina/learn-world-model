@@ -1,34 +1,50 @@
 ---
 title: Curriculum Roadmap
-description: "The learning path from L01 to L05, and the starting point for L02: how to compress pixels into a latent vector."
+description: "The interleaved learning path through five lectures and six projects, from intuition and latent dynamics to planning, evaluation, and frontier debates."
 lecture: 1
 ---
 
 # Curriculum Roadmap
 
-## Curriculum Roadmap
+## One Path Through Lectures and Projects
 
 ```mermaid
 flowchart TD
-    L01["L01 History & Intuition (you are here)"] --> L02
-    L02["L02 Encoder & Dynamics Model"] --> P01["P01/P02 Hands-on: Build VAE and RSSM"]
-    L02 --> L03["L03 Architecture Pattern Comparison\nRNN / Transformer / Diffusion / JEPA"]
-    L03 --> L04["L04 Learning Paradigms & Planning\nDreamer / TD-MPC / CEM"]
-    L04 --> L05["L05 Evaluation Metrics"]
-    L05 --> P03["P03–P06 Full Dreamer Pipeline\nTD-MPC, STORM, Evaluation Dashboard"]
+    L01["L01 Motivation, vocabulary, and scope"] --> L02A["L02A Encode observations"]
+    L02A --> P01["P01 Train a VAE encoder"]
+    P01 --> L02B["L02B Learn latent dynamics"]
+    L02B --> P02["P02 Build an RSSM"]
+    P02 --> L03A["L03A Turn predictions into actions"]
+    L03A --> P03["P03 Train a Dreamer agent"]
+    P03 --> L03B["L03B Compare dynamics backbones"]
+    L03B --> P04["P04 Swap in a Transformer backbone"]
+    P04 --> L04["L04 Diagnose model and planning failures"]
+    L04 --> P05["P05 Build an evaluation dashboard"]
+    P05 --> P06["P06 Test counterfactual action fidelity"]
+    P06 --> L05["L05 Examine frontier debates"]
 ```
 
-Each step has a corresponding code project. When you get stuck, returning to the relevant section is more effective than reading everything through before writing any code.
+The lectures and projects are one curriculum, not two separate tracks. Stop and complete each project when it appears in the path. The resulting checkpoint becomes the concrete object used in the next stage, so later ideas attach to a system you have already inspected and trained.
+
+| Stage | Read | Then practice | What you should be able to explain afterward |
+| --- | --- | --- | --- |
+| Foundations | L01, then L02 Part A | [P01: Train a VAE Encoder](../../projects/p01_vae_encoder) | What information an observation encoder keeps and discards |
+| Dynamics | L02 Part B and the Dreamer series | [P02: Build an RSSM](../../projects/p02_rssm_dynamics) | Why a useful latent state needs both memory and uncertainty |
+| Control | L03 Part A | [P03: Train a Dreamer Agent](../../projects/p03_dreamer_agent) | How imagined trajectories train an actor and critic |
+| Alternatives | L03 Part B | [P04: Swap the Dynamics Backbone](../../projects/p04_transformer_backbone) | Which bottleneck justifies replacing RSSM with another backbone |
+| Evaluation | L04 | [P05: Build an Evaluation Dashboard](../../projects/p05_evaluation_dashboard) | Which metric diagnoses each representation, rollout, or planning failure |
+| Causality | Revisit the L1-L5 ladder after L04 | [P06: Test Counterfactual Fidelity](../../projects/p06_counterfactual_world_model) | Whether actions causally change predicted futures rather than merely correlate with them |
+| Frontier | L05 | No required project | Which open questions are empirical, architectural, or philosophical |
 
 
 ## Next Lecture
 
 L02 starts from a concrete problem: **how do you compress a 64×64 pixel image into a compact latent vector z?** This is the task of the Variational Autoencoder (VAE), and it is the first building block of the entire Dreamer pipeline.
 
-Once the compression is in place, z is fed into the dynamics model, which learns to predict "what z will look like at the next timestep." That is the RSSM. By the end of L02, you will have written the two most critical modules of a world model by hand, and you will be able to see from real loss curves how they learn.
+Complete P01 after the encoding section rather than waiting until the end of L02. Then return to the dynamics sections, connect the learned representation to an RSSM, and complete P02. By that point you will have written the two most important predictive components of the course and inspected how their errors change over a rollout.
 
 
-*This lecture requires no mathematical or coding background. If you are interested in the original papers by Craik, Ha & Schmidhuber, or Dreamer, see the further reading in L05.*
+*L01 requires no coding and treats its mathematical callouts as optional. L02 assumes fundamental deep learning knowledge and introduces the additional machinery when it is first needed.*
 
 
 ## Further Reading

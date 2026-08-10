@@ -1,10 +1,12 @@
 ---
-title: "Part A (Continued): JEPA and RWM"
+title: "Part C, Optional Frontier Survey: JEPA and RWM"
 description: JEPA's semantic prediction paradigm and the stability-focused design of RWM for robotics.
 lecture: 3
 ---
 
-# Part A (Continued): JEPA and RWM
+# Part C, Optional Frontier Survey: JEPA and RWM
+
+This page is optional for the build path. It broadens the comparison beyond the backbones implemented in P03 and P04: JEPA asks what should be predicted, while RWM asks how prediction can remain dependable during robot deployment.
 
 ## Architecture Four: JEPA (2023, Non-Generative)
 

@@ -1,10 +1,10 @@
 ---
-title: "Part B (Continued): TD-MPC and Planning Mechanism Comparison"
+title: "Part A (Continued): TD-MPC and Planning Mechanism Comparison"
 description: TD-MPC's temporal-difference hybrid planning scheme, its comparison with DreamerV3, and a comprehensive summary of the three planning mechanisms.
 lecture: 3
 ---
 
-# Part B (Continued): TD-MPC and Planning Mechanism Comparison
+# Part A (Continued): TD-MPC and Planning Mechanism Comparison
 
 ## Mechanism 3: TD-MPC, the Bridge Between the Two
 
@@ -49,18 +49,17 @@ TD learning uses the Bellman equation to substitute "current reward + next-step 
 | Typical scenario | Simple continuous control | Visually complex tasks | Efficient continuous control |
 
 
-## Lecture Summary
+## Core Planning Checkpoint
 
-- **Seven architecture families** represent different directions for overcoming the GRU memory bottleneck: RNN/RSSM is the most computationally lightweight, Transformer handles long-range dependencies best, Diffusion produces the most realistic visuals, JEPA focuses most on semantics, RWM focuses most on deployment stability, Genie automatically discovers actions from video, and WAM unifies world prediction with action planning.
-- **Three learning paradigms** determine the knowledge boundary of a model: observation-based learns visual patterns but cannot control, interaction-based learns action causality but data is expensive, counterfactual-based learns value reasoning but has weak interpretability. WAM represents a fourth paradigm: video as dense physical supervision for joint training of world and action.
+- **Three learning paradigms** clarify what the training data can identify: observation-only data reveals visual regularities, interaction data reveals how actions change outcomes, and value-coupled training teaches which predicted outcomes matter for the task.
 - **Three planning mechanisms** determine how a model is used for decision-making: CEM is the most straightforward but inefficient in high-dimensional spaces, Actor-Critic is the most elegant but carries model exploitation risk, and TD-MPC most pragmatically balances both.
 - Dreamer = interaction-based paradigm + RSSM + latent Actor-Critic, and is the core reference system for this curriculum.
-- TD-MPC = counterfactual-based paradigm + CEM + TD, and will be implemented hands-on and compared with Dreamer in P04.
+- TD-MPC = action-conditioned latent dynamics + CEM + TD. It serves here as the hybrid comparison point; P04 instead focuses on the separate question of replacing the RSSM backbone with a Transformer.
 
 
-## Next Lecture
+## Next Step
 
-After building and running world models, the next question is: how do we judge whether they are good? Lecture 4 provides dedicated evaluation metrics for each architecture: FID and reward correlation for Dreamer, MCTS visit entropy for MuZero, latent consistency loss for TD-MPC, long-horizon PSNR for STORM, and one universal failure mode that all models encounter: **horizon drift**.
+You now have enough conceptual machinery to complete [P03: Train a Dreamer Agent](../../projects/p03_dreamer_agent). After running the complete encoder, RSSM, actor, and critic loop, return to Part B to compare the RSSM against Transformer and diffusion alternatives. That ordering makes each architecture choice answer a bottleneck you have observed rather than a name you have merely encountered.
 
 
 ## Further Reading

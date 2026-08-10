@@ -1,10 +1,12 @@
 ---
-title: "Part A: RNN, Transformer, and Diffusion Architectures"
+title: "Part B: Core Backbone Choices"
 description: RSSM serves as the baseline for comparing the core mechanisms, learning paradigms, and applicable scenarios of Transformer-based and Diffusion-based world models.
 lecture: 3
 ---
 
-# Part A: RNN, Transformer, and Diffusion Architectures
+# Part B: Core Backbone Choices
+
+Read this page after completing P03. You now have a working RSSM-based agent and can compare alternatives against failures you have actually observed. RNN/RSSM and Transformer are the core comparison needed for P04. The diffusion section is an extension for tasks where visual fidelity, rather than online control latency, is the dominant requirement.
 
 ## Review: You Already Have an RNN Baseline
 
@@ -110,3 +112,8 @@ The inherent challenge for diffusion world models is **object persistence**: eac
 **Applicable scenarios**: Offline video prediction, high-fidelity simulators, film and game content generation; not suitable for RL scenarios requiring real-time closed-loop control.
 
 **Limitations**: Slow inference (10-100 denoising steps); difficult to interface directly with policy optimization (the sampling process is non-differentiable); object persistence is hard to maintain; training and inference costs are substantial.
+
+
+## Core Path Checkpoint
+
+For P04, the actionable comparison is RSSM versus Transformer: recurrent state gives low-latency online updates, while attention trades additional compute for access to a longer context. Complete [P04: Swap the Dynamics Backbone](../../projects/p04_transformer_backbone) before continuing. The remaining Part C pages are optional and survey research directions that are not implemented by the project sequence.

@@ -26,6 +26,8 @@ This debate will not be settled in papers. It will be forced toward an answer by
 
 ## CWM: World Models for Code Execution Space
 
+CWM is a domain extension discussed for comparison, not a ninth dynamics-backbone family in Lecture 3. The eight-family survey classifies architectures used for physical or visual prediction; CWM asks whether the same capability criteria transfer when the modeled environment is a program interpreter.
+
 Physical-world world models predict pixels, joint angles, and sensor readings. But the "world" need not be physical. Meta's 2024 **CWM (Code World Model, [arXiv:2510.02387](https://arxiv.org/abs/2510.02387))** extends this idea to code execution space: the Python interpreter is itself a deterministic dynamical system. Each line of code executed applies an "action" to the "current program state" and produces the "next program state."
 
 <figure>
@@ -36,7 +38,7 @@ Physical-world world models predict pixels, joint angles, and sensor readings. B
 CWM is a 32-billion-parameter open-source LLM that underwent mid-training after pretraining, using two types of execution trajectories:
 
 - **Python execution trajectories**: action = one Python statement, observation = the full local variable state after execution (variable names, types, values). The training objective is to teach the model "what is in memory after this line runs," not merely "whether this line is syntactically correct."
-- **ForagerAgent trajectories**: an agent that autonomously executes software engineering tasks inside Docker containers, generating large-scale "edit code → observe error output → edit again" trajectories. Action = shell command or code edit; observation = terminal response.
+- **ForagerAgent trajectories**: an agent that autonomously executes software engineering tasks inside Docker containers, repeatedly editing code, observing error output, and editing again. An action is a shell command or code edit; an observation is the terminal response.
 
 This design maps almost one-to-one onto the RSSM framework from physical-world models: an encoder compresses program state into a representation, a dynamics function predicts the next state, with the only substitution being that the "physics engine" is replaced by the "Python interpreter."
 

@@ -1,15 +1,16 @@
 ---
-title: Architecture Patterns, Learning Paradigms, and Planning Methods
-description: Using the RSSM you implemented in P02 as a baseline, compare seven major world model architecture families, understand the knowledge boundaries of four learning paradigms, and learn the principles and trade-offs of CEM-MPC, latent Actor-Critic, and TD-MPC planning mechanisms.
+title: From Latent Dynamics to Planning and Architecture Choices
+description: Complete the agent loop with CEM-MPC, latent Actor-Critic, and TD-MPC, then compare alternative dynamics backbones and optionally survey frontier systems.
 lecture: 3
 difficulty: medium-high
 ---
 
-# Architecture Patterns, Learning Paradigms, and Planning Methods
+# From Latent Dynamics to Planning and Architecture Choices
 
-The RSSM you built in P02 is the RNN baseline. This lecture takes it as the starting point and unfolds in two parts:
+The RSSM you built in P02 can predict latent futures, but it does not yet tell an agent which action to execute. This lecture first completes that loop. Only after you can trace how predictions affect actions does it compare alternative model architectures.
 
-- **Part A: Architecture Patterns**: Principles and a selection guide for seven architecture families (RNN/RSSM, Transformer, Diffusion, JEPA, RWM, Genie, WAM), plus the knowledge boundaries of four learning paradigms
-- **Part B: Planning Mechanisms**: CEM-MPC random search, Dreamer latent Actor-Critic, and TD-MPC hybrid approach. This is the direct prerequisite for P03 and P04.
+- **Part A, Core Planning Loop**: CEM-MPC search, Dreamer latent Actor-Critic, and TD-MPC. Complete P03 after this part.
+- **Part B, Core Backbone Choices**: use RSSM as the baseline, then study when a Transformer or diffusion backbone is justified. Complete P04 after this part.
+- **Part C, Optional Frontier Survey**: JEPA, RWM, Genie, LoopWM, WAM, system-integration patterns, and the LS-Imagine case study. These pages broaden research judgment but are not prerequisites for P03 or P04.
 
-The architecture section does not require implementation; that is the work of later projects. The focus is on understanding design trade-offs and building judgment about when to use what. The planning section requires careful reading.
+If your goal is to build a working system, read Parts A and B in order and treat Part C as optional. If your goal is literature orientation, continue through Part C after completing the core path.

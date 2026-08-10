@@ -1,10 +1,10 @@
 ---
-title: Diffusion World Models and Horizon Drift
+title: Physical Consistency and Horizon Drift
 description: Evaluation metrics specific to the Diamond diffusion world model, and the horizon drift failure mode shared by all models along with mitigation strategies.
 lecture: 4
 ---
 
-# Diffusion World Models and Horizon Drift
+# Physical Consistency and Horizon Drift
 
 ## Diffusion World Model ([Diamond](https://arxiv.org/abs/2405.12399))
 

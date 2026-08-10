@@ -35,7 +35,7 @@ The Dreamer series (V1–V4) trains its policy inside a "dream" that functions a
 
 ### Planner: Produces the Action the Agent Should Take
 
-The planner outputs actions — given current observations and a goal, what should the agent do next. In a sense the planner is the inverse of the renderer: the renderer takes actions as input and converts them to observations; the planner takes observations as input and produces actions, closing the perception-action loop.
+The planner outputs actions: given current observations and a goal, what should the agent do next? In a sense the planner is the inverse of the renderer. The renderer takes actions as input and converts them to observations; the planner takes observations as input and produces actions, closing the perception-action loop.
 
 VLA (Vision-Language-Action) models, which take visual observations and language instructions as input and output robot actions directly, are planners. CEM-MPC and TD-MPC (two planning algorithms built on top of world models, covered in detail in L03) are planners. The latent Actor-Critic inside Dreamer is a planner. The planner is the hardest of the three to get right. The impressive-looking robot demonstrations of recent years are almost uniformly confined to tightly controlled laboratory settings; the gap between a demo video and a robot that reliably works in a real kitchen, warehouse, or operating room remains large.
 
@@ -68,7 +68,7 @@ The World Labs three-part taxonomy is not coincidental. It maps onto a classical
 
 **The simulator answers the ontological question: what is the world itself.** The objective physical structure that exists independent of any observer, with its own inherent rules of space, mechanics, and causality.
 
-**The renderer answers the phenomenological question: what does the world look like.** The appearances that reach us through our senses — visual images, perceptual surfaces — everything we see is a projection of the world onto the dimension of perception.
+**The renderer answers the phenomenological question: what does the world look like?** The appearances that reach us through our senses, including visual images and perceptual surfaces, are projections of the world onto the dimension of perception.
 
 **The planner answers the practical question: what can the agent do.** Standing on appearances, facing the objective world, acting on it and changing it through practice.
 

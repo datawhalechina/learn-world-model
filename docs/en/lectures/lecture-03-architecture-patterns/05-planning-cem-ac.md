@@ -1,14 +1,14 @@
 ---
-title: "Part B: CEM-MPC and Latent Actor-Critic"
+title: "Part A: CEM-MPC and Latent Actor-Critic"
 description: The counterfactual paradigm and MuZero's implicit world model, CEM shooting-method random search, and Dreamer's differentiable latent Actor-Critic planning.
 lecture: 3
 ---
 
-# Part B: CEM-MPC and Latent Actor-Critic
+# Part A: CEM-MPC and Latent Actor-Critic
 
-Given a world model, how does an agent use it to select actions? This section is the direct prerequisite for P03 and P04. It introduces three planning mechanisms: from the most intuitive random search, to Dreamer's imagination-based training, to TD-MPC's hybrid approach.
+Given a world model, how does an agent use it to select actions? This section is the direct prerequisite for P03 and provides the planning context used later to compare architectures. It introduces three planning mechanisms: from the most intuitive random search, to Dreamer's imagination-based training, to TD-MPC's hybrid approach.
 
-Before the three planning mechanisms, one more world-model architecture needs to be on the table: MuZero. It is introduced here rather than in Part A because its defining feature is inseparable from how it plans, its world model is deliberately built to serve tree search, and understanding one requires understanding the other. Keep in mind while reading that MuZero is, first, a distinct architecture (a world model with no pixel-level meaning at all), and second, a planning method (MCTS) built specifically to exploit that architecture's shape.
+Before the three planning mechanisms, one more world-model architecture needs to be on the table: MuZero. It is introduced beside planning because its defining feature is inseparable from tree search. Its world model is deliberately shaped to support search, so understanding the representation without its consumer would leave the system incomplete.
 
 ## MuZero and the Counterfactual Paradigm
 

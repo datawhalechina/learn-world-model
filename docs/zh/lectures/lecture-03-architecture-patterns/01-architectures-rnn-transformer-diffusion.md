@@ -1,10 +1,12 @@
 ---
-title: Part A：RNN、Transformer 与 Diffusion 架构
+title: Part B：核心骨干选择
 description: 以 RSSM 为基线，剖析 Transformer 和 Diffusion 世界模型的核心机制、学习范式与适用场景。
 lecture: 3
 ---
 
-# Part A：RNN、Transformer 与 Diffusion 架构
+# Part B：核心骨干选择
+
+请在完成 P03 后阅读本页。此时你已经拥有可运行的 RSSM 智能体，可以把替代方案与自己真正观察到的故障进行比较。RNN/RSSM 与 Transformer 是 P04 所需的核心对比；扩散部分属于扩展阅读，适用于视觉保真度比在线控制延迟更重要的任务。
 
 ## 回顾：你已经有了一个 RNN 基线
 
@@ -110,3 +112,8 @@ Diamond 的关键设计决策：动作信息通过**交叉注意力**（cross-at
 **适用场景**：离线视频预测、高保真仿真器、影视/游戏内容生成；不适合需要实时闭环控制的 RL 场景。
 
 **局限**：推理慢（10-100 步去噪）；难与策略优化直接对接（采样过程不可微）；物体持久性维护困难；训练和推理开销巨大。
+
+
+## 核心路线检查点
+
+对 P04 而言，可操作的核心比较是 RSSM 与 Transformer：循环状态提供低延迟在线更新，注意力则用更多计算换取更长的可访问上下文。请先完成 [P04：替换动力学骨干](../../projects/p04_transformer_backbone)，再决定是否继续。后续 Part C 均为选读，介绍项目序列没有实现的研究方向。

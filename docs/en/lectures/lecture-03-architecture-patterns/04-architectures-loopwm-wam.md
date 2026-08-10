@@ -1,10 +1,10 @@
 ---
-title: "Part A (cont. 3): LoopWM, WAM, and Architecture Selection"
+title: "Part C (Continued), Optional: LoopWM, WAM, and Architecture Selection"
 description: LoopWM's looped dynamics and spectral stabilization, WAM's fourth-paradigm joint learning, a comparative summary of the eight architecture families, and a decision tree for architecture selection.
 lecture: 3
 ---
 
-# Part A (cont. 3): LoopWM, WAM, and Architecture Selection
+# Part C (Continued), Optional: LoopWM, WAM, and Architecture Selection
 
 ## Architecture Seven: Looped Dynamics Models (LoopWM)
 
@@ -43,8 +43,8 @@ The traditional World Model takes actions as input and predicts future states, f
 
 | Paradigm | Supervision signal | Loss |
 |----------|--------------------|------|
-| VLA | observation sequence → action sequence | action loss only |
-| WAM | observation sequence → future frame sequence + action sequence | video reconstruction loss + action loss, mutually reinforcing |
+| VLA | observation sequence as input; action sequence as output | action loss only |
+| WAM | observation sequence as input; future frames and actions as outputs | video reconstruction loss + action loss, mutually reinforcing |
 
 **Learning paradigm**: the fourth paradigm, joint learning. Video and actions are two facets of the same physical process. WAM leverages the dense physical supervision from video to let the policy learn about physical motion and action consequences, rather than performing action regression alone.
 
@@ -60,7 +60,7 @@ The traditional World Model takes actions as input and predicts future states, f
 | **Diffusion** | Observation/Interactive | Very high visual fidelity | Slow inference, difficult to use for real-time control | Offline simulation, video generation |
 | **JEPA** | Observation-only | Robust and efficient, ignores irrelevant noise | No pixel output, control applications not yet mature | Semantic representation pretraining |
 | **RWM** | Interactive | Stable long-horizon rollout, policy does not drift | High compute (ensemble) | High-frequency robot control, sim-to-real |
-| **Genie** | Observation → Interactive | Supports interactive generation without action labels | latent actions not aligned with real actions | Interactive video generation, data pretraining |
+| **Genie** | Observation-trained, interactive at inference | Supports interactive generation without action labels | latent actions not aligned with real actions | Interactive video generation, data pretraining |
 | **LoopWM** | Interactive | Parameter-efficient, provably stable long-horizon rollout | No stability guarantee on the nonlinear term, not yet validated on pixels/real robots | Long-horizon planning, resource-constrained deployment |
 | **WAM** | Joint learning | World prediction and action planning jointly optimized | Complex architecture, high data requirements | Embodied intelligence, dexterous manipulation |
 

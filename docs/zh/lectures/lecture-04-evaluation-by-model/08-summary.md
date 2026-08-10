@@ -1,10 +1,10 @@
 ---
-title: 五模型总结、落地策略与课程展望
+title: 诊断总结、落地策略与课程展望
 description: 五种世界模型的指标对比总结表、三种务实落地策略，以及四讲课程总结与展望。
 lecture: 4
 ---
 
-# 五模型总结、落地策略与课程展望
+# 诊断总结、落地策略与课程展望
 
 ## 总结对比表
 
@@ -45,9 +45,9 @@ World model 进入 MPC 的 rollout 或 imagined rollout，直接用于在线规�
 Part A 实现了 VAE 编码器：CNN 将 64×64 图像压缩为潜在向量 `z`，ELBO 损失（重建项 + KL 项）约束潜在空间。Part B 从 GRU 出发，逐步演进到 MDN-RNN，最终到达 RSSM，确定性状态 `h_t` + 随机状态 `z_t` 的双轨架构成为 Dreamer 的基石。
 
 **L03: 架构模式、学习范式与规划方法**
-以你在 P02 实现的 RSSM 作为 RNN 基线，横向对比了七大架构族（RNN/RSSM、Transformer、Diffusion、JEPA、RWM、Genie、WAM），厘清了四种学习范式，并梳理了 CEM-MPC → 潜在 Actor-Critic → TD-MPC 的规划链路。
+以你在 P02 实现的 RSSM 作为 RNN 基线，横向对比了八个架构族（RNN/RSSM、Transformer、Diffusion、JEPA、RWM、Genie、LoopWM、WAM），厘清了四种学习范式，并梳理了从 CEM-MPC、潜在 Actor-Critic 到 TD-MPC 的规划演进。
 
-**L04: 按模型评估（本讲）**
+**L04：诊断世界模型（本讲）**
 评估不是"打分"而是"诊断"。每种架构有其专属的失效模式，需要对症的指标才能发现问题。潜在漂移是所有世界模型共同面临的长时域挑战，缓解它需要短时域训练、目标网络和持续的真实数据补充。
 
 ### 从理论到部署：展望

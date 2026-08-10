@@ -1,10 +1,10 @@
 ---
-title: Five-Model Summary, Deployment Strategies, and Curriculum Outlook
+title: Diagnostic Synthesis, Deployment Strategies, and Outlook
 description: A comparative summary table of metrics across five world models, three pragmatic deployment strategies, and a four-lecture curriculum summary with outlook.
 lecture: 4
 ---
 
-# Five-Model Summary, Deployment Strategies, and Curriculum Outlook
+# Diagnostic Synthesis, Deployment Strategies, and Outlook
 
 ## Comparative Summary Table
 
@@ -45,9 +45,9 @@ Starting from Craik's "mental models" (1943), tracing through the 1950s RNN orig
 Part A implemented a VAE encoder: a CNN compresses 64x64 images into a latent vector `z`, with the ELBO loss (reconstruction term + KL term) regularizing the latent space. Part B started from the GRU, progressed through the MDN-RNN, and arrived at the RSSM, where the dual-track architecture of deterministic state `h_t` and stochastic state `z_t` forms the foundation of Dreamer.
 
 **L03: Architecture Patterns, Learning Paradigms, and Planning Methods**
-Using the RSSM implemented in P02 as the RNN baseline, this lecture compared seven architecture families side by side (RNN/RSSM, Transformer, Diffusion, JEPA, RWM, Genie, WAM), clarified four learning paradigms, and traced the planning chain from CEM-MPC to latent actor-critic to TD-MPC.
+Using the RSSM implemented in P02 as the RNN baseline, this lecture compared eight architecture families side by side (RNN/RSSM, Transformer, Diffusion, JEPA, RWM, Genie, LoopWM, WAM), clarified four learning paradigms, and traced the planning progression from CEM-MPC through latent actor-critic to TD-MPC.
 
-**L04: Evaluation by Model (this lecture)**
+**L04: Diagnosing World Models (this lecture)**
 Evaluation is not "scoring" but "diagnosis." Each architecture has its own characteristic failure modes, and only targeted metrics can surface problems. Horizon drift is the long-horizon challenge shared by all world models; mitigating it requires short-horizon training, target networks, and continuous supplementation with real data.
 
 ### From Theory to Deployment: Outlook

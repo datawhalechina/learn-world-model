@@ -1,14 +1,14 @@
 ---
-title: STORM（Transformer 动力学）的专属指标
+title: 自回归 Rollout 质量：STORM
 description: Transformer 动力学世界模型的逐帧精度与序列动态质量评估指标及诊断规则。
 lecture: 4
 ---
 
-# STORM（Transformer 动力学）的专属指标
+# 自回归 Rollout 质量：以 STORM 为例
 
 ## STORM（Transformer 动力学）[见 L03 延伸阅读 [1]]
 
-*P05 要求你把 RSSM 的 GRU 替换为 Transformer，实现 STORM 式的动力学模型。*
+*P04 会把 RSSM 动力学骨干替换为 STORM 风格的 Transformer，P05 再把它与 Dreamer 检查点并排评估。*
 
 STORM 的本质是把 RSSM 的循环状态替换为 Transformer 的自注意力序列建模：历史帧编码为 token 序列，动作作为额外 token 拼入，Transformer 以**因果掩码**（causal mask，在自注意力计算中，将当前位置之后的所有位置的注意力分数遮盖为 $-\infty$，使每个 token 只能"看到"它之前的历史 token，而不能看到未来的 token，保证生成时的自回归因果性）处理序列，预测下一个 latent token。这让模型能捕捉百步以上的长程依赖，代价是计算量随序列长度二次增长。
 

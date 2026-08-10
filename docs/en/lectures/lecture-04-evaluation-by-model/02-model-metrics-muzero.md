@@ -1,10 +1,10 @@
 ---
-title: MuZero-Specific Metrics
+title: "Value and Search Quality: MuZero"
 description: Search quality and representation stability evaluation metrics and diagnostic rules for the implicit world model MuZero.
 lecture: 4
 ---
 
-# MuZero-Specific Metrics
+# Value and Search Quality: MuZero as a Worked Example
 
 ## MuZero (Implicit World Model)
 

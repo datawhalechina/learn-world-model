@@ -1,12 +1,12 @@
 ---
-title: "Part A（续二）：Genie"
+title: "Part C（续，选读）：Genie"
 description: Genie 的 latent action 发现机制，介于观察型预训练与无需动作标签的交互式生成之间。
 lecture: 3
 ---
 
-# Part A（续二）：Genie
+# Part C（续，选读）：Genie
 
-## Genie：从视频隐式发现动作
+## 架构六：Genie 从视频隐式发现动作
 
 **代表系统**：Genie (Google DeepMind, 2024)、Genie 2 (2024)
 

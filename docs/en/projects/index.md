@@ -33,8 +33,8 @@ Open any notebook in Jupyter or Colab and run it top to bottom. If an upstream c
 |---|---------|--------------|-------|-------------|
 | P01 | [Train a VAE Encoder](./p01_vae_encoder) | L02 Part A | `vae_encoder.pt` | CNN VAE on 64×64 frames; ELBO loss curve; latent traversals showing disentangled dimensions |
 | P02 | [Build an RSSM Dynamics Model](./p02_rssm_dynamics) | P01, L02 Part B | `rssm.pt` | GRU, MDN-RNN, and RSSM compared; rollout plots; 1-step to 5-step prediction error curves |
-| P03 | [Train a Dreamer Agent](./p03_dreamer_agent) | P02, L03 Part B | `dreamer.pt` | Encoder + RSSM + latent Actor-Critic training loop; reward curve; FID and reward-correlation self-evaluation |
-| P04 | [Swap the Dynamics Backbone](./p04_transformer_backbone) | P02, L03 Part A | `transformer_wm.pt` | RSSM replaced by a STORM-style categorical VAE plus causal Transformer; architecture comparison report |
+| P03 | [Train a Dreamer Agent](./p03_dreamer_agent) | P02, L03 Part A | `dreamer.pt` | Encoder + RSSM + latent Actor-Critic training loop; reward curve; FID and reward-correlation self-evaluation |
+| P04 | [Swap the Dynamics Backbone](./p04_transformer_backbone) | P03, L03 Part B | `transformer_wm.pt` | RSSM replaced by a STORM-style categorical VAE plus causal Transformer; architecture comparison report |
 | P05 | [World Model Evaluation Dashboard](./p05_evaluation_dashboard) | P03, P04, L04 | -- | Both trained models loaded and scored side by side: PSNR, reward correlation, token loss, and latent drift |
 | P06 | [Counterfactual Action-Conditioned World Model](./p06_counterfactual_world_model) | P03, P04 | `causal_wm.pt` | Pearl-ladder analysis: interventional and counterfactual rollouts, an inverse-dynamics-regularized world model, and an action-influence metric |
 

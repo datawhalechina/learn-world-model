@@ -1,12 +1,12 @@
 ---
-title: Dreamer-Specific Metrics
+title: "Representation and Task Signal: Dreamer"
 description: Dedicated evaluation metrics and diagnostic rules for RNN/RSSM architectures, covering reward correlation, FID, and KL collapse warnings.
 lecture: 4
 ---
 
-# Dreamer-Specific Metrics
+# Representation and Task Signal: Dreamer as a Worked Example
 
-## Why "Evaluate by Model"?
+## Why Metrics Must Match the Interface
 
 **A counterexample**: using FID to evaluate MuZero. MuZero never generates pixel images; its world model is implicit, and FID is meaningless for it. Likewise, using "token prediction loss" to evaluate Dreamer only creates the false impression that Dreamer is a language model.
 
@@ -22,7 +22,7 @@ Different world models break down at different points:
 
 ## Dreamer (RNN/RSSM)
 
-*In P03 you implemented the full Dreamer pipeline by hand: encoder → RSSM prediction → latent Actor-Critic → action execution.*
+*In P03 you implemented the full Dreamer pipeline by hand: the encoder feeds RSSM predictions into a latent Actor-Critic, whose policy selects the executed action.*
 
 Dreamer is a reinforcement learning algorithm, not a generative model. The core evaluation question across the Dreamer V1/V2/V3 papers is singular: **can the policy achieve high reward in the real environment?** Every metric serves that question, not "how good does image reconstruction look."
 

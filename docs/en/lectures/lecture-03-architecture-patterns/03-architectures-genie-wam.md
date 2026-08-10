@@ -1,12 +1,12 @@
 ---
-title: "Part A (cont. 2): Genie"
+title: "Part C (Continued), Optional: Genie"
 description: Genie's latent action discovery mechanism, bridging observation-only pretraining and interactive generation without action labels.
 lecture: 3
 ---
 
-# Part A (cont. 2): Genie
+# Part C (Continued), Optional: Genie
 
-## Genie: Discovering Actions Implicitly from Video
+## Architecture Six: Genie Discovers Actions Implicitly from Video
 
 **Representative systems**: Genie (Google DeepMind, 2024), Genie 2 (2024)
 

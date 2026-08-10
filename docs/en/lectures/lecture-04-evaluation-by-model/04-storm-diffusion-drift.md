@@ -1,14 +1,14 @@
 ---
-title: Metrics Specific to STORM (Transformer Dynamics)
+title: "Autoregressive Rollout Quality: STORM"
 description: Per-frame accuracy and sequential dynamics quality evaluation metrics and diagnostic rules for Transformer-based dynamics world models.
 lecture: 4
 ---
 
-# Metrics Specific to STORM (Transformer Dynamics)
+# Autoregressive Rollout Quality: STORM as a Worked Example
 
 ## STORM (Transformer Dynamics) [See L03 Further Reading [1]]
 
-*P05 asks you to replace the GRU in RSSM with a Transformer, implementing a STORM-style dynamics model.*
+*P04 replaces the RSSM dynamics backbone with a STORM-style Transformer. P05 then evaluates its rollout behavior beside the Dreamer checkpoint.*
 
 The core idea of STORM is to replace the recurrent state in RSSM with Transformer self-attention sequence modeling: historical frames are encoded as a token sequence, actions are appended as additional tokens, and the Transformer processes the sequence with a **causal mask** (in self-attention, the causal mask sets the attention scores for all positions after the current one to $-\infty$, so each token can only "see" historical tokens that precede it and not future tokens, preserving autoregressive causality during generation) to predict the next latent token. This allows the model to capture long-range dependencies spanning hundreds of steps, at the cost of quadratic growth in computation with sequence length.
 

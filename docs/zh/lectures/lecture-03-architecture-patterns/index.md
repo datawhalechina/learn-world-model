@@ -1,15 +1,16 @@
 ---
-title: 架构模式、学习范式与规划方法
-description: 以你在 P02 实现的 RSSM 为基线，横向比较七大世界模型架构族，掌握四种学习范式的知识边界，以及 CEM-MPC、潜在 Actor-Critic 与 TD-MPC 三种规划机制的原理与取舍。
+title: 从潜在动力学到规划与架构选择
+description: 先用 CEM-MPC、潜在 Actor-Critic 与 TD-MPC 补完整智能体闭环，再比较替代动力学骨干，并按需阅读前沿系统。
 lecture: 3
 difficulty: 中高
 ---
 
-# 架构模式、学习范式与规划方法
+# 从潜在动力学到规划与架构选择
 
-你在 P02 构建的 RSSM 就是 RNN 基线，本讲以它为起点，分两个部分展开：
+你在 P02 中实现的 RSSM 已经能预测潜在未来，却还不能告诉智能体最终应执行哪个动作。本讲先补完整这个闭环。只有能够追踪预测如何影响动作之后，我们才比较替代模型架构。
 
-- **Part A · 架构模式**：七大架构族（RNN/RSSM、Transformer、Diffusion、JEPA、RWM、Genie、WAM）的原理对比与选型指南，以及四种学习范式的知识边界
-- **Part B · 规划机制**：CEM-MPC 随机搜索 → Dreamer 潜在 Actor-Critic → TD-MPC 混合方案，这是 P03 和 P04 的直接前置
+- **Part A，核心规划闭环**：CEM-MPC 搜索、Dreamer 潜在 Actor-Critic 与 TD-MPC。读完后完成 P03。
+- **Part B，核心骨干选择**：以 RSSM 为基线，再判断何时值得换用 Transformer 或扩散骨干。读完后完成 P04。
+- **Part C，可选前沿综述**：JEPA、RWM、Genie、LoopWM、WAM、系统接入模式与 LS-Imagine 案例。这些页面用于扩展研究判断，不是 P03 或 P04 的前置要求。
 
-架构部分不要求实现，那是后续项目的工作。重点是理解设计取舍，建立"什么情况下用什么"的判断。规划部分需要认真读。
+如果目标是搭建可运行系统，请依次读完 Part A 与 Part B，把 Part C 当作选读。如果目标是建立文献地图，则在完成核心路线后继续阅读 Part C。

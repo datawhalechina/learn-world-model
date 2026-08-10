@@ -1,10 +1,12 @@
 ---
-title: Part A（续）：JEPA 与 RWM
+title: Part C（选读）：JEPA 与 RWM
 description: JEPA 的语义预测范式与机器人专属的 RWM 稳定性设计。
 lecture: 3
 ---
 
-# Part A（续）：JEPA 与 RWM
+# Part C（选读）：JEPA 与 RWM
+
+本页不是实践主线的前置要求，而是把比较范围扩展到 P03 与 P04 未实现的系统。JEPA 追问应该预测什么，RWM 则追问预测如何在机器人部署中保持可靠。
 
 ## 架构四：JEPA（2023，非生成式）
 
@@ -87,4 +89,3 @@ $$\text{policy 奖励} = \text{任务奖励} - \lambda \times \text{uncertainty}
 **学习范式**：观察型预训练（人类视频，无动作标注）+ 少量目标数据后训练。
 
 **适用场景**：高频机器人控制、离线数据充足但在线交互代价高昂的场景。
-

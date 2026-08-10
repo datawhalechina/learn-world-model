@@ -1,10 +1,10 @@
 ---
-title: MuZero 的专属指标
+title: 价值与搜索质量：MuZero
 description: 针对隐式世界模型 MuZero 的搜索质量与表示稳定性评估指标与诊断规则。
 lecture: 4
 ---
 
-# MuZero 的专属指标
+# 价值与搜索质量：以 MuZero 为例
 
 ## MuZero（隐式世界模型）
 
