@@ -8,6 +8,8 @@ lecture: 3
 
 Given a world model, how does an agent use it to select actions? This section is the direct prerequisite for P03 and P04. It introduces three planning mechanisms: from the most intuitive random search, to Dreamer's imagination-based training, to TD-MPC's hybrid approach.
 
+Before the three planning mechanisms, one more world-model architecture needs to be on the table: MuZero. It is introduced here rather than in Part A because its defining feature is inseparable from how it plans, its world model is deliberately built to serve tree search, and understanding one requires understanding the other. Keep in mind while reading that MuZero is, first, a distinct architecture (a world model with no pixel-level meaning at all), and second, a planning method (MCTS) built specifically to exploit that architecture's shape.
+
 ## MuZero and the Counterfactual Paradigm
 
 There is a class of tasks that takes counterfactual reasoning to the extreme: the **counterfactual paradigm**, which forgoes pixel prediction entirely and instead makes accurate predictions only at the abstract level of values or rewards. MuZero ([Nature, 2020](https://arxiv.org/abs/1911.08265)) decomposes the world model into three functions:
