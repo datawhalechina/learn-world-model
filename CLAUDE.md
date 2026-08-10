@@ -6,6 +6,28 @@ This file guides Claude Code when working in this repository.
 
 This repo is a bilingual VitePress documentation site for a world-models curriculum. English and Chinese content should stay structurally aligned unless the user explicitly wants divergence.
 
+## Curriculum Structure
+
+The lectures and projects form one interleaved learning path, not two independent tracks. Preserve this progression when changing content, prerequisites, navigation, or summaries:
+
+1. L01 establishes motivation, vocabulary, scope, and the L1-L5 capability ladder.
+2. L02 Part A introduces observation encoding, followed immediately by P01.
+3. L02 Part B introduces latent dynamics and RSSM, followed immediately by P02.
+4. L03 Part A completes the planning loop with CEM-MPC, latent Actor-Critic, and TD-MPC, followed by P03.
+5. L03 Part B compares core dynamics backbones, especially RSSM and Transformer, followed by P04.
+6. L03 Part C is an optional frontier survey covering JEPA, RWM, Genie, LoopWM, WAM, system-integration patterns, and LS-Imagine. It is not a prerequisite for P03 or P04.
+7. L04 teaches a model-independent diagnostic framework and uses named models as worked examples, followed by P05 and P06.
+8. L05 contains frontier debates and the philosophical coda.
+
+Keep these conceptual distinctions consistent:
+
+- L03 surveys eight model architecture families: RNN/RSSM, Transformer, Diffusion, JEPA, RWM, Genie, LoopWM, and WAM.
+- The seven system-integration patterns describe where prediction enters a complete agent. They are not seven additional architecture families.
+- CWM is a domain extension into code execution space, not a ninth L03 dynamics-backbone family.
+- L04 evaluation begins by locating the failed interface: representation, one-step dynamics, long-horizon rollout, task signal, planner or policy, or deployment loop. Model-specific metrics illustrate this framework rather than define the lecture order.
+- P04 replaces the RSSM backbone with a STORM-style Transformer. It does not implement TD-MPC.
+- P05 evaluates the trained Dreamer and Transformer systems. It is an application of L04, not a prerequisite for reading L04.
+
 ## Commands
 
 ```sh
