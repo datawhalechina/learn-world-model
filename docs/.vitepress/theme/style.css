@@ -861,3 +861,7 @@ html.has-mermaid-viewer body {
   border-top: 1px solid var(--vp-c-divider);
   padding-top: 0.5rem;
 }
+
+.vp-doc figure figcaption p {
+  margin: 0;
+}

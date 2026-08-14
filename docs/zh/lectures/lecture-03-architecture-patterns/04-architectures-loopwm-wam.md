@@ -14,7 +14,11 @@ lecture: 3
 
 <figure>
 <img src="/lwm/lwm-architecture.png" alt="LoopWM 架构：编码器与动作嵌入器输入 Looped Dynamics Core（Prelude、共享 Recurrent Block、Coda），谱稳定性保证与延迟解码机制" style="width:100%;display:block;margin:0 auto">
-<figcaption>Lu et al. (2026) LoopWM 的完整架构：观测和动作分别经编码器 $E_o$、动作嵌入器 $A_a$ 压缩后输入 Looped Dynamics Core。Core 内部分 Prelude（生成条件）、共享 Recurrent Block（循环 $T$ 次，退出门控 $g^{(t)}$ 判断是否提前终止）、Coda（投影得到 $h_k$）三段，谱稳定性保证 $\rho(\bar{A}) < 1$ 使每次循环都是压缩映射。$h_k$ 经预测头输出未来观测、奖励和终止信号，或沿延迟解码路径连续展开多步、只在终止步解码。</figcaption>
+<figcaption>
+
+Lu et al. (2026) LoopWM 的完整架构：观测和动作分别经编码器 $E_o$、动作嵌入器 $A_a$ 压缩后输入 Looped Dynamics Core。Core 内部分 Prelude（生成条件）、共享 Recurrent Block（循环 $T$ 次，退出门控 $g^{(t)}$ 判断是否提前终止）、Coda（投影得到 $h_k$）三段，谱稳定性保证 $\rho(\bar{A}) < 1$ 使每次循环都是压缩映射。$h_k$ 经预测头输出未来观测、奖励和终止信号，或沿延迟解码路径连续展开多步、只在终止步解码。
+
+</figcaption>
 </figure>
 
 配合谱稳定化，LoopWM 还把解码推迟到 rollout 序列的最后一步才做（deferred decoding，降低计算开销并让 latent 结构更利于长程规划），并用学到的退出门控实现自适应计算：门控信号超过阈值 $\tau$ 时提前退出循环，简单转移少迭代，复杂转移（比如碰撞）多迭代几轮。训练时循环次数 $T$ 从泊松分布 $\text{Poisson}(\mu_{\text{rec}})$ 中随机采样，配合截断 BPTT 训练，让模型在测试时支持可变深度推理。论文在 ScienceWorld 和 AlfWorld 上验证，约 1B 参数的 LoopWM 在多个指标上超过参数量大 100 倍的闭源基线，同时在长时程任务上保持稳定，循环次数越多、预测质量越好，呈现出与模型规模、数据量正交的第三条 scaling 轴。
