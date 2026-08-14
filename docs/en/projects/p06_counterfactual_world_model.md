@@ -385,6 +385,8 @@ print(f'Dreamer loaded: {dreamer_loaded}   Transformer loaded: {trans_loaded}')
 
 The first counterfactual test is the interventional one. Freeze the latent state at the start of a trajectory, then roll the model forward twice under two different clamped action sequences, `do(a = always-right)` and `do(a = always-left)`. If the model is action-conditioned, the two imagined futures separate. If it is not, the futures collapse onto each other regardless of the action.
 
+`dreamer_rollout` implements this with the same `rssm.prior_step` used for pure imagination throughout P02-P05, except here `action_seq` is not sampled by any policy or read from the environment; `right = [0] * ROLLOUT_LEN` and `left = [1] * ROLLOUT_LEN` are fixed, clamped action sequences chosen by the experimenter, which is exactly what `do(a_t = a')` means operationally, as the notebook's opening cell states: setting the action rather than conditioning on an observed one. `transformer_rollout` runs the same intervention through P04's Transformer, with one adaptation flagged in its docstring: because the Transformer's rollout snaps to a discrete `argmax` token at every step, two action regimes that produce merely *different probabilities* over the same most-likely token would incorrectly report zero difference. Keeping `token_probs` (the pre-argmax softmax distribution) lets the divergence measurement in the next cell see that weaker signal instead of losing it to the discretization.
+
 ```python
 @torch.no_grad()
 def dreamer_rollout(action_seq, seed_obs):
@@ -438,6 +440,8 @@ print('Interventional rollouts computed for both models.')
 ```
 With both interventional rollouts in hand, measure how far the two action regimes pull apart at each horizon step. For the Dreamer we use the pixel-level RMS difference between decoded frames. For the Transformer, decoded frames go through an `argmax` over categorical tokens, which snaps both action regimes onto the same token and reports an exact zero even when a faint action signal is present. To see that signal we instead measure the symmetric KL divergence between the two predicted token distributions. A causal model pulls these curves up. An action-blind model keeps them near the floor.
 
+Concretely: `frame_divergence` computes root-mean-square pixel difference between the two decoded frame sequences (`d_frm_r` vs `d_frm_l` for Dreamer), directly answering "do the two clamped-action rollouts produce visibly different images." The Transformer's divergence instead compares `t_prob_r` against `t_prob_l`, the two per-step categorical distributions over 32 possible tokens, via symmetric KL, which stays informative even when both distributions' `argmax` happens to coincide. A curve that rises with horizon for either model is direct visual evidence that the world model's *prediction*, not merely its training loss, depends on the action, the property P01-P05 never tested because their evaluations never varied the action while holding the past fixed.
+
 ```python
 def frame_divergence(frames_a, frames_b):
     return [(fa - fb).pow(2).mean().sqrt().item() for fa, fb in zip(frames_a, frames_b)]
@@ -481,6 +485,10 @@ The interventional test starts from a blank latent state. The counterfactual que
 
 Abduction infers the latent state that actually produced the observed trajectory. The RSSM posterior does exactly this, so we run it forward on the real frames and actions up to a branch point. Action substitutes a different choice at that branch point. Prediction rolls the prior forward from the abducted state under the new action. The factual and counterfactual branches share the same past and differ only in the intervened action, which is what makes the comparison a clean counterfactual.
 
+`abduct_state` is the abduction step in code: it calls `rssm.posterior_step` (not `prior_step`) at every timestep up to `branch_t`, meaning it uses the *real* encoded observation at each step, exactly the [prior-vs-posterior distinction from L02](../lectures/lecture-02-encode-and-dynamics/02-dynamics#rssm-separating-deterministic-and-stochastic-components): the posterior is "belief updated after seeing data," which is precisely what abducting the latent state that actually generated an observed trajectory requires. `counterfactual_branch` is the action-then-prediction steps combined: starting from the abducted `(h_b, s_b)`, it rolls forward using `rssm.prior_step` alone (no further real observations), the same imagination mechanism used everywhere else in this curriculum, but seeded from a state abducted from real history rather than from scratch.
+
+`cf_actions = [1 - a for a in factual_actions]` is the actual intervention: flipping every binary action (0 becomes 1, 1 becomes 0) from what really happened after the branch point. Both `factual_frames` and `cf_frames` start from the identical abducted state `h_b, s_b`, so any divergence between them from that point forward is attributable to the flipped action alone, not to any difference in what came before, which is the defining property of a counterfactual comparison as opposed to comparing two unrelated trajectories.
+
 ```python
 @torch.no_grad()
 def abduct_state(obs_seq, act_seq, branch_t):
@@ -519,7 +527,7 @@ cf_frames      = counterfactual_branch(h_b, cf_actions)
 
 print(f'Abducted state at step {BRANCH}; factual vs counterfactual branches rolled forward.')
 ```
-Once the two branches are rolled out, display them side by side. The shared prefix is identical by construction, so any visible difference downstream is the causal effect of the flipped action.
+Once the two branches are rolled out, display them side by side. The shared prefix is identical by construction, so any visible difference downstream is the causal effect of the flipped action. Watch specifically for the point of divergence: both branches should be pixel-identical up to and including the branch step, then begin to separate immediately after, since that is exactly where `factual_actions` and `cf_actions` first differ.
 
 ```python
 n_show = len(factual_actions)
@@ -541,6 +549,8 @@ plt.show()
 The rollouts above probe models that were trained for prediction, not for causal fidelity, so a model can score well on reconstruction while quietly ignoring the action. The World-Action Model line of work fixes this with an inverse-dynamics regularizer: alongside the forward prediction loss, a small head must recover the action `a_t` from the latent transition between `s_t` and `s_{t+1}`. If the action cannot be read back out of the transition, the dynamics are not really conditioned on it. Adding this loss forces the latent transition to carry the action's effect.
 
 We train two compact world models on the synthetic environment, one with the inverse-dynamics term and one without, then compare how action-sensitive each becomes.
+
+`CompactWM.inv` is the inverse-dynamics head itself: given `(s_t, s_next)` it must predict which action `a_t` caused that particular transition, the reverse of the usual forward-prediction direction. In `train_compact_wm`, `fwd_loss = F.mse_loss(pred_next, s_next...)` is the ordinary forward dynamics loss shared by both models; the `use_inverse` branch adds `lam * F.cross_entropy(a_logits, a_t...)` on top of it only for the action-regularized model. The mechanism behind why this works: if the encoder learned to collapse the action's effect (mapping different actions to similar `s_next`), the inverse-dynamics head could not reliably predict `a_t` back out, so its cross-entropy loss would stay high, which in turn produces a gradient that pushes the encoder and forward-dynamics network toward representations where the action's effect is actually distinguishable in latent space. This is the "World-Action Model" idea from [L03's WAM section](../lectures/lecture-03-architecture-patterns/04-architectures-loopwm-wam#architecture-nine-from-world-model-to-world-action-model-wam) applied at the smallest possible scale: forcing a single auxiliary prediction task to keep the action's causal footprint from being optimized away.
 
 ```python
 def make_training_set(n_traj=300, horizon=SEQ_LEN, base_seed=0):
@@ -632,6 +642,8 @@ print('Both compact models trained.')
 
 To put a number on action-conditioning, measure how much the predicted next latent changes when only the action is flipped, averaged over held-out states. A model that respects the action produces a large influence score. An action-collapsed model produces a score near zero. We report it for the action-regularized model, the baseline, and the loaded Dreamer RSSM.
 
+`action_influence_compact` computes exactly one clamped intervention comparison per state: `s0 = model.forward_dynamics(s, a0)` and `s1 = model.forward_dynamics(s, a1)` predict the next latent under `do(a=0)` and `do(a=1)` from the *same* encoded state `s`, and `(s0 - s1).pow(2).sum(-1).sqrt().mean()` is the average Euclidean distance between those two predictions. This is a one-step, single-number version of the interventional divergence curve from Section 4: instead of a curve over a 10-step rollout, it is a single scalar averaged over 256 held-out states, useful as a quick headline comparison across all three models before looking at the full curve.
+
 ```python
 @torch.no_grad()
 def action_influence_compact(model, obs, n=256):
@@ -675,6 +687,8 @@ plt.show()
 ```
 The scalar above is a one-step summary. To see the effect accumulate, roll the action-regularized model and the baseline forward from the same encoded state under `do(right)` against `do(left)`, and plot how far the predicted latents separate at each step. The regularized model should fan out while the baseline stays flat, giving the interventional plot the clear contrast the loaded checkpoints could not.
 
+`compact_intervention_divergence` (defined in the code cell below, following the same pattern as `dreamer_rollout`/`frame_divergence` in Section 4) repeatedly applies `forward_dynamics` under each clamped action and tracks the growing latent-space gap step by step, turning the single scalar from Section 7 above into the same kind of horizon curve Section 4 produced for the pretrained Dreamer and Transformer checkpoints, now for a controlled pair of models where the only difference is whether the inverse-dynamics loss was present during training.
+
 ```python
 @torch.no_grad()
 def compact_intervention_divergence(model, seed_obs, steps=ROLLOUT_LEN):
@@ -709,7 +723,7 @@ plt.show()
 ```
 ## 8. Save Checkpoint and Summary
 
-Save the action-regularized model for reuse and record the headline numbers.
+Save the action-regularized model for reuse and record the headline numbers. `causal_wm`, the model trained with the inverse-dynamics regularizer, is the one saved: it is the model this notebook demonstrates as actually action-causal, so it is the useful artifact to carry forward, unlike `baseline_wm`, which exists in this notebook only as a comparison point showing what happens without the regularizer.
 
 ```python
 torch.save({

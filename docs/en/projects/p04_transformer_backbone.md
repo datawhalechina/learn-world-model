@@ -78,7 +78,7 @@ print('PyTorch version:', torch.__version__)
 ```
 ## 1. Categorical VAE
 
-Tokenize each frame into a single 32-dimensional discrete code.
+Tokenize each frame into a single 32-dimensional discrete code. This is a simplified version of the tokenizers behind [IRIS and STORM](../lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion#architecture-2-transformer-based-2022-2023): STORM uses a categorical VAE with 32 categories of 32 dimensions each (32 x 32 = 1024 possible joint states per frame), while this notebook's `CatVAE` uses a single 32-way categorical code (`NUM_CATEGORIES = 32` choices, one per frame) to keep training fast on CPU. The underlying mechanism, mapping a continuous encoder output to a discrete token via a differentiable relaxation, is the same one the lecture names for both IRIS's VQ-VAE and STORM's categorical VAE.
 
 ```python
 # Synthetic shape image dataset.
@@ -121,7 +121,11 @@ plt.suptitle('Sample synthetic images', y=1.02)
 plt.tight_layout()
 plt.show()
 ```
-Once the synthetic shape dataset is ready, define the straight-through Gumbel-softmax path that makes the categorical VAE trainable end to end.
+Once the synthetic shape dataset is ready, define the straight-through Gumbel-softmax path that makes the categorical VAE trainable end to end. This is the code-level implementation of the **straight-through estimator** described in [the VQ callout on the Backbone Selection page](../lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion#iris-turning-images-into-sentences): `straight_through_gumbel` needs to pick one of 32 discrete categories, but `argmax` (needed for the forward pass) has zero gradient everywhere, which would make the encoder untrainable.
+
+`F.gumbel_softmax(logits, tau=tau, hard=False)` produces `y_soft`, a *continuous* relaxation of a one-hot vector (a full probability distribution over the 32 categories, weighted toward the most likely one, that becomes closer to a true one-hot vector as `tau -> 0`). `y_hard` is the true discrete one-hot vector via `argmax`. The return line `(y_hard - y_soft).detach() + y_soft` is the trick itself: in the forward pass this evaluates to exactly `y_hard` (since `(y_hard - y_soft).detach() + y_soft = y_hard` numerically), so the model sees genuine discrete tokens. In the backward pass, `.detach()` makes `(y_hard - y_soft)` a constant with zero gradient, so gradients flow only through the `+ y_soft` term, meaning the encoder receives gradients as if it had output the *soft*, continuous relaxation. This is exactly the lecture's description: "the forward pass uses the discrete sample, while the backward pass treats the operation as an identity function so gradients flow through directly."
+
+`CatVAEEncoder` and `CatVAEDecoder` are otherwise the same convolutional architecture as P01's VAE, with one key difference in what the encoder outputs: `CatVAEEncoder.forward` returns raw logits over 32 categories (not a `mu, log_var` pair for a continuous Gaussian), and `CatVAE.encode` applies the straight-through Gumbel-softmax to get a trainable discrete token from those logits.
 
 ```python
 # Straight-through Gumbel-softmax.
@@ -210,7 +214,7 @@ catvae = CatVAE(num_categories=NUM_CATEGORIES, tau=1.0).to(DEVICE)
 total_params = sum(p.numel() for p in catvae.parameters())
 print(f'CatVAE parameters: {total_params:,}')
 ```
-With the relaxation in place, train CatVAE on the synthetic images and let the discrete latent code learn a compact representation.
+With the relaxation in place, train CatVAE on the synthetic images and let the discrete latent code learn a compact representation. The loss combines `recon_loss` (the same MSE reconstruction term from P01) with an `entropy_reg` term absent from P01: `probs = F.softmax(logits, dim=-1).mean(0)` is the average category-usage distribution across a batch, and `entropy_reg = (probs * (probs + 1e-8).log()).sum()` is the negative entropy of that distribution. Minimizing `0.01 * entropy_reg` therefore *maximizes* entropy, pushing the model to use all 32 categories roughly equally rather than collapsing onto a small subset. This is the discrete-latent analogue of the continuous VAE's KL term from P01: both terms exist to keep the latent space well-organized (here, evenly spreading usage across categories) rather than degenerate, just enforced through a different mechanism suited to a discrete rather than continuous latent.
 
 ```python
 # Train CatVAE.
@@ -255,7 +259,7 @@ plt.grid(True, alpha=0.3)
 plt.tight_layout()
 plt.show()
 ```
-After training starts, add a quick reconstruction check to verify that the categorical bottleneck still preserves image structure.
+After training starts, add a quick reconstruction check to verify that the categorical bottleneck still preserves image structure. This is the same sanity check P01 ran on its continuous latent space, now applied to a single discrete 32-way code per frame: a much tighter bottleneck than P01's 32 continuous dimensions, so expect reconstructions to preserve coarse shape and color while losing fine positional precision.
 
 ```python
 # Visual check of CatVAE reconstructions.
@@ -288,6 +292,8 @@ The world model Transformer operates on a sequence of interleaved (z, a) tokens.
 Causal masking ensures position t can only attend to positions up to and including t, so the model cannot peek at future observations during training.
 
 The output at position t predicts: the next latent token z_{t+1} (cross-entropy), the reward r_t (MSE), and the done flag d_t (BCE).
+
+This architecture mirrors [IRIS's design](../lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion#iris-turning-images-into-sentences) more than STORM's: IRIS also interleaves frame tokens and action tokens into a single sequence (`torch.stack([z_emb, a_emb], dim=2).view(B, 2*T, D)` builds exactly that `[z0, a0, z1, a1, ...]` interleaving), whereas STORM fuses `z_t` and `a_t` into one token per step before the Transformer, halving the sequence length. IRIS's three joint prediction targets, transition, reward, and termination, are exactly `token_head`, `reward_head`, and `done_head` below. The `_causal_mask` method builds the upper-triangular mask from [the self-attention callout](../lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion#core-mechanism-1) directly: `torch.triu(..., diagonal=1)` marks every position strictly above the diagonal (every future position) as `True`, meaning "ignore," so position `t` can attend to positions `0..t` but nothing later, exactly the autoregressive constraint the lecture names.
 
 ```python
 # Causal Transformer world model.
@@ -421,7 +427,7 @@ print('Generating 200 synthetic trajectories (20 steps each)...')
 obs_arr, act_arr, rew_arr, done_arr = generate_trajectories(n_traj=200, horizon=SEQ_LEN)
 print(f'obs: {obs_arr.shape}, act: {act_arr.shape}, rew: {rew_arr.shape}')
 ```
-With the image side finished, switch to trajectories so the Transformer world model has temporal data to learn from.
+With the image side finished, switch to trajectories so the Transformer world model has temporal data to learn from. `generate_trajectories` builds a new, simpler synthetic environment than P02/P03: a single ball moves left or right by a fixed step depending on the action, with reward `1.0` whenever the ball is right of center. This is deliberately simpler than P03's environment, since the goal here is a controlled comparison of RSSM against Transformer prediction quality, not a policy-learning demonstration; no actor or critic is trained in this notebook.
 
 ```python
 # Encode all observations with CatVAE.
@@ -441,7 +447,7 @@ unique_tokens = idx_all.unique().numel()
 print(f'Unique token categories used: {unique_tokens} / {NUM_CATEGORIES}')
 catvae.train()
 ```
-Once observations are tokenized, the Transformer can model temporal dynamics directly over the latent sequence.
+Once observations are tokenized, the Transformer can model temporal dynamics directly over the latent sequence. Every observation across all 200 trajectories is passed through the frozen `catvae.encoder` in a single batched forward pass (`obs_arr.view(N * T, C, H, W)`), then converted to hard one-hot vectors via `argmax` rather than the straight-through relaxation used during CatVAE training: at this stage the encoder is fixed and only produces training targets for the Transformer, so no gradient needs to flow back through the tokenization, and using the true discrete choice (not a soft relaxation) gives the Transformer clean, unambiguous token labels to learn from.
 
 ```python
 # Train the Causal Transformer.
@@ -504,7 +510,7 @@ for epoch in range(TRANS_EPOCHS):
 
 print('Transformer training complete.')
 ```
-Now that optimization is underway, track token loss and reward loss together so both prediction heads stay in view.
+Now that optimization is underway, track token loss and reward loss together so both prediction heads stay in view. The label construction is worth reading closely: `target_idx = z_b[:, 1:, :].argmax(-1)` takes the *true* token at every position from index 1 onward, and `pred_logits = token_logits[:, :-1, :]` takes the model's prediction from every position up to the second-to-last. Because of the causal mask, `token_logits[:, t, :]` is the model's prediction for what comes *after* position `t`, so pairing `pred_logits[t]` with `target_idx[t]` (i.e., `z_b[t+1]`) is exactly the "predict the next token from everything seen so far" objective the lecture describes, implemented as ordinary next-token cross-entropy exactly as in IRIS and STORM. The total loss weights three terms (`tok_loss + 0.5 * rew_loss + 0.1 * done_loss`); the weights are chosen so token prediction, the hardest and most sample-hungry target, dominates the gradient early in training.
 
 ```python
 # --- Plot token and reward losses ---
@@ -524,6 +530,8 @@ plt.show()
 Decode rollouts from both backbones and compare image quality across horizons.
 
 We compare imagined rollouts from the RSSM (P02) and the Causal Transformer. If `rssm.pt` exists from P02 we load it. Otherwise we initialize an RSSM with the same random seed used in P02. Both models generate 10-step rollouts from the same starting state, and we decode the predicted latents back to pixels using the CatVAE decoder. PSNR measures pixel-level fidelity at each horizon step.
+
+One asymmetry worth naming: `RSSM.prior_step` (defined just above, a P02-compatible copy) returns the prior's *mean* only (`mu, _ = pr.chunk(2, dim=-1); return mu, h`), a deterministic rollout with no sampling, exactly like P02's own `RSSM.rollout`. The Transformer rollout below is also deterministic (`tok_logits[:, -1, :].argmax(-1)`, always the highest-probability token). Both models are therefore compared under matched, deterministic rollout conditions, isolating the effect of architecture (recurrent state vs. attention) from the effect of stochastic sampling, which would otherwise be a confound in a horizon-quality comparison like this one.
 
 ```python
 # PSNR utility.
@@ -608,7 +616,7 @@ rssm.eval()
 transformer_wm.eval()
 catvae.eval()
 ```
-With the PSNR utility defined, evaluate it across rollout horizons to see how prediction quality decays over time.
+With the PSNR utility defined, evaluate it across rollout horizons to see how prediction quality decays over time. `psnr` implements the formula from [L04's STORM metrics page](../lectures/lecture-04-evaluation-by-model/04-storm-diffusion-drift#long-horizon-psnr): $\text{PSNR} = 10 \log_{10}(\text{MAX}^2 / \text{MSE})$, here with `MAX = 1.0` since pixels are normalized to `[0, 1]`. Both rollouts are entirely open-loop from a shared starting frame `z0`: the RSSM loop calls `rssm.prior_step` repeatedly (no observations after step 0), and the Transformer loop appends its own predicted token to `z_seq` and re-feeds the growing sequence (`z_seq = torch.cat([z_seq, next_z.unsqueeze(1)], dim=1)`), so both are subject to the same teacher-forcing gap discussed for STORM in L04: whatever each model predicts becomes its own next input, and small early errors can compound over the 10-step horizon.
 
 ```python
 # Compute PSNR vs horizon.
@@ -671,7 +679,7 @@ print(f'{"Horizon":>10}  {"RSSM":>10}  {"Transformer":>12}')
 for h, r, t in zip(horizons, psnr_rssm_mean, psnr_trans_mean):
     print(f'{h:>10}  {r:>10.2f}  {t:>12.2f}')
 ```
-After collecting the scores, plot the horizon curve so the overall trend is easier to read.
+After collecting the scores, plot the horizon curve so the overall trend is easier to read. Reading this plot alongside the [horizon drift discussion in L04](../lectures/lecture-04-evaluation-by-model/05-diffusion-drift#horizon-drift-the-universal-failure-mode-across-all-world-models): both curves are expected to decline as horizon increases (drift is universal across architectures), but the *rate* of decline is the actual comparison of interest between RSSM's fixed-size recurrent state and the Transformer's full-context attention.
 
 ```python
 # --- Plot PSNR vs horizon ---
@@ -687,7 +695,7 @@ ax.grid(True, alpha=0.3)
 plt.tight_layout()
 plt.show()
 ```
-The horizon curve shows the aggregate pattern. The image grid makes the step-by-step differences concrete.
+The horizon curve shows the aggregate pattern. The image grid makes the step-by-step differences concrete: seeing the actual decoded frames at steps 1, 5, and 10 next to ground truth reveals *what kind* of error each backbone accumulates (blur, color drift, position drift), information the single PSNR number above averages away.
 
 ```python
 # Image grid: GT / RSSM / Transformer.
@@ -741,6 +749,8 @@ plt.show()
 ## 5. Training Efficiency
 
 Wall-clock training time is a practical consideration when choosing a dynamics backbone. Here we compare the per-epoch time of the Transformer (measured above) against a brief RSSM re-run, then plot validation loss vs cumulative wall-clock time for both models.
+
+`RSSMForTiming` is a fresh, minimal RSSM class defined purely for this timing comparison (not the same object as the `RSSM` class used for the rollout comparison above), trained on the same token-prediction cross-entropy objective as the Transformer so the two loss curves in the next section are on a comparable scale. This directly demonstrates the lecture's stated trade-off: RSSM processes each of the 20 steps in a trajectory sequentially through `self.gru(inp, h)` inside a Python `for t in range(T)` loop, one GRU cell call per step, while the Transformer's attention layers process the entire interleaved sequence in one forward pass. The wall-clock numbers printed here are this notebook's direct, empirical version of the "training parallelism: high vs. low" row in the Architecture Comparison table below.
 
 ```python
 # Brief RSSM timing run.
@@ -802,7 +812,7 @@ for epoch in range(RSSM_EPOCHS):
 print(f'RSSM avg time/epoch: {np.mean(rssm_times):.3f}s')
 print(f'Transformer avg time/epoch: {np.mean(epoch_times):.3f}s')
 ```
-With the timing baseline captured, compare validation loss against wall-clock time to make the efficiency trade-off explicit.
+With the timing baseline captured, compare validation loss against wall-clock time to make the efficiency trade-off explicit. The left panel plots each model's own loss curve against its own cumulative training time rather than against epoch count, which is the fairer comparison: two models can take a different amount of wall-clock time to complete the same number of epochs, so overlaying loss-vs-epoch curves would hide exactly the compute-efficiency difference this section is trying to surface.
 
 ```python
 # Plot validation loss vs wall-clock time.

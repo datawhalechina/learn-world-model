@@ -24,7 +24,7 @@ fi
 ```
 ## 1. Setup
 
-Define the shared environment, model dimensions, and training schedule.
+Define the shared environment, model dimensions, and training schedule. This notebook assembles four pieces from earlier lectures into the [complete Dreamer pipeline](../lectures/lecture-02-encode-and-dynamics/03-dynamics-dreamer-series#the-encoders-role-as-a-bridge-in-dreamer): encode, predict forward with RSSM, evaluate imagined trajectories with an actor and critic, then execute in the real environment. One deliberate simplification up front, flagged here so the later code is not a surprise: the actor in this notebook is trained by imitating a hand-coded expert (Section 4's `supervised_policy_update`), not by backpropagating through imagined rewards as [the lecture's latent Actor-Critic](../lectures/lecture-03-architecture-patterns/05-planning-cem-ac#mechanism-2-actor-critic-in-latent-space-dreamers-approach) describes. Only the critic is trained on imagined returns here. This keeps the tutorial-scale agent stable to train in a few minutes; Section 3 still implements the full differentiable imagination machinery the real Dreamer actor update would use.
 
 ```python
 import random
@@ -83,7 +83,7 @@ if USE_CUDA:
 ```
 ### 1.1 Hyperparameters
 
-Keep the settings small so the full loop runs quickly.
+Keep the settings small so the full loop runs quickly. Three of these map directly onto lecture concepts: `IMAGINE_H = 10` is the imagination horizon $H$ from [CEM-MPC and latent Actor-Critic](../lectures/lecture-03-architecture-patterns/05-planning-cem-ac), the number of steps rolled forward inside the world model before computing a return. `LAMBDA_RETURN = 0.95` is $\lambda$ from the lecture's $\lambda$-return: closer to 1 trusts the real (imagined) rollout more, closer to 0 trusts the critic's own value estimate more. `GAMMA = 0.99` is the discount factor $\gamma$ from the same page's CEM pseudocode, controlling how quickly future imagined rewards are discounted.
 
 ```python
 # Model dimensions
@@ -112,7 +112,7 @@ SAVE_PATH    = 'dreamer.pt'
 ```
 ### 1.2 VAE Encoder
 
-Use the same encoder shape as P01.
+Use the same encoder shape as P01, with one addition: `VAEDecoder.forward` here takes both `z` and `h` (`torch.cat([z, h], dim=-1)`), not just `z` as in P01 and P02. This matches the lecture's observation model $o_t \sim p(o_t \mid h_t, z_t)$ from [the RSSM section](../lectures/lecture-02-encode-and-dynamics/02-dynamics#why-separate-them): reconstruction is conditioned on both the deterministic memory `h_t` and the stochastic perception `z_t`, not on `z_t` alone as the simpler P01/P02 decoders did.
 
 ```python
 class VAEEncoder(nn.Module):
@@ -168,7 +168,9 @@ class VAEDecoder(nn.Module):
 ```
 ### 1.3 RSSM
 
-Reuse the latent dynamics interface from P02.
+Reuse the latent dynamics interface from P02, restructured into three separate methods (`prior`, `posterior`, `step`) instead of P02's single `forward` loop, so this notebook can call each piece independently: `step` for advancing `h`, `prior`/`posterior` for sampling `z`. This split is what makes `imagined_rollout` below possible, since imagination needs `prior` alone (no observations) while training needs `posterior` (with observations), exactly the split the [lecture's prior-vs-posterior callout](../lectures/lecture-02-encode-and-dynamics/02-dynamics#rssm-separating-deterministic-and-stochastic-components) describes.
+
+One implementation detail worth flagging: `prior` and `posterior` use `std = F.softplus(logvar) + 0.1` rather than P02's `std = (0.5 * logvar).exp()`. Both are valid ways to guarantee a positive standard deviation from an unconstrained network output; `softplus(x) + 0.1` additionally enforces a minimum standard deviation of 0.1, which prevents the KL term from being driven to exactly zero by a near-deterministic posterior, a direct guard against the posterior collapse failure mode discussed in [L04's Dreamer diagnostics](../lectures/lecture-04-evaluation-by-model/01-model-metrics-dreamer#imagined-trajectory-entropy).
 
 ```python
 class RSSM(nn.Module):
@@ -237,7 +239,7 @@ class RSSM(nn.Module):
 ```
 ### 1.4 Actor and Critic
 
-Train both entirely in latent space.
+Train both entirely in latent space, operating on `(h, z)` pairs rather than pixels, the same "no real observations needed" property that makes pure-imagination training possible. `Actor.forward` also accepts an optional `bar_pos` feature; this is a task-specific shortcut for the synthetic bar-balancing environment defined next, not part of the general Dreamer architecture, and defaults to zero when omitted (as it is during `imagined_rollout` below, where no real observation exists to compute it from). A `RewardModel` is defined alongside Actor and Critic: Dreamer needs to predict rewards *inside* imagined rollouts, since imagined states have no real environment to query for a reward signal, so a learned reward model is as essential a component as the dynamics model itself.
 
 ```python
 class Actor(nn.Module):
@@ -301,6 +303,8 @@ class RewardModel(nn.Module):
 ```
 ### 1.5 Synthetic Environment
 
+`SyntheticEnv` is a minimal control task purpose-built for this notebook, not something introduced in the lectures: a red bar's horizontal position `pos` moves left or right by a fixed step depending on the binary action, and the reward is `+1` whenever the action moved the bar closer to the center (`abs(pos) < prev_abs`) and `-1` otherwise. This makes "keep the bar near the center" the optimal policy, simple enough that a working Dreamer loop can be demonstrated in a few minutes of training on CPU, while still requiring the agent to read position from pixels (via the encoder) and act on a multi-step signal (via the RSSM and actor) rather than solving the task with a one-line heuristic.
+
 ```python
 class SyntheticEnv:
     """Simple synthetic control environment with image observations."""
@@ -344,6 +348,8 @@ obs2, r, done = env.step(1)
 print(f'After step: reward={r}, done={done}')
 ```
 ### 1.6 Load or Initialize Models
+
+Loads `vae_encoder.pt` (P01) and `rssm.pt` (P02) if present. Note the comment in `_load_encoder_decoder_from_vae_checkpoint`: only the *encoder* weights are reused from P01's checkpoint; P03's decoder is intentionally re-initialized and retrained from scratch, because P03's decoder architecture differs from P01's (it additionally conditions on `h`, as noted in Section 1.2 above), so P01's decoder weights would not be shape-compatible even if reused. If either checkpoint is missing, the corresponding module falls back to random initialization and the notebook still runs, but the resulting agent is a weaker demonstration since it is not building on the representations learned in P01/P02.
 
 ```python
 def obs_to_tensor(obs):
@@ -424,6 +430,8 @@ for name, m in [('encoder', encoder), ('decoder', decoder), ('rssm', rssm), ('ac
 ```
 ### 1.7 Replay Buffer and Optimizers
 
+`replay_buffer` is a fixed-size FIFO queue (`deque(maxlen=200)`) of collected trajectories, the training data source for both the world-model update and the supervised policy update later. Note that `opt_wm` optimizes `encoder + decoder + rssm + reward_model` jointly as one parameter group, while `opt_actor` and `opt_critic` are separate optimizers: this separation matters because, as flagged in Section 1, the actor and critic are trained by different mechanisms (imitation vs. imagined returns) and should not share gradient updates.
+
 ```python
 # Replay buffer stores trajectory dictionaries.
 replay_buffer = deque(maxlen=200)
@@ -438,6 +446,10 @@ opt_critic = optim.Adam(critic.parameters(), lr=LR_AC)
 print('Optimizers initialized.')
 ```
 ## 2. World Model Update
+
+`world_model_update` is this notebook's version of the world-model training loop from [P02](../projects/p02_rssm_dynamics), extended to also predict rewards. For each step in a trajectory: encode the current observation (`encoder.encode`), compute both the posterior `z_post` (conditioned on the real observation, via `rssm.posterior`) and the prior (conditioned on history alone, via `rssm.prior`), reconstruct the *next* observation from `(z_post, h_next)`, and predict the immediate reward from `(h, z_post, a_oh)`.
+
+The `kl` computation is the same closed-form Gaussian-vs-Gaussian KL used in P02's RSSM, just written in terms of `std` directly (`(post_std / prior_std).pow(2) + ...`) rather than in terms of `log_var` as in P02: the two are algebraically equivalent, since `log_var = 2 * log(std)`. `h = h_next.detach()` and `z = z_post.detach()` at the end of each step deliberately cut the backpropagation graph between consecutive timesteps (truncated backpropagation through time), trading a small amount of gradient accuracy for training stability and lower memory use over the 20-step episodes used here.
 
 ```python
 def action_to_onehot(action_int, action_dim=ACTION_DIM):
@@ -523,6 +535,10 @@ print('world_model_update defined.')
 ```
 ## 3. Behavior Learning (Imagination)
 
+`imagined_rollout` implements the imagination step from [the lecture's latent Actor-Critic training procedure](../lectures/lecture-03-architecture-patterns/05-planning-cem-ac#mechanism-2-actor-critic-in-latent-space-dreamers-approach): starting from a real `(h, z)` pair, repeatedly sample an action from the actor, advance the RSSM's prior (never the posterior, since no real observation exists once imagination begins), and predict a reward at each step, entirely without touching the real environment. The `differentiable=True` branch exists specifically to support the *lecture-accurate* actor training this notebook does not use by default: it replaces `dist.sample()` (non-differentiable, since sampling from a categorical distribution blocks gradient flow) with `F.gumbel_softmax(..., hard=True)`, the standard technique for approximating a differentiable sample from a discrete distribution, which is what would let the actor's gradients flow back through the entire imagined trajectory as the lecture describes. `behavior_update` calls `imagined_rollout` in the non-differentiable mode (`differentiable=False`) and uses the result only to train the critic via `lambda_returns`, the same $\lambda$-return formula introduced in the lecture; the actor is not touched by this function at all.
+
+`lambda_returns` implements the lecture's $\lambda$-return directly: `td = rewards[t] + gamma * values[t+1]` is the one-step TD target, and the backward recursion `G_next = (1 - lam) * td + lam * gamma * G_next` builds the same "weighted average over all k-step returns" the lecture describes, computed efficiently backward through the horizon rather than as an explicit weighted sum.
+
 ```python
 def lambda_returns(rewards, values, gamma=GAMMA, lam=LAMBDA_RETURN):
     """Compute lambda-return targets for imagination."""
@@ -607,6 +623,10 @@ def behavior_update(start_h, start_z, horizon=IMAGINE_H):
 print('behavior_update defined.')
 ```
 ## 4. Training Loop
+
+Each of the `N_ITERATIONS` outer iterations runs four sub-steps: collect one real episode with the current actor (`collect_episode`), update the world model on a batch of replayed trajectories (`world_model_update`), update the critic on an imagined rollout from that episode's states (`behavior_update`), and update the actor by imitation (`supervised_policy_update`). That last step is the one flagged in Section 1: `expert_action_from_obs` is a hand-coded heuristic ("move toward center") baked directly into this cell, and the actor is trained with plain `F.cross_entropy` against the expert's action labels, standard supervised behavior cloning, not policy-gradient or backpropagation-through-imagination. This is a pragmatic substitution for a tutorial-scale demo: end-to-end differentiable actor training through `imagined_rollout(differentiable=True)` is implemented and available (Section 3), but is more sensitive to hyperparameters and slower to converge reliably within `N_ITERATIONS = 30` iterations, so the default training loop uses the more stable imitation signal instead. If you want to see the lecture-accurate loss in action, replace the `supervised_policy_update` call with an actor loss computed from `imagined_rollout(h, z, differentiable=True)`'s returned `r_seq`, maximized via the critic exactly as the lecture describes.
+
+With episode collection ready, initialize the metric history before the training loop starts writing results.
 
 ```python
 def collect_episode(env_seed=None, deterministic=False, epsilon=0.05):
@@ -758,7 +778,7 @@ for iteration in range(N_ITERATIONS):
 
 print('\nTraining complete.')
 ```
-Once the metrics are being recorded, turn them into a learning curve so you can watch the agent improve over time.
+Once the metrics are being recorded, turn them into a learning curve so you can watch the agent improve over time. `ep_reward` should trend upward over iterations if the imitation-trained actor is successfully learning the "move toward center" behavior; `recon_losses` and `kl_losses` are the same two ELBO components introduced in P01 and P02, now diagnosing whether the world model itself, not the policy, is degrading. Watch `kl_losses` in particular for the near-zero collapse pattern flagged in Section 1.3: a KL that drops to near zero within the first few iterations, while `recon_losses` stays high, is posterior collapse, not successful training.
 
 ```python
 fig, axes = plt.subplots(2, 2, figsize=(12, 8))
@@ -789,6 +809,8 @@ plt.tight_layout()
 plt.show()
 ```
 ## 5. Self-Evaluation Metrics
+
+This section implements the exact diagnostic from [L04's Dreamer worked example](../lectures/lecture-04-evaluation-by-model/01-model-metrics-dreamer#reward-correlation): compare rewards the world model *imagines* against rewards the real environment *actually returns*, for the same starting states. `imagined_rollout_rewards` is a read-only variant of `imagined_rollout` (Section 3) that additionally tracks the actor's entropy at each imagined step, since the lecture's diagnostic rule for a healthy Dreamer requires checking both reward correlation and entropy together, not reward correlation alone.
 
 ```python
 def imagined_rollout_rewards(start_h, start_z, horizon=10, deterministic=True):
@@ -851,7 +873,7 @@ print(f'  Mean real reward (full episode):          {np.mean(real_reward_sums):.
 print(f'  Mean imagined reward (predicted):         {np.mean(imag_reward_sums):.3f}')
 print(f'  Mean imagined trajectory entropy:         {np.mean(imag_entropies_ev):.4f}')
 ```
-After the imagination helper is defined, compare imagined reward against real return to check whether planning is aligned with the environment.
+After the imagination helper is defined, compare imagined reward against real return to check whether planning is aligned with the environment. `N_EVAL = 10` fresh episodes are collected with `deterministic=True` (always take the actor's highest-logit action, no exploration noise), then for each episode, the RSSM's posterior state after the first real observation seeds an imagined rollout of the same length. Comparing `real_reward_sums` against `imag_reward_sums` for the same starting states is precisely the "starting from the same initial state" comparison the lecture recommends: if the two track each other, the world model's reward predictions are trustworthy inputs to planning; if they diverge, imagined rewards cannot be trusted to guide action selection, which is the model exploitation risk described in the [Actor-Critic planning lecture](../lectures/lecture-03-architecture-patterns/05-planning-cem-ac#mechanism-2-actor-critic-in-latent-space-dreamers-approach).
 
 ```python
 # Pearson correlation between imagined and real reward sums
@@ -866,7 +888,7 @@ else:
 print(f'Reward correlation rho (predicted vs real, {EVAL_H}-step): {rho:.4f}')
 print(f'Mean imagined trajectory entropy:                          {np.mean(imag_entropies_ev):.4f}')
 ```
-With the summary metric in place, lay out the diagnostic plots side by side for a fast sanity check.
+With the summary metric in place, lay out the diagnostic plots side by side for a fast sanity check. `rho`, computed in the previous cell with `np.corrcoef`, is exactly the Pearson correlation coefficient $\rho = \text{Pearson}(r_{\text{imagined}}, r_{\text{real}})$ from [L04](../lectures/lecture-04-evaluation-by-model/01-model-metrics-dreamer#reward-correlation), which recommends targeting `ρ ≥ 0.8` for a healthy world model; on this small tutorial-scale agent trained for only 30 iterations, expect a noisier value than that production target. The scatter plot's diagonal dashed line represents perfect agreement (`imagined = real`): points scattered far from that line, especially systematically above it, are the visual signature of the world model "lying" that the lecture warns about.
 
 ```python
 fig, axes = plt.subplots(1, 3, figsize=(15, 4))
@@ -900,6 +922,8 @@ plt.tight_layout()
 plt.show()
 ```
 ## 6. Save Checkpoint
+
+Saves every trained component (`encoder`, `decoder`, `rssm`, `actor`, `critic`, `reward_model`) plus the full metric history, not just the RSSM as P02 did, because P05's evaluation dashboard needs the complete agent, not only its dynamics core, to reproduce the reward-correlation and entropy diagnostics from Section 5 on demand.
 
 ```python
 checkpoint = {

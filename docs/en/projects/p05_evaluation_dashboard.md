@@ -22,7 +22,7 @@ else
   pip install torch torchvision matplotlib numpy
 fi
 ```
-With the environment ready, import the trajectory-generation and scoring utilities used throughout the dashboard.
+With the environment ready, import the trajectory-generation and scoring utilities used throughout the dashboard. This notebook implements [L04's model-independent diagnostic framework](../lectures/lecture-04-evaluation-by-model/00-diagnostic-framework) directly: rather than reporting one aggregate score, it computes the same handful of metrics across both P03's Dreamer and P04's Transformer, on the same held-out trajectories, so the numbers are directly comparable rather than each model being scored on its own terms.
 
 ```python
 import math
@@ -94,7 +94,7 @@ print('Transformer checkpoint exists:', TRANS_CKPT.exists())
 ```
 ## 1. Synthetic Environment and Trajectory Generation
 
-Generate 20 held-out episodes from the same environment used in P03.
+Generate 20 held-out episodes from the same environment used in P03. "Held-out" matters here specifically because these episodes are generated fresh (not reused from either training run), which is what makes the metrics below a genuine test of generalization rather than a check of whether each model memorized its own training trajectories, the same in-distribution-versus-held-out distinction the diagnostic framework lecture calls out under its "Three Evaluation Regimes" section.
 
 ```python
 class SyntheticEnv:
@@ -168,6 +168,8 @@ dimensions exactly match P03 and P04:
 - `HIDDEN_DIM = 128`, `LATENT_DIM = 32`, `N_CATEGORIES = 32`
 - **Dreamer side:** CNN VAE encoder/decoder, RSSM (GRU + prior/posterior nets), Actor, Critic
 - **Transformer side:** CatVAE (same as P04), CausalTransformerWM (same as P04)
+
+Reimplementing rather than importing from P03/P04 is deliberate: this notebook loads only the trained *weights* (`dreamer.pt`, `transformer_wm.pt`) via `state_dict`, so the class definitions here need to match those checkpoints' shapes exactly, but nothing about P05 depends on P03's or P04's notebook code being present or unmodified.
 
 ```python
 # Dreamer components.
@@ -342,7 +344,7 @@ class Critic(nn.Module):
 print('Dreamer architecture classes defined.')
 print(f'  RSSM hidden_dim={HIDDEN_DIM}, latent_dim={LATENT_DIM}')
 ```
-Now that the Dreamer stack is defined, add the Transformer world-model components so the dashboard can compare them directly.
+Now that the Dreamer stack is defined, add the Transformer world-model components so the dashboard can compare them directly. These are copies of P04's `CatVAE`, `straight_through_gumbel`, and `CausalTransformerWM`, kept identical so the checkpoint saved at the end of P04 loads without shape mismatches.
 
 ```python
 # Transformer-based world model components.
@@ -465,7 +467,7 @@ print(f'  CausalTransformerWM d_model={HIDDEN_DIM}, n_categories={N_CATEGORIES}'
 ```
 ## 3. Load or Initialize Both Models
 
-Load checkpoints when available, otherwise fall back to random weights.
+Load checkpoints when available, otherwise fall back to random weights. As the notebook's opening cell states, this fallback exists purely so the dashboard runs as a smoke test with no prior checkpoints present; every metric computed from a randomly initialized model is meaningless as a comparison and should be treated only as confirmation that the code executes without error, never as evidence about model quality.
 
 ```python
 # Build model instances.
@@ -548,6 +550,8 @@ quickly the imagined trajectory diverges from reality.
 yield reward, even under imagination.
 **Token prediction loss** (cross-entropy) is the Transformer's training signal at test time.
 
+Each metric maps onto a specific diagnostic layer from [L04's six-question framework](../lectures/lecture-04-evaluation-by-model/00-diagnostic-framework#six-diagnostic-questions): PSNR and latent drift both probe the "long-horizon rollout" layer (do errors stay controlled as predictions become their own next input), while reward correlation probes the "task signal" layer specifically for Dreamer, matching [L04's own reward-correlation diagnostic](../lectures/lecture-04-evaluation-by-model/01-model-metrics-dreamer#reward-correlation) computed here on fresh held-out data rather than training trajectories. Token prediction loss is a Transformer-specific proxy for the "one-step dynamics" layer, since a Transformer has no separate reward-conditioned rollout mechanism to probe the way Dreamer's actor-critic does.
+
 ```python
 def psnr_fn(pred, target):
     """Peak Signal-to-Noise Ratio in dB. Both tensors in [0,1]."""
@@ -570,7 +574,7 @@ print('Utility functions defined.')
 print('PSNR evaluation steps :', PSNR_STEPS)
 print('Latent drift steps     :', DRIFT_STEPS)
 ```
-With the shared metric helper ready, compute the Dreamer rollout statistics first.
+With the shared metric helper ready, compute the Dreamer rollout statistics first. Two details worth tracing in the code: `s_cur = z0.clone()` seeds the rollout with the *encoded ground-truth* first observation (`z0 = encoder.forward(obs_seq[0:1])`, the encoder's mean, a point estimate rather than a sample), then every subsequent step calls `rssm.prior_step` alone with no further observations, matching the lecture's description of imagination as prior-only rollout. `imagined_rewards` accumulates the reward model's prediction at each imagined step; comparing this sequence against `rew_seq[:ROLLOUT_LEN]` (the real environment's rewards for the same trajectory) via `pearson_rho` is exactly the [reward correlation diagnostic](../lectures/lecture-04-evaluation-by-model/01-model-metrics-dreamer#reward-correlation) from L04, now measured on 20 fresh episodes the Dreamer agent never saw during P03 training.
 
 ```python
 # Dreamer metrics.
@@ -645,7 +649,7 @@ print(f'  PSNR@5  : {dreamer_psnr_mean[5]:.2f} dB')
 print(f'  PSNR@10 : {dreamer_psnr_mean[10]:.2f} dB')
 print(f'  Latent drift@10 : {dreamer_drift_mean[10]:.4f}')
 ```
-Once the Dreamer numbers are logged, run the same evaluation for the Transformer baseline and line the results up side by side.
+Once the Dreamer numbers are logged, run the same evaluation for the Transformer baseline and line the results up side by side. Note this cell computes `trans_tok_loss` under **teacher forcing** (`transformer(z_seq_in, a_seq_in)` is given the true token sequence as context for every position, matching how the Transformer was trained in P04), but computes `trans_psnr` and `trans_drift` from a **fully autoregressive** rollout (`z_context = torch.cat([z_context, next_z.unsqueeze(0)], dim=1)` extends the context with the model's own predicted token at every step, never a ground-truth one after step 0). Reporting both is deliberate: the gap between the teacher-forced loss and the open-loop PSNR/drift numbers is precisely the **teacher forcing gap** [L04's STORM page](../lectures/lecture-04-evaluation-by-model/04-storm-diffusion-drift#long-horizon-psnr) singles out as the main autoregressive world-model failure mode, and Section 8 below returns to this gap explicitly.
 
 ```python
 # Transformer metrics.
@@ -729,6 +733,8 @@ metrics that are conceptually undefined for that architecture: reward correlatio
 an explicit reward head in the RSSM, and token prediction loss requires discrete categorical
 latents as in the Transformer.
 
+This `N/A` handling is itself a small worked example of [L04's opening principle](../lectures/lecture-04-evaluation-by-model/00-diagnostic-framework#a-model-independent-diagnostic-framework): "no single metric covers all six layers," and forcing every architecture into the same metric set (for instance, computing a token-prediction loss for Dreamer's continuous latents, which have no tokens) would produce numbers that look comparable but measure nothing meaningful.
+
 ```python
 # Print summary metrics table.
 header = f"{'Model':<15} | {'PSNR@1':>8} | {'PSNR@5':>8} | {'PSNR@10':>9} | {'LatentDrift@10':>14} | {'RewardCorr':>11} | {'TokenLoss':>10}"
@@ -766,6 +772,8 @@ Four panels show the L04 metrics visually:
 2. Latent drift (L2 norm) vs step (both models)
 3. Reward correlation rho for Dreamer (bar chart)
 4. Token prediction loss for the Transformer (bar chart)
+
+Panels 1 and 2 put both models on shared axes specifically to make the *rate* of degradation comparable, the same horizon-versus-error-curve diagnostic P02 and P04 each produced for their own architecture comparisons; panels 3 and 4 are architecture-specific metrics shown separately since, as Section 5 notes, they have no cross-architecture equivalent to plot against.
 
 ```python
 fig, axes = plt.subplots(2, 2, figsize=(13, 9))
@@ -832,6 +840,8 @@ plt.show()
 A 3-row image grid compares ground-truth observations with imagined frames from each model
 at rollout steps 1, 5, 10, and the final step (step 20, i.e., the last frame of the
 trajectory). This makes PSNR degradation visible at a glance.
+
+This is the same "numbers alone hide failure modes, images reveal what kind of error occurred" principle P02's rollout grid and P04's image comparison both relied on: a PSNR curve says *how much* prediction quality dropped, while the decoded frames at each step show *what* dropped, blur, color drift, or positional drift, which a single scalar cannot distinguish.
 
 ```python
 DISPLAY_STEPS = [1, 5, 10, SEQ_LEN - 1]  # 1-indexed except the last
