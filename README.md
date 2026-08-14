@@ -32,7 +32,7 @@
 ![Lecture page](./docs/public/screenshots/readme/en-lecture-01.png)
 
 ### 🗂️ Architecture Deep Dive
-> Seven architecture families, three planning mechanisms, side-by-side comparison tables.
+> Nine architecture families, three planning mechanisms, and side-by-side comparison tables.
 
 ![Architecture lecture](./docs/public/screenshots/readme/en-lecture-03.png)
 
@@ -46,8 +46,8 @@ Five lectures and six projects that take you from the intuition behind world mod
 |---|------|-------|-------------|
 | L01 | Lecture | Internal Simulation & Historical Context | Craik's mental models, predictive coding, four eras of world model evolution |
 | L02 | Lecture | Observation Encoding & Latent Dynamics | VAE, CNN encoder, ELBO, GRU → MDN-RNN → RSSM |
-| L03 | Lecture | Architecture Patterns, Learning Paradigms & Planning | Seven architecture families, CEM-MPC, latent Actor-Critic, TD-MPC |
-| L04 | Lecture | Evaluation by World Model | FID, reward correlation, consistency loss, PSNR, horizon drift |
+| L03 | Lecture | Architecture Patterns, Learning Paradigms & Planning | Planning and control, backbone selection, nine architecture families, optional frontier survey |
+| L04 | Lecture | Diagnosing World Models | Representation, dynamics, rollout, task-signal, planning, and deployment diagnostics |
 | L05 | Lecture | Frontier Debates | Language vs physical grounding, Bitter Lesson, AGI as a research target |
 | P01 | Project | Train a VAE Encoder | Small CNN VAE on 64×64 pixels. ELBO loss curve. Latent slider visualization |
 | P02 | Project | Build an RSSM Dynamics Model | GRU, MDN-RNN, and RSSM compared. Prior vs posterior rollout plots |
@@ -60,25 +60,18 @@ Five lectures and six projects that take you from the intuition behind world mod
 
 ## Curriculum flow
 
-```mermaid
-flowchart TD
-    L01["L01 History and Intuition"] --> L02A
-    L02A["L02 Part A: VAE Encoder"] --> P01["P01 Train VAE, visualize latent space"]
-    L02A --> L02B["L02 Part B: GRU to RSSM"]
-    L02B --> P02["P02 Build RSSM, compare prior vs posterior"]
-    L02B --> L03A["L03 Part A: Architecture Patterns"]
-    L03A --> L03B["L03 Part B: Planning mechanisms"]
-    L03B --> P03["P03 Train Dreamer agent"]
-    P02 --> P04["P04 Swap RSSM for Transformer backbone"]
-    L03A --> P04
-    P03 & P04 --> L04["L04 Evaluation metrics"]
-    L04 --> P05["P05 Evaluation dashboard"]
-    P03 & P04 --> P06["P06 Counterfactual action-conditioned WM"]
-    P05 --> L05["L05 Frontier Debates"]
-    P06 --> L05
-```
+| Stage | Read | Then practice |
+| --- | --- | --- |
+| Foundations | L01 | Build the shared vocabulary and capability ladder |
+| Representation | L02: Observation Encoding | P01: Train a VAE Encoder |
+| Dynamics | L02: Latent Dynamics | P02: Build an RSSM Dynamics Model |
+| Control | L03: Planning and Control | P03: Train a Dreamer Agent |
+| Backbone choice | L03: Backbone Selection | P04: Swap the Dynamics Backbone |
+| Research orientation | L03: Optional Frontier Survey | Optional reading, no project prerequisite |
+| Diagnosis | L04: Diagnosing World Models | P05: Evaluation Dashboard and P06: Counterfactual Fidelity |
+| Open questions | L05 | Synthesize the unresolved debates |
 
-Suggested path: L01, L02, P01, P02, L03, P03, P04, L04, P05, P06, L05
+Suggested path: L01, L02 Observation Encoding, P01, L02 Latent Dynamics, P02, L03 Planning and Control, P03, L03 Backbone Selection, P04, optional L03 frontier survey, L04, P05, P06, L05.
 
 You do not need to finish all theory before starting a project. Build, then come back with questions.
 
@@ -108,8 +101,8 @@ npm run screenshots:readme
 learn-world-model/
 ├── docs/                                  # VitePress documentation site
 │   ├── .vitepress/config.mts             # nav and sidebar (EN + ZH)
-│   ├── en/lectures/                       # 5 English lecture pages
-│   ├── zh/lectures/                       # 5 Chinese lecture pages
+│   ├── en/lectures/                       # 5 English lecture modules
+│   ├── zh/lectures/                       # 5 Chinese lecture modules
 │   ├── en/projects/                       # 6 English project pages
 │   └── zh/projects/                       # 6 Chinese project pages
 ├── external/world-model-tutorial/         # PyTorch source referenced by projects
