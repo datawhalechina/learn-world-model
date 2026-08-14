@@ -1,12 +1,12 @@
 ---
 title: "Part C (Continued), Optional: LoopWM, WAM, and Architecture Selection"
-description: LoopWM's looped dynamics and spectral stabilization, WAM's fourth-paradigm joint learning, a comparative summary of the eight architecture families, and a decision tree for architecture selection.
+description: LoopWM's looped dynamics and spectral stabilization, WAM's fourth-paradigm joint learning, a comparative summary of the nine architecture families, and a decision tree for architecture selection.
 lecture: 3
 ---
 
 # Part C (Continued), Optional: LoopWM, WAM, and Architecture Selection
 
-## Architecture Seven: Looped Dynamics Models (LoopWM)
+## Architecture Eight: Looped Dynamics Models (LoopWM)
 
 **Representative systems**: LoopWM (Looped World Models, [Lu et al., 2026](https://www.emergentmind.com/papers/2606.18208))
 
@@ -23,7 +23,7 @@ Alongside spectral stabilization, LoopWM defers decoding to the final step of a 
 
 **Limitations**: the spectral stabilization constraint only applies to the linear retention term in the update rule; the nonlinear residual term has no equivalent stability guarantee. The paper is validated mainly on text-based interactive environments and has not yet been thoroughly validated on pixel-level continuous control or real robots.
 
-## Architecture Eight: From World Model to World Action Model (WAM)
+## Architecture Nine: From World Model to World Action Model (WAM)
 
 **Representative systems**: Motus (2025, Bi et al.), DreamZero / WAM (NVIDIA 2026)
 
@@ -60,6 +60,7 @@ The traditional World Model takes actions as input and predicts future states, f
 | **Diffusion** | Observation/Interactive | Very high visual fidelity | Slow inference, difficult to use for real-time control | Offline simulation, video generation |
 | **JEPA** | Observation-only | Robust and efficient, ignores irrelevant noise | No pixel output, control applications not yet mature | Semantic representation pretraining |
 | **RWM** | Interactive | Stable long-horizon rollout, policy does not drift | High compute (ensemble) | High-frequency robot control, sim-to-real |
+| **Spatial 3D/4D** | Observation-only (mostly) | Explicit multi-view consistency, object permanence | Expensive rendering, needs multi-view or pose data | Driving perception/forecasting, precise manipulation |
 | **Genie** | Observation-trained, interactive at inference | Supports interactive generation without action labels | latent actions not aligned with real actions | Interactive video generation, data pretraining |
 | **LoopWM** | Interactive | Parameter-efficient, provably stable long-horizon rollout | No stability guarantee on the nonlinear term, not yet validated on pixels/real robots | Long-horizon planning, resource-constrained deployment |
 | **WAM** | Joint learning | World prediction and action planning jointly optimized | Complex architecture, high data requirements | Embodied intelligence, dexterous manipulation |
@@ -81,6 +82,7 @@ flowchart TD
     Q3 -->|Semantic reasoning| R6[JEPA]
     Q3 -->|Embodied intelligence| R7[WAM]
     Q3 -->|Interactive generation without action labels| R8[Genie]
+    Q3 -->|Multi-view consistency or object permanence| R9[Spatial 3D/4D]
 ```
 
-**Practical advice**: start with RNN/RSSM; P02 already walks you through this step. Upgrade only when you hit a bottleneck: if long-sequence prediction accuracy keeps declining, or the task requires causal reasoning across many steps, consider switching to Transformer; if the bottleneck is specifically diverging error accumulation over long rollouts, LoopWM's spectral stabilization offers a more parameter-efficient path. Reserve Diffusion for offline scenarios. The JEPA control interface is not yet mature, but representation learning tasks have produced substantive results and are worth tracking. When you have large amounts of unannotated video but lack action labels, Genie's latent action discovery mechanism is currently the most direct entry point, though an alignment step is still needed for real control. For real robotics, engineering techniques such as Self-Forcing and ensemble uncertainty are more impactful than switching architectures; solve long-horizon stability first.
+**Practical advice**: start with RNN/RSSM; P02 already walks you through this step. Upgrade only when you hit a bottleneck: if long-sequence prediction accuracy keeps declining, or the task requires causal reasoning across many steps, consider switching to Transformer; if the bottleneck is specifically diverging error accumulation over long rollouts, LoopWM's spectral stabilization offers a more parameter-efficient path. Reserve Diffusion for offline scenarios. The JEPA control interface is not yet mature, but representation learning tasks have produced substantive results and are worth tracking. When you have large amounts of unannotated video but lack action labels, Genie's latent action discovery mechanism is currently the most direct entry point, though an alignment step is still needed for real control. When object permanence or multi-view geometric consistency is a hard requirement, such as driving forecasting or precise manipulation, a spatial 3D/4D representation is worth the added rendering cost. For real robotics, engineering techniques such as Self-Forcing and ensemble uncertainty are more impactful than switching architectures; solve long-horizon stability first.

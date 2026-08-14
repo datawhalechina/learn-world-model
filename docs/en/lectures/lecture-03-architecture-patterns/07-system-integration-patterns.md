@@ -1,6 +1,6 @@
 ---
 title: Seven World-Model Integration Patterns
-description: A system-level comparison of where learned prediction enters an agent, from representation pretraining and dense supervision to online action selection and offline data generation.
+description: A system-level comparison of where learned prediction enters an agent, from representation pretraining and dense supervision to online action selection and offline data generation, including how a VLA's direct observation-to-action mapping relates to world-model prediction.
 lecture: 3
 difficulty: advanced
 ---
@@ -21,6 +21,12 @@ A learned predictor can shape a system in four places:
 4. It can generate training data offline, after which deployment may no longer call the model.
 
 The seven patterns below are finer variations of these four roles.
+
+## Where a VLA Fits Next to a World Model
+
+Two of the seven patterns below route a world model's prediction into a **VLA** (Vision-Language-Action model, [Brohan et al., 2023](https://arxiv.org/abs/2307.15818)): a model that maps an observation and a language instruction directly to an action, typically built by adding an action output head to a pretrained vision-language model and training it with **behavior cloning** (supervised learning on observation-instruction-action demonstrations). A bare VLA never predicts a future state; it decides what to do right now, with no world model anywhere in its loop. This is exactly why it needs distinguishing from the architectures in this lecture: everything on this page so far predicts a state, and a VLA is the part of a complete system that does not.
+
+Patterns 3 and 5 below describe two different ways a world model's prediction can still be spliced into that direct mapping, without turning the VLA itself into a predictive model.
 
 ## The Seven Patterns
 

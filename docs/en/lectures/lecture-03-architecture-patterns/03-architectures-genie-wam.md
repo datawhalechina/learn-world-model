@@ -6,11 +6,11 @@ lecture: 3
 
 # Part C (Continued), Optional: Genie
 
-## Architecture Six: Genie Discovers Actions Implicitly from Video
+## Architecture Seven: Genie Discovers Actions Implicitly from Video
 
 **Representative systems**: Genie (Google DeepMind, 2024), Genie 2 (2024)
 
-The first five architecture families share a common assumption: training data either includes action labels (interactive) or requires no actions at all (observation-only). Genie breaks this dichotomy by **automatically discovering implicit latent actions from unannotated internet video**.
+The architecture families covered so far share a common assumption: training data either includes action labels (interactive) or requires no actions at all (observation-only). Genie breaks this dichotomy by **automatically discovering implicit latent actions from unannotated internet video**.
 
 Training data consists of large collections of video clips showing humans playing games and manipulating objects, with no action labels of any kind. Genie jointly trains three modules: a video tokenizer (**ST-ViT**, Spatiotemporal Vision Transformer, which applies patch-based encoding simultaneously along both the spatial and temporal dimensions to produce spatiotemporal discrete tokens) that compresses frame sequences into spatiotemporal discrete tokens; a latent action model (**LAM**, which learns to infer the type of change between adjacent frames) that infers discrete latent action codes from consecutive frame pairs; and a dynamics model that predicts the next frame token sequence conditioned on the latent action. At inference time, a user can specify a latent action and the model generates the next frame accordingly, making the entire process fully interactive.
 

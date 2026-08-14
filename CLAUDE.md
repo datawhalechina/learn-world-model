@@ -41,9 +41,9 @@ L03 has three distinct layers:
 
 - **Part A, core planning**: CEM-MPC, latent Actor-Critic, and TD-MPC. This is the prerequisite for P03.
 - **Part B, core backbone comparison**: RNN/RSSM, Transformer, and diffusion. This supports P04.
-- **Part C, optional frontier survey**: JEPA, RWM, Genie, LoopWM, WAM, system-integration patterns, and LS-Imagine.
+- **Part C, optional frontier survey**: JEPA, RWM, Spatial 3D/4D, Genie, LoopWM, WAM, system-integration patterns (including VLA mechanics), and LS-Imagine.
 
-The architecture survey contains eight families: RNN/RSSM, Transformer, Diffusion, JEPA, RWM, Genie, LoopWM, and WAM. The seven system-integration patterns describe where prediction enters a complete agent; they are not additional architecture families. CWM is a domain extension into code execution space, not a ninth L03 backbone.
+The architecture survey contains nine families: RNN/RSSM, Transformer, Diffusion, JEPA, RWM, Spatial 3D/4D, Genie, LoopWM, and WAM. The seven system-integration patterns describe where prediction enters a complete agent; they are not additional architecture families. The Integration Patterns page also covers VLA mechanics (backbone, action tokenization, behavior cloning), since several patterns route prediction through a VLA; VLA itself is an action-interface concept, not an architecture family. CWM is a domain extension into code execution space, not a tenth L03 backbone.
 
 ### Lecture 4: Diagnostic Framework
 

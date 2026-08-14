@@ -48,3 +48,13 @@ Failure at any link in this chain causes system failure. Paper metrics measure o
 **System Performance**
 
 - **Latency**: whether the observation-to-action cycle meets the required control frequency (real-time factor: sim\_speed / real\_speed ≥ 1)
+
+## Data and Compute Budget as a Deployment Constraint
+
+Everything above assumes the model was trainable in the first place, which is itself a system-level constraint worth recording. Three factors determine whether a world model can reach the scale a task needs:
+
+- **Data mixture**: training data usually blends several sources with very different cost and coverage: passively collected video (cheap, plentiful, no action labels), action-labeled video or teleoperation demonstrations (expensive, precise), simulation rollouts (cheap and infinitely repeatable, but subject to sim-to-real gap), and real robot trajectories (most faithful, scarcest). The mixture ratio is a deliberate tradeoff, not an afterthought: too much simulation data risks a model that has never seen real sensor noise, too little action-labeled data leaves action-conditioning under-supervised.
+- **Tokenizer throughput**: for Transformer and diffusion backbones (L03 Part B), the video tokenizer's encode/decode speed sets a hard floor on both training iteration time and, if the tokenizer runs at inference, closed-loop control latency. A tokenizer that compresses more aggressively trains faster but discards more visual detail, the same reconstruction-versus-compression tradeoff introduced for the VAE encoder in L02, now at system scale.
+- **Compute allocation**: for a fixed compute budget, more parameters spent on the tokenizer or encoder is compute not spent on the dynamics model or the policy, and vice versa. There is no universally correct split; the right allocation depends on which component's error currently dominates the diagnostic layers introduced earlier in this lecture. If representation-layer diagnostics show information loss, spend more on the encoder; if long-horizon rollout is the bottleneck, spend more on the dynamics model.
+
+None of these numbers appear in a benchmark leaderboard, but a system that cannot be retrained within its data and compute budget cannot be kept current after deployment, which makes this a deployment concern rather than a purely academic one.

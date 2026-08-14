@@ -6,11 +6,11 @@ lecture: 3
 
 # Part C（续，选读）：Genie
 
-## 架构六：Genie 从视频隐式发现动作
+## 架构七：Genie 从视频隐式发现动作
 
 **代表系统**：Genie (Google DeepMind, 2024)、Genie 2 (2024)
 
-前五个架构族都有一个共同假设：训练数据要么包含动作标签（交互型），要么完全不需要动作（观察型）。Genie 打破了这个二分法：**从无标注互联网视频中，自动发现隐式的 latent action。**
+前面几个架构族都有一个共同假设：训练数据要么包含动作标签（交互型），要么完全不需要动作（观察型）。Genie 打破了这个二分法：**从无标注互联网视频中，自动发现隐式的 latent action。**
 
 训练数据是大量人类玩游戏、操作物体的视频片段，没有任何动作标签。Genie 同时训练三个模块：视频 tokenizer（**ST-ViT**，Spatiotemporal Vision Transformer，时空视觉 Transformer，将视频片段在时间和空间两个维度上同时做 patch 分割和编码，输出时空离散 token）将帧序列压缩为时空离散 token；latent action model（**LAM**，latent action model，潜在动作模型，从相邻帧对中学习推断帧间变化的类型）从相邻帧对中推断离散的 latent action code；dynamics model 以 latent action 为条件预测下一帧 token 序列。推理时，用户可以指定一个 latent action，模型据此生成下一帧，整个过程完全可交互。
 
