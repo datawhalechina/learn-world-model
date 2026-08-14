@@ -23,9 +23,9 @@ RSSM 是 Dreamer V1 确立的基础架构，此后三个版本在其上逐步演
 
 **[Dreamer V2（2020）](https://arxiv.org/abs/2010.02193)** 的核心改动是将连续高斯 $\mathbf{z}_t$ 替换为**离散 Categorical 潜变量**（从有限个类别中选一个，而非从连续实数空间采样），并使用**直通梯度**（straight-through gradient，一种让梯度"穿过"不可微离散采样操作的技巧：前向传播使用离散采样结果，反向传播时假装该操作是恒等函数，梯度直接流过）传递梯度。离散潜变量带来了两个效果：训练曲线显著变稳定，潜在空间的语义结构也更清晰。动力学骨干仍是 GRU，策略仍在线学习。
 
-**[Dreamer V3（2023）](https://arxiv.org/abs/2301.04104)** 不改架构，改的是训练配方。两个关键技术：**symlog 变换**（symmetric log，对奖励值做对称对数压缩：$\text{symlog}(x) = \text{sign}(x) \cdot \ln(|x|+1)$，将量级相差悬殊的奖励压缩到相近的数值范围，防止极端奖励值主导梯度）压缩极端奖励值；**百分位归一化**（percentile normalization，用奖励分布的第 5 和第 95 百分位数作为缩放基准，而非固定的最大最小值，使归一化对离群值鲁棒）使奖励缩放与量纲无关。结果是同一套超参数可以直接跑 Atari 全套、DMControl、Minecraft，无需按任务调参。Minecraft 中从零训练出能采集钻石的智能体，是这一版的标志性结果，也说明 GRU 骨干在足够稳健的训练配方下潜力并未耗尽。
+**[Dreamer V3（2023）](https://arxiv.org/abs/2301.04104)** 不改架构，改的是训练配方。两个关键技术：**symlog 变换**（symmetric log，对奖励值做对称对数压缩：$\text{symlog}(x) = \text{sign}(x) \cdot \ln(|x|+1)$，将量级相差悬殊的奖励压缩到相近的数值范围，防止极端奖励值主导梯度）压缩极端奖励值。**百分位归一化**（percentile normalization，用奖励分布的第 5 和第 95 百分位数作为缩放基准，而非固定的最大最小值，使归一化对离群值鲁棒）使奖励缩放与量纲无关。结果是同一套超参数可以直接跑 Atari 全套、DMControl、Minecraft，无需按任务调参。Minecraft 中从零训练出能采集钻石的智能体，是这一版的标志性结果，也说明 GRU 骨干在足够稳健的训练配方下潜力并未耗尽。
 
-**[Dreamer V4（2025）](https://arxiv.org/abs/2509.24527)** 是架构上的质变，而非配方调整。动力学核心从 GRU 换成 **Transformer**，世界模型获得了对更长上下文的建模能力，长程预测精度随之提升。策略学习方式也从在线 Actor-Critic 切换到**离线策略学习**（offline policy learning，策略完全从预先存储的轨迹数据中训练，不需要与环境实时交互；与"在线"学习的区别在于，在线学习边交互边更新，离线学习只用固定数据集）：策略完全从存储的想象轨迹中训练，不再依赖在线 rollout。这一设计与 Transformer 世界模型路线中的 STORM（[Zhang et al., 2023](https://arxiv.org/abs/2310.09615)）和 IRIS（[Micheli et al., 2022](https://arxiv.org/abs/2209.00588)）在架构哲学上高度相近，Dreamer V4 在某种意义上是 GRU 阵营向 Transformer 阵营的正式靠拢。
+**[Dreamer V4（2025）](https://arxiv.org/abs/2509.24527)** 是架构上的质变，而非配方调整。动力学核心从 GRU 换成 **Transformer**，世界模型获得了对更长上下文的建模能力，长程预测精度随之提升。策略学习方式也从在线 Actor-Critic 切换到**离线策略学习**（offline policy learning，策略完全从预先存储的轨迹数据中训练，不需要与环境实时交互。与"在线"学习的区别在于，在线学习边交互边更新，离线学习只用固定数据集）：策略完全从存储的想象轨迹中训练，不再依赖在线 rollout。这一设计与 Transformer 世界模型路线中的 STORM（[Zhang et al., 2023](https://arxiv.org/abs/2310.09615)）和 IRIS（[Micheli et al., 2022](https://arxiv.org/abs/2209.00588)）在架构哲学上高度相近，Dreamer V4 在某种意义上是 GRU 阵营向 Transformer 阵营的正式靠拢。
 
 | 版本 | 动力学核心 | 潜变量类型 | 策略学习 | 关键突破 |
 |------|-----------|-----------|---------|---------|

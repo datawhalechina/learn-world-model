@@ -49,10 +49,10 @@ Five lectures and six projects that take you from the intuition behind world mod
 | L03 | Lecture | Architecture Patterns, Learning Paradigms & Planning | Seven architecture families, CEM-MPC, latent Actor-Critic, TD-MPC |
 | L04 | Lecture | Evaluation by World Model | FID, reward correlation, consistency loss, PSNR, horizon drift |
 | L05 | Lecture | Frontier Debates | Language vs physical grounding, Bitter Lesson, AGI as a research target |
-| P01 | Project | Train a VAE Encoder | Small CNN VAE on 64×64 pixels; ELBO loss curve; latent slider visualization |
-| P02 | Project | Build an RSSM Dynamics Model | GRU, MDN-RNN, and RSSM compared; prior vs posterior rollout plots |
+| P01 | Project | Train a VAE Encoder | Small CNN VAE on 64×64 pixels. ELBO loss curve. Latent slider visualization |
+| P02 | Project | Build an RSSM Dynamics Model | GRU, MDN-RNN, and RSSM compared. Prior vs posterior rollout plots |
 | P03 | Project | Train a Dreamer Agent | Full training loop: encoder + RSSM + latent Actor-Critic on a small pixel env |
-| P04 | Project | Swap the Dynamics Backbone | Replace RSSM with a small causal Transformer (STORM-style); architecture comparison |
+| P04 | Project | Swap the Dynamics Backbone | Replace RSSM with a small causal Transformer (STORM-style). Architecture comparison |
 | P05 | Project | World Model Evaluation Dashboard | Per-model metrics side by side: FID, reward correlation, PSNR, latent drift |
 | P06 | Project | Counterfactual Action-Conditioned World Model | Interventional and counterfactual rollouts, inverse-dynamics regularization, action-influence metric |
 

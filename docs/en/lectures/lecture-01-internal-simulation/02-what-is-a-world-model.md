@@ -8,7 +8,7 @@ lecture: 1
 
 "World models are the destination everyone will reach. I've gone all-in on this path. Are you with me?"
 
-Saining Xie's statement carries an implicit premise: the "world model" he is talking about is not necessarily the same thing most people mean when they use the term. This is not a terminological quibble; it is a real conceptual fracture. In 2025, Fei-Fei Li and the World Labs team published an article that systematically clarified this confusion.
+Saining Xie's statement carries an implicit premise: the "world model" he is talking about is not necessarily the same thing most people mean when they use the term. This is not a terminological quibble. It is a real conceptual fracture. In 2025, Fei-Fei Li and the World Labs team published an article that systematically clarified this confusion.
 
 
 ## Three Functional Types of World Models
@@ -29,15 +29,15 @@ Text-to-video models (Veo, Sora) are renderers. Interactive generation systems (
 
 The simulator outputs world states that are faithful to reality in geometry, physics, or dynamics. Where the renderer only needs visual plausibility, the simulator must satisfy stricter structural constraints: geometric relationships must hold under scrutiny, physical processes must obey Newton's laws, and dynamic behavior must respect causal structure.
 
-Simulators serve two audiences: professionals such as architects, engineers, and game developers who need accuracy beyond visual realism; and computational systems such as RL agents, robot controllers, and autonomous driving pipelines that need to test dangerous or expensive scenarios safely at scale.
+Simulators serve two audiences: professionals such as architects, engineers, and game developers who need accuracy beyond visual realism. And computational systems such as RL agents, robot controllers, and autonomous driving pipelines that need to test dangerous or expensive scenarios safely at scale.
 
 The Dreamer series (V1–V4) trains its policy inside a "dream" that functions as an implicit simulator: it maintains a state representation in latent space, rolls forward through actions to predict the next state, and the policy learns entirely from this internal simulation before transferring to the real environment.
 
 ### Planner: Produces the Action the Agent Should Take
 
-The planner outputs actions: given current observations and a goal, what should the agent do next? In a sense the planner is the inverse of the renderer. The renderer takes actions as input and converts them to observations; the planner takes observations as input and produces actions, closing the perception-action loop.
+The planner outputs actions: given current observations and a goal, what should the agent do next? In a sense the planner is the inverse of the renderer. The renderer takes actions as input and converts them to observations. The planner takes observations as input and produces actions, closing the perception-action loop.
 
-VLA (Vision-Language-Action) models, which take visual observations and language instructions as input and output robot actions directly, are planners. CEM-MPC and TD-MPC (two planning algorithms built on top of world models, covered in detail in L03) are planners. The latent Actor-Critic inside Dreamer is a planner. The planner is the hardest of the three to get right. The impressive-looking robot demonstrations of recent years are almost uniformly confined to tightly controlled laboratory settings; the gap between a demo video and a robot that reliably works in a real kitchen, warehouse, or operating room remains large.
+VLA (Vision-Language-Action) models, which take visual observations and language instructions as input and output robot actions directly, are planners. CEM-MPC and TD-MPC (two planning algorithms built on top of world models, covered in detail in L03) are planners. The latent Actor-Critic inside Dreamer is a planner. The planner is the hardest of the three to get right. The impressive-looking robot demonstrations of recent years are almost uniformly confined to tightly controlled laboratory settings. The gap between a demo video and a robot that reliably works in a real kitchen, warehouse, or operating room remains large.
 
 
 ## Why the Simulator Is the Missing Link
@@ -77,6 +77,6 @@ When Craik described the human mind as a "small-scale model of external reality"
 
 ## Further Reading
 
-- Li, F.-F. et al., World Labs (2025). [What Is a World Model?](https://x.com/drfeifei/status/2062247238143996275): systematic definitions of the three functional world model types
+- Li, F.-F. Et al., World Labs (2025). [What Is a World Model?](https://x.com/drfeifei/status/2062247238143996275): systematic definitions of the three functional world model types
 - Xie, S. (2024). [World Models, Embodied Intelligence, and AMI Labs](https://www.youtube.com/watch?v=rIwgZWzUKm8): Saining Xie's full elaboration on why world models are "the destination everyone will reach"
 - Ha & Schmidhuber (2018): World Models (see L01 Further Reading): the earliest engineering framework to cleanly separate rendering (V), simulation (M), and planning (C)

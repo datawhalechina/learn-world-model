@@ -20,7 +20,7 @@ This prediction capability lets the agent "simulate" the future internally, enab
 The **Gated Recurrent Unit (GRU)** is a foundational tool for sequence modeling. As a dynamics model, the GRU takes $(\mathbf{z}_t, \mathbf{a}_t)$ and predicts the next latent state:
 
 $$
-\mathbf{z}_{t+1} = \text{GRU}(\mathbf{z}_t, \mathbf{a}_t; \theta)
+\mathbf{z}_{t+1} = \text{GRU}(\mathbf{z}_t, \mathbf{a}_t. \theta)
 $$
 
 > **📖 GRU internals (brief)**: A GRU controls information flow through two gates: the **reset gate** decides "how much of the past to forget", and the **update gate** decides "how much of the old state to retain vs. how much new information to write in". Gate values lie between 0 and 1, determined jointly by the current input and the previous hidden state. This allows the GRU to selectively retain long-term dependencies while discarding irrelevant information, making it better at handling longer sequences than a plain RNN. Compared to an LSTM, the GRU has one fewer gate (no separate memory cell), fewer parameters, and trains faster.
@@ -33,7 +33,7 @@ The GRU's strengths are simplicity and stable training. Its limitation is that i
 **MDN-RNN (Mixture Density Network + RNN)**, proposed in [Ha & Schmidhuber (2018)](https://arxiv.org/abs/1803.10122), models uncertainty over the next state using a **mixture of Gaussians**:
 
 $$
-p(\mathbf{z}_{t+1} | \mathbf{z}_t, \mathbf{a}_t) = \sum_{k=1}^{K} \pi_k \cdot \mathcal{N}(\mathbf{z}_{t+1}; \mu_k, \sigma_k^2)
+p(\mathbf{z}_{t+1} | \mathbf{z}_t, \mathbf{a}_t) = \sum_{k=1}^{K} \pi_k \cdot \mathcal{N}(\mathbf{z}_{t+1}. \mu_k, \sigma_k^2)
 $$
 
 - $K$ Gaussian components, each with its own mean $\mu_k$ (center of the distribution) and variance $\sigma_k^2$ (width of the distribution)
@@ -65,12 +65,12 @@ $$
 
 $$
 \mathbf{z}_t \sim p_\phi(\mathbf{z}_t \mid \mathbf{h}_t)
-\quad \text{(prior: no access to real observations, infers current state from history } h_t \text{ alone; used for pure imagination/prediction)}
+\quad \text{(prior: no access to real observations, infers current state from history } h_t \text{ alone. Used for pure imagination/prediction)}
 $$
 
 $$
 \mathbf{z}_t \sim q_\phi(\mathbf{z}_t \mid \mathbf{h}_t,\ \mathbf{o}_t)
-\quad \text{(posterior: corrects the prior using real observation } o_t \text{; used during training)}
+\quad \text{(posterior: corrects the prior using real observation } o_t \text{. Used during training)}
 $$
 
 > **📖 Prior vs. posterior**: these are fundamental concepts in Bayesian statistics. The **prior** is "belief before seeing data", the RSSM's guess about the current state $z_t$ based on historical memory $h_t$. The **posterior** is "belief updated after seeing data", refining the prior with real observation $o_t$ to obtain a more accurate estimate. During training, the posterior generates $z_t$ and the KL loss is computed (measuring the gap between prior and posterior). During inference and imagination, only the prior is available (there is no real $o_t$), so the RSSM rolls forward using the prior alone.
@@ -84,7 +84,7 @@ $$
 
 After separation, the model can roll forward using only the prior $p(\mathbf{z}_t | \mathbf{h}_t)$ without real observations, enabling **planning purely in imagination**. This is the fundamental reason for Dreamer's sample efficiency.
 
-The PlaNet paper (Hafner et al., ICML 2019) verified this design through **ablation studies** (systematically removing one component of the model and observing the change in performance, thereby confirming the component's necessity): a purely stochastic path (no deterministic $h_t$) struggles to reliably retain information across multiple steps, and training optimization may fail to find solutions where some dimensions collapse to near-zero variance to store long-term information; a purely deterministic path (no stochastic $z_t$) cannot express the inherent stochasticity of the environment, and the distribution gap between imagined and real trajectories grows larger. **Both paths are indispensable.** The observation model is therefore conditioned on both $h_t$ and $z_t$: $o_t \sim p(o_t | h_t, z_t)$, with deterministic memory and stochastic perception jointly determining the reconstructed image.
+The PlaNet paper (Hafner et al., ICML 2019) verified this design through **ablation studies** (systematically removing one component of the model and observing the change in performance, thereby confirming the component's necessity): a purely stochastic path (no deterministic $h_t$) struggles to reliably retain information across multiple steps, and training optimization may fail to find solutions where some dimensions collapse to near-zero variance to store long-term information. A purely deterministic path (no stochastic $z_t$) cannot express the inherent stochasticity of the environment, and the distribution gap between imagined and real trajectories grows larger. **Both paths are indispensable.** The observation model is therefore conditioned on both $h_t$ and $z_t$: $o_t \sim p(o_t | h_t, z_t)$, with deterministic memory and stochastic perception jointly determining the reconstructed image.
 
 
 ## Comparison of Three Dynamics Models

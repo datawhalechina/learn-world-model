@@ -12,7 +12,7 @@ On this point, Xie Saining is surprisingly moderate. He does not say "LLMs are a
 
 > "Without LLMs, Vision would have no way to expand into the truly multimodal, large-scale intelligence we have today."
 
-His AMI Labs does not reject LLMs; it explicitly credits them for the progress they enabled. LLMs solved language understanding and instruction following, two critical problems, giving visual systems a "language interface" so that world models can accept natural-language commands.
+His AMI Labs does not reject LLMs. It explicitly credits them for the progress they enabled. LLMs solved language understanding and instruction following, two critical problems, giving visual systems a "language interface" so that world models can accept natural-language commands.
 
 His position is that the two paradigms handle different dimensions of information, each with its own domain of strength.
 
@@ -34,7 +34,7 @@ Dreamer V3 sits squarely in the world model row: it consumes actions, predicts l
 
 The concept of WAM (World Action Model) deserves separate explanation.
 
-> **📖 WAM (World Action Model)**: A class of architectures that jointly model video prediction and action prediction. The core idea is not merely to "understand the world" but to "understand the world and know how to act within it." Video frames provide physical constraints; action signals provide causal annotation. A model trained jointly on both understands the consequences of actions better than a combination of separately trained modules.
+> **📖 WAM (World Action Model)**: A class of architectures that jointly model video prediction and action prediction. The core idea is not merely to "understand the world" but to "understand the world and know how to act within it." Video frames provide physical constraints. Action signals provide causal annotation. A model trained jointly on both understands the consequences of actions better than a combination of separately trained modules.
 
 Traditional world models and policies are two separate modules: first model the world state, then plan inside the world model. WAM breaks this division: video itself serves as the supervisory signal for action learning, without requiring explicit reward functions or manual annotation.
 
@@ -44,7 +44,7 @@ To understand the existing world models with a matrix, consider the horizontal a
 - **STORM** (Stochastic Transformer-based wORld Models, categorical VAE + Transformer dynamics, see L03): consumes actions (actions concatenated as tokens into the sequence), predicts next-frame latent tokens, interactive
 - **WAM**: consumes actions while simultaneously understanding semantics, a unification of both
 
-These three paradigms were compared from an engineering perspective in L03. The question here is different: what assumption is WAM betting on? **World models and policies should not be two separate modules; video itself is the supervisory signal for action learning.** If this assumption holds, joint training will dissolve the division between model foundation and policy learning, producing new emergent capabilities.
+These three paradigms were compared from an engineering perspective in L03. The question here is different: what assumption is WAM betting on? **World models and policies should not be two separate modules. Video itself is the supervisory signal for action learning.** If this assumption holds, joint training will dissolve the division between model foundation and policy learning, producing new emergent capabilities.
 
 
 ## JEPA: A Different Path
@@ -53,7 +53,7 @@ LeCun's JEPA (Joint Embedding Predictive Architecture, [LeCun 2022](https://open
 
 > **📖 JEPA (Joint Embedding Predictive Architecture)**: An architectural principle proposed by LeCun in 2022. The core idea is that prediction should happen at the level of abstract representations, not pixels. Rather than having a model predict every pixel of the future (extremely difficult, and full of irrelevant noise), the model predicts future semantic representations. V-JEPA 2 is the video version of this approach.
 
-JEPA does not generate pixels; it only predicts semantic representations. This choice reflects a clear stance: **pixels are noise, semantics are signal.** A model that generates no images at all may actually acquire structural understanding of the physical world faster than diffusion-based world models.
+JEPA does not generate pixels. It only predicts semantic representations. This choice reflects a clear stance: **pixels are noise, semantics are signal.** A model that generates no images at all may actually acquire structural understanding of the physical world faster than diffusion-based world models.
 
 LeCun has put a concrete timestamp on this bet. In a May 2026 interview, he stated that by early 2027 the entire field will recognize that the paradigm must change, and that within five years JEPA-style architectures will become the foundational standard in AI the way Linux became the standard in operating systems.
 

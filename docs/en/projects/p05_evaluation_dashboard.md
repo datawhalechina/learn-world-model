@@ -6,9 +6,9 @@ title: P05 World Model Evaluation Dashboard
 
 Load the P03 Dreamer and P04 Transformer checkpoints, evaluate them on held-out episodes, and compare the P04 metrics side by side. The dashboard is intentionally conservative: it prefers explicit checkpoint loading and honest fallback behavior over hidden assumptions.
 
-**Prerequisite**: P03 (`dreamer.pt`) and P04 (`transformer_wm.pt`) if present; otherwise each missing checkpoint falls back to a randomly initialized model so the notebook still runs as a smoke test. The reported metrics are only meaningful with the pretrained checkpoints, so the ship-ready path is the loaded-checkpoint path.
+**Prerequisite**: P03 (`dreamer.pt`) and P04 (`transformer_wm.pt`) if present. Otherwise each missing checkpoint falls back to a randomly initialized model so the notebook still runs as a smoke test. The reported metrics are only meaningful with the pretrained checkpoints, so the ship-ready path is the loaded-checkpoint path.
 
-**Metrics**: Dreamer reward correlation, PSNR, latent drift; Transformer token loss, PSNR, latent drift.
+**Metrics**: Dreamer reward correlation, PSNR, latent drift. Transformer token loss, PSNR, latent drift.
 
 > Notebook source: [p05_evaluation_dashboard.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p05_evaluation_dashboard.ipynb)
 
@@ -541,7 +541,7 @@ Compute the held-out metrics for each model.
 
 We define helper functions for each metric, then loop over the 20 held-out trajectories.
 
-**PSNR** measures pixel-level reconstruction fidelity; higher is better.
+**PSNR** measures pixel-level reconstruction fidelity. Higher is better.
 **Latent drift** (L2 distance between imagined and observed latent vectors) quantifies how
 quickly the imagined trajectory diverges from reality.
 **Reward correlation** (Pearson rho) checks whether the RSSM can predict which steps

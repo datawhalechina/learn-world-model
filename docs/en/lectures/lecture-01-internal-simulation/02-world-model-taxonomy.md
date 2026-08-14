@@ -36,7 +36,7 @@ This avoids a common mistake: treating every famous technique as a separate kind
 
 **Era Three: Dreamer and Latent Space (2019)**. Hafner et al.'s [Dreamer V1](https://arxiv.org/abs/1912.01603) introduced RSSM (Recurrent State Space Model, full mechanism in Lecture 2), splitting state into a deterministic history path and a stochastic uncertainty path. Unlike Ha and Schmidhuber's approach, Dreamer never reconstructs images in pixel space: prediction, planning, and reward learning all happen directly in latent space, substantially outperforming prior model-free methods on Atari and continuous control.
 
-**Era Four: Video as World (2023+)**. JEPA (Joint Embedding Predictive Architecture, LeCun's team, [2022](https://openreview.net/forum?id=BZ5a1r-kVsf)) abandons pixel reconstruction entirely and predicts purely in a semantic embedding space: "I don't need to draw your face; I just need to know who you are."
+**Era Four: Video as World (2023+)**. JEPA (Joint Embedding Predictive Architecture, LeCun's team, [2022](https://openreview.net/forum?id=BZ5a1r-kVsf)) abandons pixel reconstruction entirely and predicts purely in a semantic embedding space: "I don't need to draw your face. I just need to know who you are."
 
 The evolutionary logic across the four eras: from "how to predict states in a sequence" (Era 1), to "how to train a policy in dreams" (Era 2), to "how to compress perception in latent space" (Era 3), to "how to retain only semantics and discard noise" (Era 4). Each step is a direct response to the bottleneck of the previous one.
 
@@ -91,7 +91,7 @@ Limits: it knows "what is here," but not necessarily "what happens next."
 
 ### L2 Dynamics Models: What happens next?
 
-Dynamics models do more than represent the current world; they learn how state changes over time, predicting "if the world keeps evolving, what happens next." Prediction can happen in pixel space, feature space, object space, or 3D space.
+Dynamics models do more than represent the current world. They learn how state changes over time, predicting "if the world keeps evolving, what happens next." Prediction can happen in pixel space, feature space, object space, or 3D space.
 
 Formally:
 
@@ -111,7 +111,7 @@ Limits: it can predict the future, but not necessarily "what my action would cha
 
 ### L3 Action-Conditioned Models: What if I act?
 
-Action-conditioned models fold the agent's action into world evolution. They do not merely predict what naturally happens next; they predict "what happens if I take this action."
+Action-conditioned models fold the agent's action into world evolution. They do not merely predict what naturally happens next. They predict "what happens if I take this action."
 
 Formally:
 
@@ -136,9 +136,9 @@ Value-coupled models bind world prediction to goals, rewards, preferences, or su
 
 Formally:
 
-$$a^* = \arg\max_{a} \; \text{Value}\big(\text{Rollout}_{\text{WM}}(s, a)\big)$$
+$$a^* = \arg\max_{a} \. \text{Value}\big(\text{Rollout}_{\text{WM}}(s, a)\big)$$
 
-That is, the world model rolls out multiple candidate actions in parallel imagination, a value function or evaluator scores them, and the best action is selected. Dreamer does this with a learned actor-critic inside latent imagination; MuZero does the same thing with search.
+That is, the world model rolls out multiple candidate actions in parallel imagination, a value function or evaluator scores them, and the best action is selected. Dreamer does this with a learned actor-critic inside latent imagination. MuZero does the same thing with search.
 
 Typical examples:
 
@@ -153,7 +153,7 @@ Limits: it knows which futures are more valuable, but does not necessarily keep 
 
 ### L5 Self-Correcting Models: How do I improve my model of the world?
 
-Self-correcting models close the loop between prediction error, exploration, and model update. They do not just use a world model; they actively improve it: detecting model error, choosing experiments that reduce uncertainty, updating beliefs after intervention, and maintaining a growing world model across tasks. This is a higher-order world model, one that not only simulates the world but also notices where its simulation is unreliable.
+Self-correcting models close the loop between prediction error, exploration, and model update. They do not just use a world model. They actively improve it: detecting model error, choosing experiments that reduce uncertainty, updating beliefs after intervention, and maintaining a growing world model across tasks. This is a higher-order world model, one that not only simulates the world but also notices where its simulation is unreliable.
 
 Typical examples:
 
@@ -179,11 +179,11 @@ This course does not use a binary label such as “is this a world model or not?
 
 This taxonomy is stronger than the common “reconstruct / predict / run the world” grid because it classifies models by agent capability rather than surface behavior. A system can implement these abilities over pixels, objects, 3D scenes, language, physical states, or abstract latent variables. The modality is not the essence. **Operational counterfactual ability is the essence.**
 
-There is also a class of systems commonly mislabeled as world models: physics simulators such as MuJoCo, Brax, and Isaac Gym; rule-based or procedurally generated environments such as Atari, Snake, and Minecraft; and game engines in general. They genuinely "contain a world," and they matter a great deal for training world models because they supply data and evaluation environments. But they are usually not internal models the agent has learned itself. Unless the agent has internalized their regularities into its own internal model, they count as **external simulators** and sit outside the L1-L5 ladder.
+There is also a class of systems commonly mislabeled as world models: physics simulators such as MuJoCo, Brax, and Isaac Gym. Rule-based or procedurally generated environments such as Atari, Snake, and Minecraft. And game engines in general. They genuinely "contain a world," and they matter a great deal for training world models because they supply data and evaluation environments. But they are usually not internal models the agent has learned itself. Unless the agent has internalized their regularities into its own internal model, they count as **external simulators** and sit outside the L1-L5 ladder.
 
 ## Two-Dimensional Classification: Object × Capability
 
-A popular meme grid, the "world model nine-grid" (reconstruction / predict-next-step / runnable-simulation on one axis, features-latents / objects-3D / pixels-video on the other), captures exactly the intuition in this section: DINO, JEPA, and Dreamer each occupy one cell; NeRF, scene flow, and MuJoCo occupy others. This is the same idea as the three-question table in [Foundations](./01-foundations): "what does it predict / does it condition on actions / what purpose does it serve," laid out differently. It arranges models along two orthogonal axes:
+A popular meme grid, the "world model nine-grid" (reconstruction / predict-next-step / runnable-simulation on one axis, features-latents / objects-3D / pixels-video on the other), captures exactly the intuition in this section: DINO, JEPA, and Dreamer each occupy one cell. NeRF, scene flow, and MuJoCo occupy others. This is the same idea as the three-question table in [Foundations](./01-foundations): "what does it predict / does it condition on actions / what purpose does it serve," laid out differently. It arranges models along two orthogonal axes:
 
 - **Horizontal: modeling space**, what the representation is over: features/latents, objects/3D, pixels/video, or physical state.
 - **Vertical: capability level**, what the model can do in that space: reconstruction, prediction, or action-conditioned closure, corresponding to L1-L4 above.
@@ -197,7 +197,7 @@ A popular meme grid, the "world model nine-grid" (reconstruction / predict-next-
 
 In the NeRF / 3D Gaussian Splatting formula, $\Theta$ is the scene representation (NeRF weights or a 3DGS Gaussian set), $c$ is the query condition (viewpoint, timestamp, or pose), and $I$ is the rendered image.
 
-The key point of this table is: **the object axis does not determine whether something is a complete world model; the capability axis determines the strict level**. NeRF can be an excellent 3D world representation, but if it is only static reconstruction, it stays at the L1 representational level. Dreamer is closer to a complete world model precisely because it connects latent prediction to action learning, reaching L3-L4. This is also why DINO and MAE usually stay at L1, JEPA and video prediction reach L2, action-conditioned dynamics reach L3, Dreamer and MuZero reach L4, and only agents that actively design experiments and revise their own assumptions reach L5, a level with no corresponding cell in the nine-grid, since it goes beyond what the "modeling space" axis alone can describe.
+The key point of this table is: **the object axis does not determine whether something is a complete world model. The capability axis determines the strict level**. NeRF can be an excellent 3D world representation, but if it is only static reconstruction, it stays at the L1 representational level. Dreamer is closer to a complete world model precisely because it connects latent prediction to action learning, reaching L3-L4. This is also why DINO and MAE usually stay at L1, JEPA and video prediction reach L2, action-conditioned dynamics reach L3, Dreamer and MuZero reach L4, and only agents that actively design experiments and revise their own assumptions reach L5, a level with no corresponding cell in the nine-grid, since it goes beyond what the "modeling space" axis alone can describe.
 
 ## From Capability to System Design
 

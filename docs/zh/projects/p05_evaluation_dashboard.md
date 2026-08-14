@@ -6,9 +6,9 @@ title: P05 世界模型评估仪表盘
 
 加载 P03 的 Dreamer 权重文件和 P04 的 Transformer 权重文件，在留出 episode 上进行评估，并将各项指标并排比较。本仪表盘有意保持保守风格：优先采用显式的权重文件加载和诚实的回退机制，避免任何隐含假设。
 
-**前提条件**：P03 生成的 `dreamer.pt` 和 P04 生成的 `transformer_wm.pt`（如存在）；否则，每个缺失的权重文件将回退到随机初始化的模型，以便本 notebook 仍可作为冒烟测试运行。只有在加载了预训练权重文件时，所报告的指标才有实际意义，因此正式评估路径即为加载权重文件的路径。
+**前提条件**：P03 生成的 `dreamer.pt` 和 P04 生成的 `transformer_wm.pt`（如存在）。否则，每个缺失的权重文件将回退到随机初始化的模型，以便本 notebook 仍可作为冒烟测试运行。只有在加载了预训练权重文件时，所报告的指标才有实际意义，因此正式评估路径即为加载权重文件的路径。
 
-**指标**：Dreamer 的奖励相关性、PSNR、潜在漂移；Transformer 的 token 预测损失、PSNR、潜在漂移。
+**指标**：Dreamer 的奖励相关性、PSNR、潜在漂移。Transformer 的 token 预测损失、PSNR、潜在漂移。
 
 > Notebook 源文件: [p05_evaluation_dashboard.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p05_evaluation_dashboard.ipynb)
 
@@ -120,7 +120,7 @@ def optimizer_step(optimizer, scaler=None):
     else:
         optimizer.step()
 
-# 共享超参数——必须与 P03 和 P04 保持一致
+# 共享超参数，，必须与 P03 和 P04 保持一致
 HIDDEN_DIM   = 128   # GRU / Transformer d_model
 LATENT_DIM   = 32    # 随机状态维度（RSSM）/ 嵌入维度
 N_CATEGORIES = 32    # CatVAE 离散词表大小
@@ -189,7 +189,7 @@ def generate_eval_trajectories(n_traj=N_EVAL_TRAJ, horizon=SEQ_LEN, base_seed=99
             traj_act.append(action)
             traj_rew.append(rew)
             traj_obs.append(next_obs)
-        # obs_seq 共有 horizon+1 帧；保留前 horizon 帧作为输入
+        # obs_seq 共有 horizon+1 帧。保留前 horizon 帧作为输入
         obs_list.append(traj_obs[:horizon])
         act_list.append(traj_act)
         rew_list.append(traj_rew)
@@ -991,7 +991,7 @@ print(
 print(sep2)
 print()
 print('说明：')
-print('  PSNR 单位为 dB（越高越好）；潜在漂移为 L2 范数（越低越好）')
+print('  PSNR 单位为 dB（越高越好）。潜在漂移为 L2 范数（越低越好）')
 print('  RewardCorr：10 步想象推演的皮尔逊相关系数 rho（仅 Dreamer）')
 print('  TokenLoss：teacher forcing 条件下的交叉熵损失（仅 Transformer）')
 print(f'  已从权重文件加载的模型：Dreamer={dreamer_loaded}, Transformer={trans_loaded}')

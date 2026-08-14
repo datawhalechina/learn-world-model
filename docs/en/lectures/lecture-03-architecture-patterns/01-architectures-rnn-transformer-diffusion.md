@@ -28,9 +28,9 @@ The GRU incrementally updates the hidden state with **O(1)** per-step cost, inde
 
 **Learning paradigm**: Interactive. Collects $(o_t, a_t, r_t, o_{t+1})$ tuples and learns the action-conditioned transition distribution $p(s_{t+1} \mid s_t, a_t)$. The interactive paradigm can answer "what would happen if I took a different action," which observation-only paradigms (pure video) cannot.
 
-**Applicable scenarios**: Simple to moderately complex continuous control tasks (e.g., **DMControl**, the DeepMind Control Suite, a set of standard continuous control benchmarks based on the MuJoCo physics engine, including Cheetah running, Cartpole balancing, Reacher goal reaching, and similar tasks; **Atari**, a set of classic video game benchmarks covering 57 games used to evaluate general decision-making capability), and latency-sensitive online reinforcement learning.
+**Applicable scenarios**: Simple to moderately complex continuous control tasks (e.g., **DMControl**, the DeepMind Control Suite, a set of standard continuous control benchmarks based on the MuJoCo physics engine, including Cheetah running, Cartpole balancing, Reacher goal reaching, and similar tasks. **Atari**, a set of classic video game benchmarks covering 57 games used to evaluate general decision-making capability), and latency-sensitive online reinforcement learning.
 
-**Limitations**: Weak long-term memory, with the effective memory window of the GRU hidden state typically between 50-100 steps; generation quality inferior to Diffusion; data collection on real robots remains expensive.
+**Limitations**: Weak long-term memory, with the effective memory window of the GRU hidden state typically between 50-100 steps. Generation quality inferior to Diffusion. Data collection on real robots remains expensive.
 
 
 ## Architecture 2: Transformer-based (2022, 2023)
@@ -51,7 +51,7 @@ Every position can directly "see" any historical timestep in the sequence, no lo
 
 IRIS (Imagination with auto-Regression over an Inner Speech, ICLR 2023) centers on **VQ-VAE quantization**, converting continuous image frames into discrete token sequences. GPT can predict "the next word" because words are discrete and finite, and the probability distribution can be modeled precisely with softmax. By converting images into discrete units analogous to "words," one can directly apply a GPT-style autoregressive Transformer to predict "the next visual word."
 
-> **📖 VQ** (vector quantization) works as follows: (1) the encoder maps an image patch to a continuous vector $z$; (2) the closest vector $e_k$ in the codebook is found ($k = \arg\min_j \|z - e_j\|_2$); (3) the index $k$ of $e_k$ replaces the continuous vector and is passed to the Transformer. During backpropagation, the **straight-through estimator** is used: the forward pass uses the quantized discrete vector, while the backward pass pretends the quantization operation does not exist and passes gradients straight through.
+> **📖 VQ** (vector quantization) works as follows: (1) the encoder maps an image patch to a continuous vector $z$. (2) the closest vector $e_k$ in the codebook is found ($k = \arg\min_j \|z - e_j\|_2$). (3) the index $k$ of $e_k$ replaces the continuous vector and is passed to the Transformer. During backpropagation, the **straight-through estimator** is used: the forward pass uses the quantized discrete vector, while the backward pass pretends the quantization operation does not exist and passes gradients straight through.
 
 The Transformer in IRIS receives a **sequence of interleaved frame tokens and actions**: each frame is encoded by VQ-VAE into $K$ tokens (e.g., $K=16$, codebook size $N=1024$), and action $a_t$ is inserted as a separate token after each frame's tokens. The Transformer simultaneously predicts three targets: the transition distribution $\hat{z}_{t+1}$ (via cross-entropy loss), the immediate reward $\hat{r}_t$, and the episode termination flag $\hat{d}_t$. The policy is trained entirely within imagined trajectories without touching the real environment. On the Atari 100k benchmark (allowing only 100,000 environment interaction steps, roughly equivalent to 2 hours of real gameplay, to test sample efficiency), IRIS achieves an average **HNS** (Human Normalized Score, which normalizes agent performance to the interval where random policy = 0 and human = 1, with values above 1 indicating superhuman performance) of 1.046, surpassing humans on 10 out of 26 games.
 
@@ -59,7 +59,7 @@ IRIS processes each frame as a pipeline: VQ-VAE encodes the raw frame into a dis
 
 ### STORM's Key Improvement: Single-Token Stochastic Latent Variable
 
-STORM (Stochastic Transformer-based wORld Models, NeurIPS 2023) differs from IRIS mainly in its latent variable design. IRIS uses VQ-VAE to represent one frame as multiple discrete tokens ($4 \times 4 = 16$); STORM instead uses a **categorical VAE** to compress an entire frame into a single stochastic latent variable $z_t$ (32 categories, each 32-dimensional, with straight-through gradient estimation), then fuses $z_t$ with action $a_t$ into a **single token** $e_t$ fed into the Transformer:
+STORM (Stochastic Transformer-based wORld Models, NeurIPS 2023) differs from IRIS mainly in its latent variable design. IRIS uses VQ-VAE to represent one frame as multiple discrete tokens ($4 \times 4 = 16$). STORM instead uses a **categorical VAE** to compress an entire frame into a single stochastic latent variable $z_t$ (32 categories, each 32-dimensional, with straight-through gradient estimation), then fuses $z_t$ with action $a_t$ into a **single token** $e_t$ fed into the Transformer:
 
 $$e_t = m_\phi(z_t, a_t), \quad h_{1:T} = f_\phi(e_{1:T})$$
 
@@ -71,14 +71,14 @@ Compared to DreamerV3's GRU-based RSSM, STORM's Transformer sequence model is st
 
 <figure>
 <img src="/storm/storm-world-model.png" alt="STORM Transformer dynamics model architecture" style="width:90%;display:block;margin:0 auto">
-<figcaption>Zhang et al. (2023) STORM architecture: a categorical VAE compresses each frame into a single stochastic latent variable z_t, which is fused with action a_t and fed into a causal-masked Transformer. The Transformer simultaneously predicts reward, continuation flag, and next-step latent distribution; the single-token design makes sequences 16 times shorter than IRIS.</figcaption>
+<figcaption>Zhang et al. (2023) STORM architecture: a categorical VAE compresses each frame into a single stochastic latent variable z_t, which is fused with action a_t and fed into a causal-masked Transformer. The Transformer simultaneously predicts reward, continuation flag, and next-step latent distribution. The single-token design makes sequences 16 times shorter than IRIS.</figcaption>
 </figure>
 
 **Learning paradigm**: Interactive (action-conditioned). Action $a_t$ is concatenated into the token sequence, and the model predicts the future latent distribution conditioned on actions.
 
-**Applicable scenarios**: Complex games (long Atari games, strategy games), tasks requiring multi-step planning; the preferred choice when sufficient compute and data are available.
+**Applicable scenarios**: Complex games (long Atari games, strategy games), tasks requiring multi-step planning. The preferred choice when sufficient compute and data are available.
 
-**Limitations**: Computation scales quadratically with sequence length ($O(T^2)$); inference latency is higher than RNN; requires more data to converge.
+**Limitations**: Computation scales quadratically with sequence length ($O(T^2)$). Inference latency is higher than RNN. Requires more data to converge.
 
 
 ## Architecture 3: Diffusion-based (2023, 2024)
@@ -101,15 +101,15 @@ GameNGen (2024) is the first system to run a complete game engine **in real time
 
 Diamond (NeurIPS 2024) directly integrates the diffusion process with the reinforcement learning training loop. Conditioned on a number of past frames and the current action, it uses a U-Net to denoise and generate the next frame, with the full generation chain serving as an environment simulator for policy training.
 
-Diamond's key design decision: action information is injected via **cross-attention** (a variant of self-attention where the Query comes from one sequence and the Key and Value come from another, aligning two different sources of information; here used to let image features "query" action information) into **every resolution layer** of the U-Net, rather than only into the bottleneck (the lowest-resolution layer at the bottom of the U-Net), which tightly aligns the generated frames with the action instructions. On the Atari 100k benchmark, Diamond achieves an average HNS of 1.46, surpassing all prior world model methods while maintaining excellent visual generation quality.
+Diamond's key design decision: action information is injected via **cross-attention** (a variant of self-attention where the Query comes from one sequence and the Key and Value come from another, aligning two different sources of information. Here used to let image features "query" action information) into **every resolution layer** of the U-Net, rather than only into the bottleneck (the lowest-resolution layer at the bottom of the U-Net), which tightly aligns the generated frames with the action instructions. On the Atari 100k benchmark, Diamond achieves an average HNS of 1.46, surpassing all prior world model methods while maintaining excellent visual generation quality.
 
 The inherent challenge for diffusion world models is **object persistence**: each frame is denoised independently, and the model does not maintain explicit object state, causing the identity, position, and occlusion relationships of objects to quietly drift in long sequences. Diamond mitigates this by limiting the number of rollout steps and adding a depth consistency penalty to the loss (for more diagnostic methods, see L04).
 
 **Learning paradigm**: Interactive (Diamond is action-conditioned) or observation-only (pure video diffusion models). Observation-only diffusion models are trained on large-scale internet video, learning the visual regularities of the world without action conditioning, and cannot answer "what would happen if I took a different action."
 
-**Applicable scenarios**: Offline video prediction, high-fidelity simulators, film and game content generation; not suitable for RL scenarios requiring real-time closed-loop control.
+**Applicable scenarios**: Offline video prediction, high-fidelity simulators, film and game content generation. Not suitable for RL scenarios requiring real-time closed-loop control.
 
-**Limitations**: Slow inference (10-100 denoising steps); difficult to interface directly with policy optimization (the sampling process is non-differentiable); object persistence is hard to maintain; training and inference costs are substantial.
+**Limitations**: Slow inference (10-100 denoising steps). Difficult to interface directly with policy optimization (the sampling process is non-differentiable). Object persistence is hard to maintain. Training and inference costs are substantial.
 
 
 ## Core Path Checkpoint

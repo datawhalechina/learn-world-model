@@ -8,7 +8,7 @@ lecture: 4
 
 ## Why Metrics Must Match the Interface
 
-**A counterexample**: using FID to evaluate MuZero. MuZero never generates pixel images; its world model is implicit, and FID is meaningless for it. Likewise, using "token prediction loss" to evaluate Dreamer only creates the false impression that Dreamer is a language model.
+**A counterexample**: using FID to evaluate MuZero. MuZero never generates pixel images. Its world model is implicit, and FID is meaningless for it. Likewise, using "token prediction loss" to evaluate Dreamer only creates the false impression that Dreamer is a language model.
 
 Different world models break down at different points:
 
@@ -28,7 +28,7 @@ Dreamer is a reinforcement learning algorithm, not a generative model. The core 
 
 ### Policy Reward Curve (Episode Return)
 
-This is the primary metric across the Dreamer series. Hafner et al. 2019 report per-task episode return on DMControl; Hafner et al. 2020 report episode return on Atari over 200M frames; Hafner et al. 2023 report episode return across 7 domains with a single set of hyperparameters. The central figure in all three papers is a **training steps vs. cumulative reward curve**, compared against model-free baselines (such as **SAC**, Soft Actor-Critic, an off-policy Actor-Critic algorithm based on the maximum-entropy framework and a strong model-free baseline on continuous control tasks; and **DrQ-v2**, Data-regularized Q, which adds data augmentation and n-step returns on top of SAC and serves as a representative baseline for pixel-input continuous control) and model-based baselines (such as **MBPO**, Model-Based Policy Optimization, which uses a learned world model to generate short synthetic rollouts to improve sample efficiency; and **PlaNet**, Planning with Latent Dynamics, the predecessor to RSSM that performs only MPC planning without an Actor-Critic).
+This is the primary metric across the Dreamer series. Hafner et al. 2019 report per-task episode return on DMControl. Hafner et al. 2020 report episode return on Atari over 200M frames. Hafner et al. 2023 report episode return across 7 domains with a single set of hyperparameters. The central figure in all three papers is a **training steps vs. cumulative reward curve**, compared against model-free baselines (such as **SAC**, Soft Actor-Critic, an off-policy Actor-Critic algorithm based on the maximum-entropy framework and a strong model-free baseline on continuous control tasks. And **DrQ-v2**, Data-regularized Q, which adds data augmentation and n-step returns on top of SAC and serves as a representative baseline for pixel-input continuous control) and model-based baselines (such as **MBPO**, Model-Based Policy Optimization, which uses a learned world model to generate short synthetic rollouts to improve sample efficiency. And **PlaNet**, Planning with Latent Dynamics, the predecessor to RSSM that performs only MPC planning without an Actor-Critic).
 
 **Diagnostic rule**: a training curve that stagnates or declines over an extended period has two possible sources. First, reward prediction distortion (the world model is lying), causing the Actor-Critic to optimize against incorrect imagined rewards. Second, RSSM dynamics prediction drift, causing imagined rollouts to diverge increasingly from the real environment distribution. Distinguishing the two requires simultaneously inspecting reward correlation.
 
@@ -40,7 +40,7 @@ Dreamer rolls out trajectories in "imagination" and predicts rewards. These imag
 
 $$\rho = \text{Pearson}(r_{\text{imagined}},\, r_{\text{real}})$$
 
-> **📖 Pearson correlation coefficient**: the standard metric for measuring the degree of linear correlation between two variables, with values in $[-1, 1]$. $\rho = 1$ indicates perfect positive correlation (one increases as the other does, at a fixed ratio); $\rho = 0$ indicates no linear correlation; $\rho = -1$ indicates perfect negative correlation. The formula is $\rho = \frac{\text{Cov}(X, Y)}{\sigma_X \sigma_Y}$, where $\text{Cov}$ is covariance and $\sigma$ is standard deviation. Here it measures whether the trends of the imagined reward sequence and the real reward sequence move together.
+> **📖 Pearson correlation coefficient**: the standard metric for measuring the degree of linear correlation between two variables, with values in $[-1, 1]$. $\rho = 1$ indicates perfect positive correlation (one increases as the other does, at a fixed ratio). $\rho = 0$ indicates no linear correlation. $\rho = -1$ indicates perfect negative correlation. The formula is $\rho = \frac{\text{Cov}(X, Y)}{\sigma_X \sigma_Y}$, where $\text{Cov}$ is covariance and $\sigma$ is standard deviation. Here it measures whether the trends of the imagined reward sequence and the real reward sequence move together.
 
 In practice, take a batch of rollouts (e.g., 1000 steps), compute the Pearson correlation coefficient between the imagined and real reward sequences, and target `ρ ≥ 0.8`.
 
@@ -57,7 +57,7 @@ FID uses **Inception-v3** (a deep convolutional image classification network pro
 <details>
 <summary>📖 FID Calculation Details (expand)</summary>
 
-① Use an intermediate layer of Inception-v3 to extract a feature vector from each of a large number of real images and generated images; ② fit a multivariate Gaussian distribution (mean $\mu$, covariance matrix $\Sigma$) to each set of features; ③ compute the Fréchet distance (also known as the Wasserstein-2 distance, the minimum work required to "transport" one distribution into the other, more sensitive to shape differences than KL divergence) between the two Gaussians:
+① Use an intermediate layer of Inception-v3 to extract a feature vector from each of a large number of real images and generated images. ② fit a multivariate Gaussian distribution (mean $\mu$, covariance matrix $\Sigma$) to each set of features. ③ compute the Fréchet distance (also known as the Wasserstein-2 distance, the minimum work required to "transport" one distribution into the other, more sensitive to shape differences than KL divergence) between the two Gaussians:
 
 $$\text{FID} = \|\mu_r - \mu_g\|^2 + \text{Tr}\!\left(\Sigma_r + \Sigma_g - 2(\Sigma_r \Sigma_g)^{1/2}\right)$$
 
@@ -66,7 +66,7 @@ where `Tr(·)` is the trace of a matrix (the sum of its diagonal elements). Ince
 
 **Diagnostic rule**: a sudden rise in FID mid-training indicates representation collapse in the encoder, where convolutional weights have degenerated to constant outputs. **Mitigation**: reduce the encoder learning rate, or add LayerNorm after the encoder.
 
-**Normal FID does not mean Dreamer is healthy.** It is entirely possible for visual reconstruction to look acceptable while imagined rewards have quietly become distorted, because the stochastic state `z_t` in the RSSM can satisfy reconstruction quality while encoding insufficient reward information. Normal FID only confirms that the encoder has not degraded; reward correlation must also be checked together.
+**Normal FID does not mean Dreamer is healthy.** It is entirely possible for visual reconstruction to look acceptable while imagined rewards have quietly become distorted, because the stochastic state `z_t` in the RSSM can satisfy reconstruction quality while encoding insufficient reward information. Normal FID only confirms that the encoder has not degraded. Reward correlation must also be checked together.
 
 ### Imagined Trajectory Entropy
 

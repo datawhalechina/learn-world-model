@@ -28,7 +28,7 @@ In robotics, autonomous driving, and industrial control, the cost of trial-and-e
 
 ## The Gap: Why World Models Went Quiet
 
-After the initial wave of enthusiasm around 2018 to 2020, the world model field gradually cooled. Dreamer, RSSM, and PlaNet generated real excitement, but prolonged research revealed a consistent set of problems: predictions degraded quickly over time, long-horizon trajectories collapsed, errors accumulated step by step, and generated video frames blurred within a few steps. These were not just engineering difficulties; they pointed to a fundamental capability gap.
+After the initial wave of enthusiasm around 2018 to 2020, the world model field gradually cooled. Dreamer, RSSM, and PlaNet generated real excitement, but prolonged research revealed a consistent set of problems: predictions degraded quickly over time, long-horizon trajectories collapsed, errors accumulated step by step, and generated video frames blurred within a few steps. These were not just engineering difficulties. They pointed to a fundamental capability gap.
 
 Meanwhile, the broader field was moving elsewhere. The success of scaling laws convinced many researchers that larger data and larger models could handle everything end-to-end. VLMs and VLAs exploded in capability. World models, by contrast, started to feel like an older idea being left behind.
 

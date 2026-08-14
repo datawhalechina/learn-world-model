@@ -24,7 +24,7 @@ The seven patterns below are finer variations of these four roles.
 
 ## Where a VLA Fits Next to a World Model
 
-Two of the seven patterns below route a world model's prediction into a **VLA** (Vision-Language-Action model, [Brohan et al., 2023](https://arxiv.org/abs/2307.15818)): a model that maps an observation and a language instruction directly to an action, typically built by adding an action output head to a pretrained vision-language model and training it with **behavior cloning** (supervised learning on observation-instruction-action demonstrations). A bare VLA never predicts a future state; it decides what to do right now, with no world model anywhere in its loop. This is exactly why it needs distinguishing from the architectures in this lecture: everything on this page so far predicts a state, and a VLA is the part of a complete system that does not.
+Two of the seven patterns below route a world model's prediction into a **VLA** (Vision-Language-Action model, [Brohan et al., 2023](https://arxiv.org/abs/2307.15818)): a model that maps an observation and a language instruction directly to an action, typically built by adding an action output head to a pretrained vision-language model and training it with **behavior cloning** (supervised learning on observation-instruction-action demonstrations). A bare VLA never predicts a future state. It decides what to do right now, with no world model anywhere in its loop. This is exactly why it needs distinguishing from the architectures in this lecture: everything on this page so far predicts a state, and a VLA is the part of a complete system that does not.
 
 Patterns 3 and 5 below describe two different ways a world model's prediction can still be spliced into that direct mapping, without turning the VLA itself into a predictive model.
 
@@ -46,7 +46,7 @@ Patterns 3 and 5 below describe two different ways a world model's prediction ca
 
 Patterns one through three differ mainly in coupling. Representation pretraining passes features to a separate policy. A slow-fast hierarchy keeps two cooperating modules at deployment. A unified VLA trains perception, intermediate prediction, and action generation in one sequence. Greater coupling can align training and deployment behavior, but it also makes failures harder to localize.
 
-Patterns four and five both make supervision denser. Pattern four uses future prediction as an auxiliary training objective. Pattern five exposes an imagined target to an inverse model at inference. The former can discard the predictor after training; the latter still depends on generation quality when acting.
+Patterns four and five both make supervision denser. Pattern four uses future prediction as an auxiliary training objective. Pattern five exposes an imagined target to an inverse model at inference. The former can discard the predictor after training. The latter still depends on generation quality when acting.
 
 Patterns six and seven differ in when the world model runs. Online evaluation can respond to the current observation but adds latency and exposes the planner to model exploitation. Offline generation avoids inference-time cost, but the deployed policy cannot ask the model to reconsider an unfamiliar situation.
 

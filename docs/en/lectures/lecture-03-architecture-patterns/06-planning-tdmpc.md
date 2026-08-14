@@ -54,7 +54,7 @@ TD learning uses the Bellman equation to substitute "current reward + next-step 
 - **Three learning paradigms** clarify what the training data can identify: observation-only data reveals visual regularities, interaction data reveals how actions change outcomes, and value-coupled training teaches which predicted outcomes matter for the task.
 - **Three planning mechanisms** determine how a model is used for decision-making: CEM is the most straightforward but inefficient in high-dimensional spaces, Actor-Critic is the most elegant but carries model exploitation risk, and TD-MPC most pragmatically balances both.
 - Dreamer = interaction-based paradigm + RSSM + latent Actor-Critic, and is the core reference system for this curriculum.
-- TD-MPC = action-conditioned latent dynamics + CEM + TD. It serves here as the hybrid comparison point; P04 instead focuses on the separate question of replacing the RSSM backbone with a Transformer.
+- TD-MPC = action-conditioned latent dynamics + CEM + TD. It serves here as the hybrid comparison point. P04 instead focuses on the separate question of replacing the RSSM backbone with a Transformer.
 
 
 ## Next Step
@@ -69,7 +69,7 @@ Key papers covered in this lecture, listed in order of appearance:
 **Foundational Architectures**
 - [Ha & Schmidhuber (2018): World Models](https://arxiv.org/abs/1803.10122): original paper on the V/M/C three-module framework and training in dreams
 - [Hafner et al. (2019): PlaNet / RSSM](https://arxiv.org/abs/1811.04551): deterministic + stochastic dual-path latent dynamics model
-- [Hafner et al. (2019/2020/2023/2025): Dreamer V1/V2/V3/V4](https://arxiv.org/abs/1912.01603): RSSM and latent Actor-Critic series; V4 see [arxiv 2509.24527](https://arxiv.org/abs/2509.24527)
+- [Hafner et al. (2019/2020/2023/2025): Dreamer V1/V2/V3/V4](https://arxiv.org/abs/1912.01603): RSSM and latent Actor-Critic series. V4 see [arxiv 2509.24527](https://arxiv.org/abs/2509.24527)
 
 **Transformer Architectures**
 - [Micheli et al. (2022): IRIS](https://arxiv.org/abs/2209.00588): VQ-VAE discretization + GPT autoregressive world model, Atari 100k 1.046 HNS

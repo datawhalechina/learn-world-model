@@ -6,7 +6,7 @@ title: P02 Build an RSSM Dynamics Model
 
 Train and compare GRU, MDN-RNN, and RSSM dynamics models on synthetic pixel trajectories. The point of this notebook is comparison, not leaderboard chasing: GRU is the simplest baseline, MDN-RNN adds predictive uncertainty, and RSSM introduces a latent stochastic state for world-model style rollouts.
 
-**Prerequisite**: P01 (`vae_encoder.pt`) if present; otherwise the notebook falls back to a randomly initialized encoder so it still runs, but the rollout comparison is only meaningful with the pretrained checkpoint. This notebook trains the dynamics models and saves the RSSM to `rssm.pt` for P03 and P04.
+**Prerequisite**: P01 (`vae_encoder.pt`) if present. Otherwise the notebook falls back to a randomly initialized encoder so it still runs, but the rollout comparison is only meaningful with the pretrained checkpoint. This notebook trains the dynamics models and saves the RSSM to `rssm.pt` for P03 and P04.
 
 > Notebook source: [p02_rssm_dynamics.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p02_rssm_dynamics.ipynb)
 
@@ -185,7 +185,7 @@ for p in list(encoder.parameters()) + list(decoder.parameters()):
 print(f'Encoder params: {sum(p.numel() for p in encoder.parameters()):,}')
 print(f'Decoder params: {sum(p.numel() for p in decoder.parameters()):,}')
 ```
-Next, generate synthetic trajectories; these rollouts become the supervision signal for the sequence models.
+Next, generate synthetic trajectories. These rollouts become the supervision signal for the sequence models.
 
 ```python
 # Generate synthetic trajectory data.
@@ -616,7 +616,7 @@ fig.suptitle('10-step Imagined Rollouts vs Ground Truth', fontsize=12, y=1.05)
 display(fig)
 plt.close(fig)
 ```
-The image grid gives the visual story; the next block turns that into a per-step pixel MSE curve for a quantitative view.
+The image grid gives the visual story. The next block turns that into a per-step pixel MSE curve for a quantitative view.
 
 ```python
 # Per-step pixel MSE vs ground truth.

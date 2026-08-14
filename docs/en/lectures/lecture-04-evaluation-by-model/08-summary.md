@@ -10,11 +10,11 @@ lecture: 4
 
 | Model | Primary Metrics | Additional Diagnostic Metrics | Common Failure Modes | Diagnostic Approach |
 |-------|----------------|-------------------------------|----------------------|---------------------|
-| **Dreamer** (RSSM) | Reconstruction FID, reward correlation `ρ` | Imagined trajectory entropy (KL collapse warning) | Encoder degradation, imagined reward distortion, KL collapse | FID rising: reduce encoder LR; `ρ` dropping: increase latent dimension; entropy approaching zero: KL annealing / free bits |
-| **MuZero** (implicit) | Value accuracy, MCTS visit entropy | Representation stability (cosine similarity > 0.95) | Value estimation bias, false confidence, unstable representation | Low accuracy: retrain reward model; entropy judgment requires task stochasticity context; low stability: increase network width or add contrastive loss |
-| **TD-MPC** (latent MPC) | Latent consistency loss, plan efficiency | Latent space t-SNE visualization (local isometry) | Representation collapse, myopic planning | Removing sg yields lower loss: collapse; low covariance rank: collapse; low efficiency: increase elite ratio |
-| **STORM** (Transformer) | Token prediction loss, long-horizon PSNR | FVD (I3D features, sequential dynamics quality) | Teacher forcing gap, autoregressive drift | PSNR sudden drop: shorten context window; use PSNR for debugging, FVD for policy evaluation |
-| **Diffusion World Model** (Diamond) | FVD, physics consistency, action-conditioned fidelity | Depth violation rate (DepthAnything + DINO automated evaluation) | Object persistence loss, inverted 3D relationships | High depth violation rate: introduce 3D constraints; low fidelity: inject action information at each layer |
+| **Dreamer** (RSSM) | Reconstruction FID, reward correlation `ρ` | Imagined trajectory entropy (KL collapse warning) | Encoder degradation, imagined reward distortion, KL collapse | FID rising: reduce encoder LR. `ρ` dropping: increase latent dimension. Entropy approaching zero: KL annealing / free bits |
+| **MuZero** (implicit) | Value accuracy, MCTS visit entropy | Representation stability (cosine similarity > 0.95) | Value estimation bias, false confidence, unstable representation | Low accuracy: retrain reward model. Entropy judgment requires task stochasticity context. Low stability: increase network width or add contrastive loss |
+| **TD-MPC** (latent MPC) | Latent consistency loss, plan efficiency | Latent space t-SNE visualization (local isometry) | Representation collapse, myopic planning | Removing sg yields lower loss: collapse. Low covariance rank: collapse. Low efficiency: increase elite ratio |
+| **STORM** (Transformer) | Token prediction loss, long-horizon PSNR | FVD (I3D features, sequential dynamics quality) | Teacher forcing gap, autoregressive drift | PSNR sudden drop: shorten context window. Use PSNR for debugging, FVD for policy evaluation |
+| **Diffusion World Model** (Diamond) | FVD, physics consistency, action-conditioned fidelity | Depth violation rate (DepthAnything + DINO automated evaluation) | Object persistence loss, inverted 3D relationships | High depth violation rate: introduce 3D constraints. Low fidelity: inject action information at each layer |
 
 
 ## Three Pragmatic Deployment Strategies
@@ -48,7 +48,7 @@ Part A implemented a VAE encoder: a CNN compresses 64x64 images into a latent ve
 Using the RSSM implemented in P02 as the RNN baseline, this lecture compared eight architecture families side by side (RNN/RSSM, Transformer, Diffusion, JEPA, RWM, Genie, LoopWM, WAM), clarified four learning paradigms, and traced the planning progression from CEM-MPC through latent actor-critic to TD-MPC.
 
 **L04: Diagnosing World Models (this lecture)**
-Evaluation is not "scoring" but "diagnosis." Each architecture has its own characteristic failure modes, and only targeted metrics can surface problems. Horizon drift is the long-horizon challenge shared by all world models; mitigating it requires short-horizon training, target networks, and continuous supplementation with real data.
+Evaluation is not "scoring" but "diagnosis." Each architecture has its own characteristic failure modes, and only targeted metrics can surface problems. Horizon drift is the long-horizon challenge shared by all world models. Mitigating it requires short-horizon training, target networks, and continuous supplementation with real data.
 
 ### From Theory to Deployment: Outlook
 

@@ -6,9 +6,9 @@ title: P03：训练 Dreamer 智能体
 
 训练一个包含世界模型与潜在 Actor-Critic 策略的紧凑型 Dreamer 智能体。本项目为教程规模的演示：目标是展示 Dreamer 训练循环、权重文件的衔接方式以及指标诊断流程，而非求解高难度控制基准。本项目不依赖外部 gym 库，由 `SyntheticEnv` 生成 64×64 RGB 帧并附带简单奖励信号。
 
-**前置条件**：若存在 P01 的 `vae_encoder.pt` 和 P02 的 `rssm.pt`，将自动加载；否则缺失部分退化为随机初始化，笔记本仍可运行，但只有在使用预训练权重文件的情况下，训练出的智能体才具有实际意义。本笔记本将完整智能体保存为 `dreamer.pt`，供 P05 使用。
+**前置条件**：若存在 P01 的 `vae_encoder.pt` 和 P02 的 `rssm.pt`，将自动加载。否则缺失部分退化为随机初始化，笔记本仍可运行，但只有在使用预训练权重文件的情况下，训练出的智能体才具有实际意义。本笔记本将完整智能体保存为 `dreamer.pt`，供 P05 使用。
 
-此处出现嘈杂的奖励曲线是可以接受的；教程目标是构建一个可运行的世界模型加策略流水线，而非追求基准得分。
+此处出现嘈杂的奖励曲线是可以接受的。教程目标是构建一个可运行的世界模型加策略流水线，而非追求基准得分。
 
 > Notebook 源文件: [p03_dreamer_agent.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/zh/projects/p03_dreamer_agent.ipynb)
 

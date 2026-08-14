@@ -4,7 +4,7 @@ title: P01 Train a VAE Encoder
 
 # P01: Train a VAE Encoder
 
-Train a compact convolutional Variational Autoencoder (VAE) on synthetic 64x64 RGB images. The encoder learns a 32-dimensional latent space that P02 reuses as its observation encoder. The goal here is not photorealistic generation; it is to learn a stable latent space that downstream notebooks can consume.
+Train a compact convolutional Variational Autoencoder (VAE) on synthetic 64x64 RGB images. The encoder learns a 32-dimensional latent space that P02 reuses as its observation encoder. The goal here is not photorealistic generation. It is to learn a stable latent space that downstream notebooks can consume.
 
 **Output**: this notebook trains from scratch (no prior checkpoint needed) and saves the trained weights to `vae_encoder.pt`, which P02 and P03 load as their observation encoder.
 

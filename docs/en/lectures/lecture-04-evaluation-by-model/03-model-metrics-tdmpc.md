@@ -18,7 +18,7 @@ $$\mathcal{L}_{\text{consist}} = \|\text{sg}(h_{t+1}) - f(h_t, a_t)\|^2$$
 
 where `f` is the dynamics function and `sg` denotes stop-gradient. This loss measures the distance between "the next state predicted by the dynamics function" and "the next observation directly encoded by the encoder."
 
-**Diagnostic rule (representation collapse):** If the consistency loss decreases further after removing `sg`, the encoder has degenerated into an identity mapping, compressing all states to a single point. Formal diagnosis: on the validation set, inspect the rank of the covariance matrix of the latent vectors; a rank close to 1 indicates collapse. (The `sg` mechanism is discussed in Lecture 3 Part A, TD-MPC section.)
+**Diagnostic rule (representation collapse):** If the consistency loss decreases further after removing `sg`, the encoder has degenerated into an identity mapping, compressing all states to a single point. Formal diagnosis: on the validation set, inspect the rank of the covariance matrix of the latent vectors. A rank close to 1 indicates collapse. (The `sg` mechanism is discussed in Lecture 3 Part A, TD-MPC section.)
 
 **Diagnostic rule (training oscillation):** If the consistency loss oscillates during training (unstable up-and-down fluctuations) rather than decreasing monotonically, the learning rate is too high, or the gradient scales of the encoder and dynamics function are mismatched. Try reducing the learning rate by one order of magnitude, or using a separate (smaller) learning rate for the encoder.
 

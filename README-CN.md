@@ -48,10 +48,10 @@
 | L03 | 讲义 | 架构模式、学习范式与规划 | 七大架构族、CEM-MPC、潜在 Actor-Critic、TD-MPC |
 | L04 | 讲义 | 按模型划分的评估指标 | FID、奖励相关性、一致性损失、PSNR、时程漂移 |
 | L05 | 讲义 | 前沿争论 | 语言 vs 物理 grounding、Bitter Lesson、AGI 作为研究目标 |
-| P01 | 项目 | 训练 VAE 编码器 | 小型 CNN VAE 处理 64×64 像素观测；ELBO 损失曲线；潜在维度滑块可视化 |
-| P02 | 项目 | 构建 RSSM 动力学模型 | GRU、MDN-RNN、RSSM 三者对比；先验与后验轨迹对比图 |
+| P01 | 项目 | 训练 VAE 编码器 | 小型 CNN VAE 处理 64×64 像素观测。ELBO 损失曲线。潜在维度滑块可视化 |
+| P02 | 项目 | 构建 RSSM 动力学模型 | GRU、MDN-RNN、RSSM 三者对比。先验与后验轨迹对比图 |
 | P03 | 项目 | 训练 Dreamer 智能体 | 完整训练循环：编码器 + RSSM + 潜在 Actor-Critic，在小型像素环境上训练 |
-| P04 | 项目 | 替换动力学骨干网络 | 将 RSSM 替换为小型因果 Transformer（STORM 风格）；架构对比分析 |
+| P04 | 项目 | 替换动力学骨干网络 | 将 RSSM 替换为小型因果 Transformer（STORM 风格）。架构对比分析 |
 | P05 | 项目 | 世界模型评估仪表盘 | 两个模型指标并排展示：FID、奖励相关性、PSNR、潜在漂移曲线 |
 | P06 | 项目 | 反事实的动作条件世界模型 | 干预与反事实 rollout、逆动力学正则化、动作影响度指标 |
 

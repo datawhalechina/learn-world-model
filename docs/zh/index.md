@@ -29,7 +29,7 @@ Learn World Models 是一门以项目为驱动的世界模型课程，从 VAE �
   <li><strong>为什么需要世界模型</strong>：从 Craik（1943）到 JEPA 的历史脉络。</li>
   <li><strong>观测编码</strong>：VAE、CNN 编码器、ELBO，以及通往 Dreamer 的桥梁。</li>
   <li><strong>潜在动力学</strong>：GRU、MDN-RNN 与 RSSM（确定性 + 随机性）。</li>
-  <li><strong>架构族</strong>：八个架构族，RNN/RSSM、Transformer、扩散模型、JEPA、RWM、Genie、LoopWM 与 WAM。</li>
+  <li><strong>架构族</strong>：九个架构族，RNN/RSSM、Transformer、扩散模型、JEPA、RWM、空间 3D/4D 模型、Genie、LoopWM 与 WAM。</li>
   <li><strong>规划机制</strong>：CEM-MPC、潜在 Actor-Critic 与 TD-MPC。</li>
   <li><strong>评估指标</strong>：FID、奖励相关性、一致性损失、PSNR 与视野漂移。</li>
   <li><strong>前沿思辨</strong>：语言 vs 物理世界、Bitter Lesson、AGI 作为研究目标。</li>

@@ -29,7 +29,7 @@ Learn World Models is a project-driven world models curriculum covering VAE enco
   <li><strong>Why world models are needed</strong>: historical context from Craik (1943) to JEPA.</li>
   <li><strong>Observation encoding</strong>: VAE, CNN encoder, ELBO, and the bridge to Dreamer.</li>
   <li><strong>Latent dynamics</strong>: GRU, MDN-RNN, and RSSM (deterministic + stochastic).</li>
-  <li><strong>Architecture families</strong>: eight architecture families, RNN/RSSM, Transformer, diffusion models, JEPA, RWM, Genie, LoopWM, and WAM.</li>
+  <li><strong>Architecture families</strong>: nine architecture families, RNN/RSSM, Transformer, diffusion models, JEPA, RWM, spatial 3D/4D models, Genie, LoopWM, and WAM.</li>
   <li><strong>Planning mechanisms</strong>: CEM-MPC, latent actor-critic, and TD-MPC.</li>
   <li><strong>Evaluation metrics</strong>: FID, reward correlation, consistency loss, PSNR, and horizon drift.</li>
   <li><strong>Frontier debates</strong>: language vs. the physical world, Bitter Lesson, AGI as a research target.</li>

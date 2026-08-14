@@ -54,7 +54,7 @@ TD 学习用 Bellman 方程，以"当前奖励 + 下一步 Q 值估计"代替完
 - **三类训练信号**界定模型能识别什么：纯观测数据揭示视觉规律，交互数据揭示动作如何改变结果，价值耦合训练则教会模型哪些预测结果与任务有关。
 - **三种规划机制**决定模型如何被用于决策：CEM 最直白但在高维空间效率低，Actor-Critic 最优雅但有模型漏洞风险，TD-MPC 最务实地兼顾了两者。
 - Dreamer = 交互型范式 + RSSM + 潜在 Actor-Critic，是本系列课程的核心参考系统。
-- TD-MPC = 动作条件潜在动力学 + CEM + TD，在这里作为两类规划机制的混合对照；P04 处理的是另一个问题，即用 Transformer 替换 RSSM 骨干。
+- TD-MPC = 动作条件潜在动力学 + CEM + TD，在这里作为两类规划机制的混合对照。P04 处理的是另一个问题，即用 Transformer 替换 RSSM 骨干。
 
 
 ## 下一步
@@ -69,7 +69,7 @@ TD 学习用 Bellman 方程，以"当前奖励 + 下一步 Q 值估计"代替完
 **基础架构**
 - [Ha & Schmidhuber (2018): World Models](https://arxiv.org/abs/1803.10122)：V/M/C 三模块框架与梦中训练的原始论文
 - [Hafner et al. (2019): PlaNet / RSSM](https://arxiv.org/abs/1811.04551)：确定性+随机双路径潜在动力学模型
-- [Hafner et al. (2019/2020/2023/2025): Dreamer V1/V2/V3/V4](https://arxiv.org/abs/1912.01603)：RSSM 与潜在 Actor-Critic 系列；V4 见 [arxiv 2509.24527](https://arxiv.org/abs/2509.24527)
+- [Hafner et al. (2019/2020/2023/2025): Dreamer V1/V2/V3/V4](https://arxiv.org/abs/1912.01603)：RSSM 与潜在 Actor-Critic 系列。V4 见 [arxiv 2509.24527](https://arxiv.org/abs/2509.24527)
 
 **Transformer 架构**
 - [Micheli et al. (2022): IRIS](https://arxiv.org/abs/2209.00588)：VQ-VAE 离散化 + GPT 自回归世界模型，Atari 100k 1.046 HNS

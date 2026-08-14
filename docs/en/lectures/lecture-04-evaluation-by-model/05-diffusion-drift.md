@@ -18,7 +18,7 @@ As noted in the STORM section, FVD is the preferred reporting metric for sequenc
 
 This is a challenge unique to diffusion world models: high-fidelity per-frame generation does not guarantee that physical relationships remain consistent across a sequence. A concrete failure case: an object falling off a table may look realistic in each individual frame, yet the object might "snap back" onto the table in the next frame, violating gravity and persistence constraints.
 
-**Evaluation method**: Run an object tracker over the evaluation sequence (e.g., **SAM2**, Segment Anything Model 2, a video segmentation and tracking model released by Meta in 2024 that can track the mask of any specified object in real time across video frames; or **DINO** feature matching, a visual feature extractor based on self-supervised Transformer pretraining, where DINO feature vectors of the same object across different frames have high cosine similarity and can be used for cross-frame correspondence matching). Track the position trajectories of key objects across consecutive frames and flag jump frames where inter-frame displacement exceeds a reasonable threshold. The physics consistency score is the proportion of frames with no violations; higher is better.
+**Evaluation method**: Run an object tracker over the evaluation sequence (e.g., **SAM2**, Segment Anything Model 2, a video segmentation and tracking model released by Meta in 2024 that can track the mask of any specified object in real time across video frames. Or **DINO** feature matching, a visual feature extractor based on self-supervised Transformer pretraining, where DINO feature vectors of the same object across different frames have high cosine similarity and can be used for cross-frame correspondence matching). Track the position trajectories of key objects across consecutive frames and flag jump frames where inter-frame displacement exceeds a reasonable threshold. The physics consistency score is the proportion of frames with no violations. Higher is better.
 
 ### Action-Conditioning Fidelity
 
@@ -50,10 +50,10 @@ Under a sufficiently long rollout, all architectures exhibit a systematic diverg
 
 | Architecture | Drift Manifestation |
 |------|---------|
-| RNN/RSSM | Latent vector `z_t` drifts away from the region corresponding to real observations; PSNR degrades |
-| Transformer (STORM) | Autoregressive errors accumulate; token prediction residuals grow progressively |
+| RNN/RSSM | Latent vector `z_t` drifts away from the region corresponding to real observations. PSNR degrades |
+| Transformer (STORM) | Autoregressive errors accumulate. Token prediction residuals grow progressively |
 | Diffusion (Diamond) | Object identity, position, and occlusion relationships quietly shift over long sequences |
-| TD-MPC | Latent consistency loss increases; planning efficiency degrades |
+| TD-MPC | Latent consistency loss increases. Planning efficiency degrades |
 
 ### Detection: Drift Curves
 

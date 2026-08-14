@@ -4,11 +4,11 @@ title: P03 Train a Dreamer Agent
 
 # P03: Train a Dreamer Agent
 
-Train a compact Dreamer agent with a world model and a latent Actor-Critic policy. This is a tutorial-scale demo: the objective is to show the Dreamer training loop, checkpoint wiring, and metric diagnostics, not to solve a hard control benchmark. There is no external gym dependency; a `SyntheticEnv` generates 64x64 RGB frames with a simple reward signal.
+Train a compact Dreamer agent with a world model and a latent Actor-Critic policy. This is a tutorial-scale demo: the objective is to show the Dreamer training loop, checkpoint wiring, and metric diagnostics, not to solve a hard control benchmark. There is no external gym dependency. A `SyntheticEnv` generates 64x64 RGB frames with a simple reward signal.
 
-**Prerequisite**: P01 (`vae_encoder.pt`) and P02 (`rssm.pt`) if present; otherwise the missing parts fall back to random initialization so the notebook still runs, but the trained agent is only meaningful with the pretrained checkpoints. This notebook saves the full agent to `dreamer.pt` for P05.
+**Prerequisite**: P01 (`vae_encoder.pt`) and P02 (`rssm.pt`) if present. Otherwise the missing parts fall back to random initialization so the notebook still runs, but the trained agent is only meaningful with the pretrained checkpoints. This notebook saves the full agent to `dreamer.pt` for P05.
 
-A noisy reward trace is acceptable here; the tutorial goal is a working world-model + policy pipeline, not a benchmark score.
+A noisy reward trace is acceptable here. The tutorial goal is a working world-model + policy pipeline, not a benchmark score.
 
 > Notebook source: [p03_dreamer_agent.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p03_dreamer_agent.ipynb)
 

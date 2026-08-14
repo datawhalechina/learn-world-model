@@ -10,7 +10,7 @@ We organize the project around Judea Pearl's ladder of causation. The bottom run
 
 One honest clarification up front. Pearl's do-calculus exists to decide whether `P(Y | do(a))` is recoverable from observational data when the action is tangled with hidden confounders. That problem does not arise here: the action is an exogenous input we choose, so there is no back-door path between our chosen action and the latent state. The intervention `do(a_t = a')` is therefore implemented operationally, by clamping the action in the rollout, not by graph surgery. We use the do-notation because it names the right concept, and we keep the scope honest.
 
-**Prerequisite**: P03 (`dreamer.pt`) and P04 (`transformer_wm.pt`) if present; otherwise each missing checkpoint falls back to a randomly initialized model so the notebook still runs as a smoke test. The counterfactual comparisons are only meaningful once the real checkpoints are loaded. This notebook trains one small action-regularized world model and saves it to `causal_wm.pt`.
+**Prerequisite**: P03 (`dreamer.pt`) and P04 (`transformer_wm.pt`) if present. Otherwise each missing checkpoint falls back to a randomly initialized model so the notebook still runs as a smoke test. The counterfactual comparisons are only meaningful once the real checkpoints are loaded. This notebook trains one small action-regularized world model and saves it to `causal_wm.pt`.
 
 > Notebook source: [p06_counterfactual_world_model.ipynb](https://github.com/datawhalechina/learn-world-model/blob/main/docs/en/projects/p06_counterfactual_world_model.ipynb)
 
@@ -436,7 +436,7 @@ t_frm_l, t_prob_l = transformer_rollout(left,  seed)
 
 print('Interventional rollouts computed for both models.')
 ```
-With both interventional rollouts in hand, measure how far the two action regimes pull apart at each horizon step. For the Dreamer we use the pixel-level RMS difference between decoded frames. For the Transformer, decoded frames go through an `argmax` over categorical tokens, which snaps both action regimes onto the same token and reports an exact zero even when a faint action signal is present; to see that signal we instead measure the symmetric KL divergence between the two predicted token distributions. A causal model pulls these curves up; an action-blind model keeps them near the floor.
+With both interventional rollouts in hand, measure how far the two action regimes pull apart at each horizon step. For the Dreamer we use the pixel-level RMS difference between decoded frames. For the Transformer, decoded frames go through an `argmax` over categorical tokens, which snaps both action regimes onto the same token and reports an exact zero even when a faint action signal is present. To see that signal we instead measure the symmetric KL divergence between the two predicted token distributions. A causal model pulls these curves up. An action-blind model keeps them near the floor.
 
 ```python
 def frame_divergence(frames_a, frames_b):
@@ -630,7 +630,7 @@ print('Both compact models trained.')
 ```
 ## 7. Action-Influence Metric
 
-To put a number on action-conditioning, measure how much the predicted next latent changes when only the action is flipped, averaged over held-out states. A model that respects the action produces a large influence score; an action-collapsed model produces a score near zero. We report it for the action-regularized model, the baseline, and the loaded Dreamer RSSM.
+To put a number on action-conditioning, measure how much the predicted next latent changes when only the action is flipped, averaged over held-out states. A model that respects the action produces a large influence score. An action-collapsed model produces a score near zero. We report it for the action-regularized model, the baseline, and the loaded Dreamer RSSM.
 
 ```python
 @torch.no_grad()

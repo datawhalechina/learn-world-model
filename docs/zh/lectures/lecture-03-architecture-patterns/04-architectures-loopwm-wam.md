@@ -14,14 +14,14 @@ lecture: 3
 
 <figure>
 <img src="/lwm/lwm-architecture.png" alt="LoopWM 架构：编码器与动作嵌入器输入 Looped Dynamics Core（Prelude、共享 Recurrent Block、Coda），谱稳定性保证与延迟解码机制" style="width:100%;display:block;margin:0 auto">
-<figcaption>Lu et al. (2026) LoopWM 的完整架构：观测和动作分别经编码器 $E_o$、动作嵌入器 $A_a$ 压缩后输入 Looped Dynamics Core；Core 内部分 Prelude（生成条件）、共享 Recurrent Block（循环 $T$ 次，退出门控 $g^{(t)}$ 判断是否提前终止）、Coda（投影得到 $h_k$）三段，谱稳定性保证 $\rho(\bar{A}) < 1$ 使每次循环都是压缩映射；$h_k$ 经预测头输出未来观测、奖励和终止信号，或沿延迟解码路径连续展开多步、只在终止步解码。</figcaption>
+<figcaption>Lu et al. (2026) LoopWM 的完整架构：观测和动作分别经编码器 $E_o$、动作嵌入器 $A_a$ 压缩后输入 Looped Dynamics Core。Core 内部分 Prelude（生成条件）、共享 Recurrent Block（循环 $T$ 次，退出门控 $g^{(t)}$ 判断是否提前终止）、Coda（投影得到 $h_k$）三段，谱稳定性保证 $\rho(\bar{A}) < 1$ 使每次循环都是压缩映射。$h_k$ 经预测头输出未来观测、奖励和终止信号，或沿延迟解码路径连续展开多步、只在终止步解码。</figcaption>
 </figure>
 
 配合谱稳定化，LoopWM 还把解码推迟到 rollout 序列的最后一步才做（deferred decoding，降低计算开销并让 latent 结构更利于长程规划），并用学到的退出门控实现自适应计算：门控信号超过阈值 $\tau$ 时提前退出循环，简单转移少迭代，复杂转移（比如碰撞）多迭代几轮。训练时循环次数 $T$ 从泊松分布 $\text{Poisson}(\mu_{\text{rec}})$ 中随机采样，配合截断 BPTT 训练，让模型在测试时支持可变深度推理。论文在 ScienceWorld 和 AlfWorld 上验证，约 1B 参数的 LoopWM 在多个指标上超过参数量大 100 倍的闭源基线，同时在长时程任务上保持稳定，循环次数越多、预测质量越好，呈现出与模型规模、数据量正交的第三条 scaling 轴。
 
 **学习范式**：交互型，以动作为条件的 latent 动力学预测器，可以直接替换 RSSM 或标准 Transformer 动力学模型作为 backbone。
 
-**局限**：谱稳定化约束只作用在更新规则的线性保留项上，非线性残差项没有同等的稳定性保证；论文主要在文本交互环境上验证，尚未在像素级连续控制或真实机器人环境上充分验证。
+**局限**：谱稳定化约束只作用在更新规则的线性保留项上，非线性残差项没有同等的稳定性保证。论文主要在文本交互环境上验证，尚未在像素级连续控制或真实机器人环境上充分验证。
 
 ## 架构九：从 World Model 到 World Action Model（WAM）
 
@@ -85,4 +85,4 @@ flowchart TD
     Q3 -->|多视角一致性或物体恒存性| R9[空间 3D/4D]
 ```
 
-**实践建议**：从 RNN/RSSM 起步，P02 已经帮你走完这一步。遇到瓶颈再升级：长序列预测精度持续下跌、或任务需要跨多步因果推理，再考虑切换 Transformer；如果瓶颈具体是长 rollout 误差累积发散，LoopWM 的谱稳定化提供了一条参数量更小的路径。Diffusion 留给离线场景。JEPA 控制接口尚不成熟，但表示学习任务已有实质结果，值得跟踪。有大量无标注视频但缺乏动作标签时，Genie 的 latent action 发现机制是目前最直接的切入点，但要做真实控制还需要对齐步骤。当物体恒存性或多视角几何一致性是硬性需求时，比如自动驾驶预测或精确操作，空间 3D/4D 表示值得付出额外的渲染开销。做真实机器人，Self-Forcing 和 ensemble uncertainty 这类工程手段比换架构更重要，先把长程稳定性解决掉。
+**实践建议**：从 RNN/RSSM 起步，P02 已经帮你走完这一步。遇到瓶颈再升级：长序列预测精度持续下跌、或任务需要跨多步因果推理，再考虑切换 Transformer。如果瓶颈具体是长 rollout 误差累积发散，LoopWM 的谱稳定化提供了一条参数量更小的路径。Diffusion 留给离线场景。JEPA 控制接口尚不成熟，但表示学习任务已有实质结果，值得跟踪。有大量无标注视频但缺乏动作标签时，Genie 的 latent action 发现机制是目前最直接的切入点，但要做真实控制还需要对齐步骤。当物体恒存性或多视角几何一致性是硬性需求时，比如自动驾驶预测或精确操作，空间 3D/4D 表示值得付出额外的渲染开销。做真实机器人，Self-Forcing 和 ensemble uncertainty 这类工程手段比换架构更重要，先把长程稳定性解决掉。

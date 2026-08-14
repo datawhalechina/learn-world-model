@@ -13,7 +13,7 @@ A world model is a set of interfaces connecting observations, latent states, pre
 | Layer | Question | Evidence to collect | Failure that return can hide |
 | --- | --- | --- | --- |
 | Representation | Does the latent state preserve distinctions needed by the task? | probe accuracy, latent variance and rank, perturbation tests | collapsed or nuisance-dominated features |
-| One-step dynamics | Does the transition predict the immediate effect of an action? | held-out transition, reward, and termination error; opposite-action tests | action-ignoring predictions |
+| One-step dynamics | Does the transition predict the immediate effect of an action? | held-out transition, reward, and termination error. Opposite-action tests | action-ignoring predictions |
 | Long-horizon rollout | Do errors remain controlled when predictions become subsequent inputs? | error-versus-horizon curves, free-running rollouts, identity and geometry tracking | teacher-forcing gap and drift |
 | Task signal | Are reward, value, and continuation estimates calibrated on real outcomes? | reward correlation, value error, calibration curves, out-of-distribution slices | visually accurate but decision-useless futures |
 | Planner or policy | Does predicted value improve real action selection? | search improvement, plan efficiency, real-versus-imagined return gap, exploitation tests | optimization of model defects |

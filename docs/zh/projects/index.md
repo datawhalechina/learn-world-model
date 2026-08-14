@@ -14,7 +14,7 @@ title: 项目
 
 | 平台 | 硬件 | 适用场景 | 链接 |
 |---|---|---|---|
-| Google Colab | T4、L4、A100 | 本课程的参考环境；免费版可用于冒烟测试，Pro 版提供稳定的 T4/L4 算力 | [colab.research.google.com/signup](https://colab.research.google.com/signup) |
+| Google Colab | T4、L4、A100 | 本课程的参考环境。免费版可用于冒烟测试，Pro 版提供稳定的 T4/L4 算力 | [colab.research.google.com/signup](https://colab.research.google.com/signup) |
 | Kaggle Notebooks | 双 T4、P100 | 每周 30 小时免费 GPU 时长，无需订阅 | [kaggle.com/docs/notebooks](https://www.kaggle.com/docs/notebooks) |
 | AMD Radeon Cloud | Radeon | 免费 150 小时 GPU 时长，一键启动本课程 notebook | [developer.amd.com.cn](https://developer.amd.com.cn/login?source=eHjyREaw5) |
 | Lambda Cloud | A10、A100、H100 | 按小时计费的 Nvidia 按需实例，无需长期承诺 | [lambda.ai/service/gpu-cloud](https://lambda.ai/service/gpu-cloud) |
@@ -31,16 +31,16 @@ title: 项目
 
 | # | 项目 | 前置 | 产出 | 交付物 |
 |---|------|------|------|--------|
-| P01 | [训练 VAE 编码器](./p01_vae_encoder) | L02 Part A | `vae_encoder.pt` | 64×64 帧上的 CNN VAE；ELBO 损失曲线；展示解耦维度的潜在遍历 |
-| P02 | [构建 RSSM 动力学模型](./p02_rssm_dynamics) | P01、L02 Part B | `rssm.pt` | GRU、MDN-RNN 与 RSSM 对比；rollout 图；1 步到 5 步预测误差曲线 |
-| P03 | [训练 Dreamer 智能体](./p03_dreamer_agent) | P02、L03 Part A | `dreamer.pt` | 编码器 + RSSM + 潜在 Actor-Critic 训练循环；奖励曲线；FID 与奖励相关性自评 |
-| P04 | [替换动力学骨干网络](./p04_transformer_backbone) | P03、L03 Part B | `transformer_wm.pt` | 用 STORM 风格的类别 VAE 加因果 Transformer 替换 RSSM；架构对比报告 |
+| P01 | [训练 VAE 编码器](./p01_vae_encoder) | L02 Part A | `vae_encoder.pt` | 64×64 帧上的 CNN VAE。ELBO 损失曲线。展示解耦维度的潜在遍历 |
+| P02 | [构建 RSSM 动力学模型](./p02_rssm_dynamics) | P01、L02 Part B | `rssm.pt` | GRU、MDN-RNN 与 RSSM 对比。rollout 图。1 步到 5 步预测误差曲线 |
+| P03 | [训练 Dreamer 智能体](./p03_dreamer_agent) | P02、L03 Part A | `dreamer.pt` | 编码器 + RSSM + 潜在 Actor-Critic 训练循环。奖励曲线。FID 与奖励相关性自评 |
+| P04 | [替换动力学骨干网络](./p04_transformer_backbone) | P03、L03 Part B | `transformer_wm.pt` | 用 STORM 风格的类别 VAE 加因果 Transformer 替换 RSSM。架构对比报告 |
 | P05 | [世界模型评估仪表盘](./p05_evaluation_dashboard) | P03、P04、L04 | -- | 加载两套训练好的模型并排打分：PSNR、奖励相关性、token 损失与潜在漂移 |
 | P06 | [反事实的动作条件世界模型](./p06_counterfactual_world_model) | P03、P04 | `causal_wm.pt` | 因果之梯分析：干预与反事实推演、逆动力学正则化的世界模型，以及动作影响度指标 |
 
 ## 权重文件如何串联
 
-各项目共享一组在流水线中向前传递的权重文件。P01 训练 VAE 并写出 `vae_encoder.pt`；P02 加载该编码器，训练动力学模型，写出 `rssm.pt`。此后路径分叉：P03 把编码器和 RSSM 组合成 Dreamer 智能体，保存为 `dreamer.pt`；P04 则复用 RSSM 作为基线，训练 Transformer 骨干，保存为 `transformer_wm.pt`。P05 加载 `dreamer.pt` 与 `transformer_wm.pt` 完成准确度评估，P06 再加载同样的两套权重探查因果保真度，并训练一个自有的动作正则化模型，保存为 `causal_wm.pt`。
+各项目共享一组在流水线中向前传递的权重文件。P01 训练 VAE 并写出 `vae_encoder.pt`。P02 加载该编码器，训练动力学模型，写出 `rssm.pt`。此后路径分叉：P03 把编码器和 RSSM 组合成 Dreamer 智能体，保存为 `dreamer.pt`。P04 则复用 RSSM 作为基线，训练 Transformer 骨干，保存为 `transformer_wm.pt`。P05 加载 `dreamer.pt` 与 `transformer_wm.pt` 完成准确度评估，P06 再加载同样的两套权重探查因果保真度，并训练一个自有的动作正则化模型，保存为 `causal_wm.pt`。
 
 ```mermaid
 graph TD

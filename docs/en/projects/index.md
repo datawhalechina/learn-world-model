@@ -8,13 +8,13 @@ Six hands-on projects build a complete world-model pipeline from scratch. Work t
 
 ## Hardware requirements
 
-Every notebook in this section was developed and run on Google Colab with a single T4 GPU (16 GB). Any accelerator with comparable or greater memory and compute, whether an Nvidia GPU, an AMD GPU, or a TPU from the same or a later generation, runs all six projects unchanged. A single mid-range consumer GPU is enough; none of the projects require multi-GPU training.
+Every notebook in this section was developed and run on Google Colab with a single T4 GPU (16 GB). Any accelerator with comparable or greater memory and compute, whether an Nvidia GPU, an AMD GPU, or a TPU from the same or a later generation, runs all six projects unchanged. A single mid-range consumer GPU is enough. None of the projects require multi-GPU training.
 
 If you do not already have access to a machine with a suitable GPU, here are cloud options that work well:
 
 | Provider | Hardware | Good for | Link |
 |---|---|---|---|
-| Google Colab | T4, L4, A100 | The reference environment for this course; free tier works for smoke tests, Pro gives reliable T4/L4 access | [colab.research.google.com/signup](https://colab.research.google.com/signup) |
+| Google Colab | T4, L4, A100 | The reference environment for this course. Free tier works for smoke tests, Pro gives reliable T4/L4 access | [colab.research.google.com/signup](https://colab.research.google.com/signup) |
 | Kaggle Notebooks | T4 x2, P100 | Free 30 GPU-hours per week, no subscription needed | [kaggle.com/docs/notebooks](https://www.kaggle.com/docs/notebooks) |
 | AMD Developer Cloud | MI300X | Free trial credits for testing ROCm compatibility on AMD GPUs | [amd.com/en/developer/resources/cloud-access.html](https://www.amd.com/en/developer/resources/cloud-access.html) |
 | Lambda Cloud | A10, A100, H100 | On-demand Nvidia instances billed by the hour, no long-term commitment | [lambda.ai/service/gpu-cloud](https://lambda.ai/service/gpu-cloud) |
@@ -31,10 +31,10 @@ Open any notebook in Jupyter or Colab and run it top to bottom. If an upstream c
 
 | # | Project | Prerequisite | Saves | Deliverable |
 |---|---------|--------------|-------|-------------|
-| P01 | [Train a VAE Encoder](./p01_vae_encoder) | L02 Part A | `vae_encoder.pt` | CNN VAE on 64×64 frames; ELBO loss curve; latent traversals showing disentangled dimensions |
-| P02 | [Build an RSSM Dynamics Model](./p02_rssm_dynamics) | P01, L02 Part B | `rssm.pt` | GRU, MDN-RNN, and RSSM compared; rollout plots; 1-step to 5-step prediction error curves |
-| P03 | [Train a Dreamer Agent](./p03_dreamer_agent) | P02, L03 Part A | `dreamer.pt` | Encoder + RSSM + latent Actor-Critic training loop; reward curve; FID and reward-correlation self-evaluation |
-| P04 | [Swap the Dynamics Backbone](./p04_transformer_backbone) | P03, L03 Part B | `transformer_wm.pt` | RSSM replaced by a STORM-style categorical VAE plus causal Transformer; architecture comparison report |
+| P01 | [Train a VAE Encoder](./p01_vae_encoder) | L02 Part A | `vae_encoder.pt` | CNN VAE on 64×64 frames. ELBO loss curve. Latent traversals showing disentangled dimensions |
+| P02 | [Build an RSSM Dynamics Model](./p02_rssm_dynamics) | P01, L02 Part B | `rssm.pt` | GRU, MDN-RNN, and RSSM compared. Rollout plots. 1-step to 5-step prediction error curves |
+| P03 | [Train a Dreamer Agent](./p03_dreamer_agent) | P02, L03 Part A | `dreamer.pt` | Encoder + RSSM + latent Actor-Critic training loop. Reward curve. FID and reward-correlation self-evaluation |
+| P04 | [Swap the Dynamics Backbone](./p04_transformer_backbone) | P03, L03 Part B | `transformer_wm.pt` | RSSM replaced by a STORM-style categorical VAE plus causal Transformer. Architecture comparison report |
 | P05 | [World Model Evaluation Dashboard](./p05_evaluation_dashboard) | P03, P04, L04 | -- | Both trained models loaded and scored side by side: PSNR, reward correlation, token loss, and latent drift |
 | P06 | [Counterfactual Action-Conditioned World Model](./p06_counterfactual_world_model) | P03, P04 | `causal_wm.pt` | Pearl-ladder analysis: interventional and counterfactual rollouts, an inverse-dynamics-regularized world model, and an action-influence metric |
 

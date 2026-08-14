@@ -29,13 +29,13 @@ The **Variational Autoencoder (VAE)**[1] is the core tool for achieving this com
 Key property: the latent space is **continuous**. This means neighboring values of $\mathbf{z}$ correspond to similar images, enabling smooth interpolation in latent space.
 
 <figure>
-<img src="/worldmodels/vae.png" alt="VAE architecture: the encoder compresses an image into a latent distribution; the decoder reconstructs the image from the sampled z" style="width:80%;display:block;margin:0 auto">
+<img src="/worldmodels/vae.png" alt="VAE architecture: the encoder compresses an image into a latent distribution. The decoder reconstructs the image from the sampled z" style="width:80%;display:block;margin:0 auto">
 <figcaption>The VAE structure from Ha & Schmidhuber (2018): the encoder outputs mean μ and variance σ², samples z via the reparameterization trick as z = μ + σ·ε (ε ~ N(0,I)), and the decoder reconstructs the original frame from z. The reparameterization trick allows gradients to flow through the sampling operation.</figcaption>
 </figure>
 
 The data flows in one direction: the CNN Encoder compresses the raw image into a latent vector **z**, and the CNN Decoder reconstructs the image from **z**.
 
-> **📖 Transposed Convolution (also called deconvolution)**: A standard convolution compresses a large feature map into a smaller one (reducing spatial resolution); a transposed convolution does the reverse, upsampling a small feature map into a larger one (increasing spatial resolution). The decoder uses transposed convolutions to progressively "restore" the low-dimensional latent vector back to the original image size.
+> **📖 Transposed Convolution (also called deconvolution)**: A standard convolution compresses a large feature map into a smaller one (reducing spatial resolution). A transposed convolution does the reverse, upsampling a small feature map into a larger one (increasing spatial resolution). The decoder uses transposed convolutions to progressively "restore" the low-dimensional latent vector back to the original image size.
 
 
 ## ELBO Loss: Balancing Two Objectives
@@ -48,7 +48,7 @@ $$
 \mathcal{L} = \underbrace{-\mathbb{E}_{q(\mathbf{z}|\mathbf{o})}\left[\log p(\mathbf{o}|\mathbf{z})\right]}_{\text{reconstruction loss}} + \underbrace{D_{\text{KL}}\left(q(\mathbf{z}|\mathbf{o}) \| p(\mathbf{z})\right)}_{\text{KL divergence}}
 $$
 
-> **📖 What is KL divergence?** $D_{\text{KL}}(q \| p)$ measures the "gap" between two probability distributions: the more similar $q$ is to $p$, the closer the KL value is to 0; the larger the gap, the larger the KL value (always ≥ 0). Here it constrains the encoder's output distribution $q(\mathbf{z}|\mathbf{o})$ from straying too far from the standard normal prior $p(\mathbf{z}) = \mathcal{N}(0, I)$, ensuring that different regions of the latent space can be smoothly interpolated without "holes" (regions where interpolated points decode to incoherent outputs).
+> **📖 What is KL divergence?** $D_{\text{KL}}(q \| p)$ measures the "gap" between two probability distributions: the more similar $q$ is to $p$, the closer the KL value is to 0. The larger the gap, the larger the KL value (always ≥ 0). Here it constrains the encoder's output distribution $q(\mathbf{z}|\mathbf{o})$ from straying too far from the standard normal prior $p(\mathbf{z}) = \mathcal{N}(0, I)$, ensuring that different regions of the latent space can be smoothly interpolated without "holes" (regions where interpolated points decode to incoherent outputs).
 
 | Loss term | Objective | Intuition |
 |-----------|-----------|-----------|

@@ -32,13 +32,13 @@ It sounds like a single word has been swapped. But behind it lie two fundamental
 
 Saining Xie has a passage that is one of the most charged statements in this entire debate:
 
-> "Language is actually a kind of 'poison', or you could call it 'opium'. The more language you add, the happier you feel. It's useful, but it's a shortcut. If you keep taking opium you'll be ruined; if you keep leaning on a crutch, you'll never train the muscles in your legs."
+> "Language is actually a kind of 'poison', or you could call it 'opium'. The more language you add, the happier you feel. It's useful, but it's a shortcut. If you keep taking opium you'll be ruined. If you keep leaning on a crutch, you'll never train the muscles in your legs."
 
 The logic of this analogy needs unpacking.
 
 Language is the product of thousands of years of human civilization, a highly compressed abstract knowledge structure. When you say "the cup fell and broke," you have already discarded all of the physical process: gravitational acceleration, the stress distribution at impact, the trajectory of the fragments, the brittleness coefficient of the material. None of that physical information appears anywhere in the sentence.
 
-For an agent that needs to act in the physical world, those missing details are precisely what matters most. An industrial robotic arm needs torque values; a surgical robot needs tissue deformation data; an autonomous vehicle needs road surface friction coefficients. Language cannot express any of these.
+For an agent that needs to act in the physical world, those missing details are precisely what matters most. An industrial robotic arm needs torque values. A surgical robot needs tissue deformation data. An autonomous vehicle needs road surface friction coefficients. Language cannot express any of these.
 
 Xie divides the learning space of AI systems into two layers:
 
@@ -57,7 +57,7 @@ The language camp does not accept this criticism quietly. They have several forc
 
 **First, GPT-4 can do physical reasoning, and that is understanding, not mere description.** Ask GPT-4 to explain why a stick looks bent when submerged in water, and it gives the refractive index explanation. Ask it to predict the forces on an object, and it derives the answer from Newton's laws. If that does not count as understanding physics, what does?
 
-**Second, humans also think in language.** The sentence "the cup fell and broke" is meaningful precisely because the speaker has physical intuitions behind it, intuitions built from countless real experiences. Language and physical understanding are not opposites; they are symbiotic. Humans use language to transmit knowledge, to reason, and to plan. If language does not "ruin" humans, why should it ruin AI?
+**Second, humans also think in language.** The sentence "the cup fell and broke" is meaningful precisely because the speaker has physical intuitions behind it, intuitions built from countless real experiences. Language and physical understanding are not opposites. They are symbiotic. Humans use language to transmit knowledge, to reason, and to plan. If language does not "ruin" humans, why should it ruin AI?
 
 **Third, Scaling Laws remain effective on physical understanding.** On physical reasoning benchmarks such as **BIG-Bench Physical Intuition** (the physical intuition subset of the Beyond the Imitation Game Benchmark, which evaluates language models on everyday physical scenarios including object motion, gravity, and collisions), larger models consistently perform better. The trend shows no sign of leveling off. If language is a crutch, why does leaning on it harder keep producing stronger results?
 
@@ -104,7 +104,7 @@ The extended implication: the Scaling Law for language models may contain "slack
 
 ### Counterarguments: Why "Absorbing Human Knowledge" Does Not Mean Anti-Bitter Lesson
 
-The Bitter Lesson objects to **hand-crafted features and rules**, not to **using data that humans have accumulated**. Language data is not "rules"; it is "examples." Learning from knowledge embedded in human language is methodologically no different from learning from a database of chess games. Did AlphaZero not use the rules of Go, a human invention, as its environment? Those rules are also human knowledge.
+The Bitter Lesson objects to **hand-crafted features and rules**, not to **using data that humans have accumulated**. Language data is not "rules". It is "examples." Learning from knowledge embedded in human language is methodologically no different from learning from a database of chess games. Did AlphaZero not use the rules of Go, a human invention, as its environment? Those rules are also human knowledge.
 
 Seen this way, LLMs are actually the most thoroughgoing embodiment of the Bitter Lesson's spirit: discard hand-crafted features, make everything end-to-end learning. The only difference is that this time the "end" is language, not pixels.
 

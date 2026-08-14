@@ -29,9 +29,9 @@ Dreamer 是一个强化学习算法，不是生成模型。Dreamer V1/V2/V3 论�
 
 ### 策略奖励曲线（Episode Return）
 
-这是 Dreamer 系列论文的首要指标。Hafner et al. 2019 在 DMControl 上报告每个任务的 episode return；Hafner et al. 2020 在 Atari 200M 帧上报告 episode return；Hafner et al. 2023 横跨 7 个领域用单一超参数报告 episode return。三篇论文的核心 figure 都是**训练步数 vs. 累计奖励曲线**，与 model-free 基线（如 **SAC**，Soft Actor-Critic，一种基于最大熵框架的 off-policy Actor-Critic 算法，在连续控制任务上是强力的无模型基线；**DrQ-v2**，Data-regularized Q，在 SAC 基础上加入数据增强和 n 步回报，是像素输入连续控制的代表性基线）和 model-based 基线（如 **MBPO**，Model-Based Policy Optimization，用学到的世界模型生成短程合成轨迹来提高样本效率的基线算法；**PlaNet**，Planning with Latent Dynamics，RSSM 的前身，只做 MPC 规划不做 Actor-Critic）对比数据效率。
+这是 Dreamer 系列论文的首要指标。Hafner et al. 2019 在 DMControl 上报告每个任务的 episode return。Hafner et al. 2020 在 Atari 200M 帧上报告 episode return。Hafner et al. 2023 横跨 7 个领域用单一超参数报告 episode return。三篇论文的核心 figure 都是**训练步数 vs. 累计奖励曲线**，与 model-free 基线（如 **SAC**，Soft Actor-Critic，一种基于最大熵框架的 off-policy Actor-Critic 算法，在连续控制任务上是强力的无模型基线。**DrQ-v2**，Data-regularized Q，在 SAC 基础上加入数据增强和 n 步回报，是像素输入连续控制的代表性基线）和 model-based 基线（如 **MBPO**，Model-Based Policy Optimization，用学到的世界模型生成短程合成轨迹来提高样本效率的基线算法。**PlaNet**，Planning with Latent Dynamics，RSSM 的前身，只做 MPC 规划不做 Actor-Critic）对比数据效率。
 
-**诊断规则**：训练曲线长期停滞或下降有两种来源。第一，奖励预测失真（世界模型在撒谎），Actor-Critic 在错误的想象奖励上优化；第二，RSSM 动力学预测漂移，想象轨迹越来越偏离真实环境分布。区分两者的办法是同时观察奖励相关性。
+**诊断规则**：训练曲线长期停滞或下降有两种来源。第一，奖励预测失真（世界模型在撒谎），Actor-Critic 在错误的想象奖励上优化。第二，RSSM 动力学预测漂移，想象轨迹越来越偏离真实环境分布。区分两者的办法是同时观察奖励相关性。
 
 **如何在 P03 实验中追踪**：每隔固定训练步数（如每 10k 步）暂停训练，在真实环境中跑若干完整 episode，记录平均 episode return，画出曲线。这条曲线是判断 Dreamer 是否正常训练的最终标准。
 
@@ -41,13 +41,13 @@ Dreamer 在"想象空间"中滚出轨迹并预测奖励，这些"想象奖励"�
 
 $$\rho = \text{Pearson}(r_{\text{imagined}},\, r_{\text{real}})$$
 
-> **📖 皮尔逊相关系数（Pearson correlation coefficient）**：衡量两个变量线性相关程度的标准指标，取值范围 $[-1, 1]$。$\rho = 1$ 表示完全正相关（一个增大另一个也增大，且比例固定）；$\rho = 0$ 表示无线性相关；$\rho = -1$ 表示完全负相关。公式为 $\rho = \frac{\text{Cov}(X, Y)}{\sigma_X \sigma_Y}$，其中 $\text{Cov}$ 是协方差，$\sigma$ 是标准差。这里用它衡量"想象奖励"和"真实奖励"这两条序列的变化趋势是否一致。
+> **📖 皮尔逊相关系数（Pearson correlation coefficient）**：衡量两个变量线性相关程度的标准指标，取值范围 $[-1, 1]$。$\rho = 1$ 表示完全正相关（一个增大另一个也增大，且比例固定）。$\rho = 0$ 表示无线性相关。$\rho = -1$ 表示完全负相关。公式为 $\rho = \frac{\text{Cov}(X, Y)}{\sigma_X \sigma_Y}$，其中 $\text{Cov}$ 是协方差，$\sigma$ 是标准差。这里用它衡量"想象奖励"和"真实奖励"这两条序列的变化趋势是否一致。
 
 实践中，取一批轨迹（如 1000 步），计算想象奖励序列和真实奖励序列的皮尔逊相关系数，目标值 `ρ ≥ 0.8`。
 
 **诊断规则**：`ρ` 持续低于 0.5，RSSM 的随机状态 `z_t` 对奖励信息编码不足，可尝试增大潜在维度或延长 KL 退火周期。
 
-**实验建议**：可视化想象轨迹 vs 真实轨迹的奖励曲线。具体做法是：从同一初始状态出发，分别让 Dreamer 想象展开 20 步，同时在真实环境中执行同样的动作序列，然后把两条奖励曲线画在同一张图上。如果两条曲线趋势相符（即使不完全重合），说明世界模型在诚实地反映环境；如果想象奖励持续高于真实奖励且趋势相反，说明"世界模型在撒谎"，policy 学到的是在虚假优化目标上的技巧，这正是 model exploitation 问题的根源。
+**实验建议**：可视化想象轨迹 vs 真实轨迹的奖励曲线。具体做法是：从同一初始状态出发，分别让 Dreamer 想象展开 20 步，同时在真实环境中执行同样的动作序列，然后把两条奖励曲线画在同一张图上。如果两条曲线趋势相符（即使不完全重合），说明世界模型在诚实地反映环境。如果想象奖励持续高于真实奖励且趋势相反，说明"世界模型在撒谎"，policy 学到的是在虚假优化目标上的技巧，这正是 model exploitation 问题的根源。
 
 ### 编码器健康度诊断：重建 FID（Fréchet Inception Distance）
 
@@ -58,7 +58,7 @@ FID 用 **Inception-v3**（Google 2015 年提出的深度卷积图像分类网�
 <details>
 <summary>📖 FID 计算细节（展开）</summary>
 
-① 用 Inception-v3 的中间层对大量真实图像和生成图像各提取一个特征向量；② 分别拟合两组特征的多元高斯分布（均值 $\mu$，协方差矩阵 $\Sigma$）；③ 计算两个高斯分布之间的 Fréchet 距离（又称 Wasserstein-2 距离，把一个分布"搬运"成另一个所需的最小工作量，比 KL 散度对形状差异更敏感）：
+① 用 Inception-v3 的中间层对大量真实图像和生成图像各提取一个特征向量。② 分别拟合两组特征的多元高斯分布（均值 $\mu$，协方差矩阵 $\Sigma$）。③ 计算两个高斯分布之间的 Fréchet 距离（又称 Wasserstein-2 距离，把一个分布"搬运"成另一个所需的最小工作量，比 KL 散度对形状差异更敏感）：
 
 $$\text{FID} = \|\mu_r - \mu_g\|^2 + \text{Tr}\!\left(\Sigma_r + \Sigma_g - 2(\Sigma_r \Sigma_g)^{1/2}\right)$$
 
