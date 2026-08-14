@@ -1,10 +1,10 @@
 ---
-title: Part A：观测编码
+title: 观测编码
 description: VAE 的压缩原理、ELBO 损失函数的直觉，以及 CNN 编码器的结构。
 lecture: 2
 ---
 
-# Part A：观测编码
+# 观测编码
 
 ## 为什么要压缩？
 

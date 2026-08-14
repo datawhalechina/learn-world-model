@@ -1,10 +1,10 @@
 ---
-title: "Part C, Optional Case Study: LS-Imagine"
+title: "Optional Case Study: LS-Imagine"
 description: "ICLR 2025 Oral. A long short-term world model with affordance-map-driven jump-style state transitions, letting a Minecraft agent imagine directly toward distant, sparsely distributed goals."
 lecture: 3
 ---
 
-# Part C, Optional Case Study: LS-Imagine
+# Optional Case Study: LS-Imagine
 
 Every planning mechanism in this lecture shares one assumption: the world model rolls forward one step at a time. CEM-MPC samples full action sequences step by step. Dreamer's Actor-Critic imagines $H$ steps ahead one transition at a time. TD-MPC bootstraps through the Bellman equation one step at a time. This works well when the reward that matters is close by. It breaks down in tasks like Minecraft, where a useful outcome (finding a village, reaching an ore vein) may be hundreds of steps away and only weakly signposted by nearby rewards. An agent that only ever imagines a few steps ahead is myopic: it optimizes what it can see and stays blind to what pays off later.
 

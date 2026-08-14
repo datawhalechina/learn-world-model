@@ -9,7 +9,7 @@ difficulty: advanced
 
 The L1-L5 ladder in Lecture 1 classifies capability. The earlier pages in this lecture classify dynamics architectures and explain three concrete planning mechanisms. A complete system needs one more design decision: **where does learned prediction enter the agent's pipeline?**
 
-This is not another list of model architectures. The same RSSM, Transformer, or video model can participate in several patterns below. The patterns describe system integration, while the architecture pages in Parts B and C describe model structure.
+This is not another list of model architectures. The same RSSM, Transformer, or video model can participate in several patterns below. The patterns describe system integration, while Backbone Selection and the Optional Frontier Survey describe model structure.
 
 ## Four Places Prediction Can Enter
 

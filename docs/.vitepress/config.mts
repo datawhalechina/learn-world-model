@@ -25,9 +25,9 @@ const zhWorldModelItems = [
     collapsed: false,
     items: [
       { text: "导读", link: "/zh/lectures/lecture-02-encode-and-dynamics/" },
-      { text: "Part A：观测编码", link: "/zh/lectures/lecture-02-encode-and-dynamics/01-encoding" },
-      { text: "Part B：GRU、MDN-RNN、RSSM", link: "/zh/lectures/lecture-02-encode-and-dynamics/02-dynamics" },
-      { text: "Part B（续）：Dreamer 系列迭代", link: "/zh/lectures/lecture-02-encode-and-dynamics/03-dynamics-dreamer-series" },
+      { text: "观测编码", link: "/zh/lectures/lecture-02-encode-and-dynamics/01-encoding" },
+      { text: "潜在动力学：GRU、MDN-RNN、RSSM", link: "/zh/lectures/lecture-02-encode-and-dynamics/02-dynamics" },
+      { text: "Dreamer 系列迭代", link: "/zh/lectures/lecture-02-encode-and-dynamics/03-dynamics-dreamer-series" },
     ]
   },
   {
@@ -35,15 +35,15 @@ const zhWorldModelItems = [
     collapsed: false,
     items: [
       { text: "导读", link: "/zh/lectures/lecture-03-architecture-patterns/" },
-      { text: "Part A：CEM-MPC 与 Actor-Critic", link: "/zh/lectures/lecture-03-architecture-patterns/05-planning-cem-ac" },
-      { text: "Part A（续）：TD-MPC 与规划对比", link: "/zh/lectures/lecture-03-architecture-patterns/06-planning-tdmpc" },
-      { text: "Part B：核心骨干选择", link: "/zh/lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion" },
-      { text: "Part C（选读）：JEPA 与 RWM", link: "/zh/lectures/lecture-03-architecture-patterns/02-architectures-jepa-rwm-wam" },
-      { text: "Part C（选读）：空间 3D/4D 世界模型", link: "/zh/lectures/lecture-03-architecture-patterns/03-architectures-spatial-3d4d" },
-      { text: "Part C（选读）：Genie", link: "/zh/lectures/lecture-03-architecture-patterns/03-architectures-genie-wam" },
-      { text: "Part C（选读）：LoopWM、WAM 与选型", link: "/zh/lectures/lecture-03-architecture-patterns/04-architectures-loopwm-wam" },
-      { text: "Part C（选读）：七种系统接入模式", link: "/zh/lectures/lecture-03-architecture-patterns/07-system-integration-patterns" },
-      { text: "Part C（选读）：LS-Imagine 案例", link: "/zh/lectures/lecture-03-architecture-patterns/07-case-study-ls-imagine" },
+      { text: "规划与控制：CEM-MPC、Actor-Critic", link: "/zh/lectures/lecture-03-architecture-patterns/05-planning-cem-ac" },
+      { text: "规划与控制：TD-MPC 与机制对比", link: "/zh/lectures/lecture-03-architecture-patterns/06-planning-tdmpc" },
+      { text: "骨干选择：RSSM、Transformer、扩散", link: "/zh/lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion" },
+      { text: "选读：JEPA 与 RWM", link: "/zh/lectures/lecture-03-architecture-patterns/02-architectures-jepa-rwm-wam" },
+      { text: "选读：空间 3D/4D 世界模型", link: "/zh/lectures/lecture-03-architecture-patterns/03-architectures-spatial-3d4d" },
+      { text: "选读：Genie", link: "/zh/lectures/lecture-03-architecture-patterns/03-architectures-genie-wam" },
+      { text: "选读：LoopWM、WAM 与选型", link: "/zh/lectures/lecture-03-architecture-patterns/04-architectures-loopwm-wam" },
+      { text: "选读：七种系统接入模式", link: "/zh/lectures/lecture-03-architecture-patterns/07-system-integration-patterns" },
+      { text: "选读案例：LS-Imagine", link: "/zh/lectures/lecture-03-architecture-patterns/07-case-study-ls-imagine" },
     ]
   },
   {
@@ -105,9 +105,9 @@ const enWorldModelItems = [
     collapsed: false,
     items: [
       { text: "Overview", link: "/en/lectures/lecture-02-encode-and-dynamics/" },
-      { text: "Part A: Observation Encoding", link: "/en/lectures/lecture-02-encode-and-dynamics/01-encoding" },
-      { text: "Part B: GRU, MDN-RNN & RSSM", link: "/en/lectures/lecture-02-encode-and-dynamics/02-dynamics" },
-      { text: "Part B (cont): Dreamer Series", link: "/en/lectures/lecture-02-encode-and-dynamics/03-dynamics-dreamer-series" },
+      { text: "Observation Encoding", link: "/en/lectures/lecture-02-encode-and-dynamics/01-encoding" },
+      { text: "Latent Dynamics: GRU, MDN-RNN & RSSM", link: "/en/lectures/lecture-02-encode-and-dynamics/02-dynamics" },
+      { text: "Dreamer Series Evolution", link: "/en/lectures/lecture-02-encode-and-dynamics/03-dynamics-dreamer-series" },
     ]
   },
   {
@@ -115,15 +115,15 @@ const enWorldModelItems = [
     collapsed: false,
     items: [
       { text: "Overview", link: "/en/lectures/lecture-03-architecture-patterns/" },
-      { text: "Part A: CEM-MPC & Actor-Critic", link: "/en/lectures/lecture-03-architecture-patterns/05-planning-cem-ac" },
-      { text: "Part A (cont): TD-MPC & Comparison", link: "/en/lectures/lecture-03-architecture-patterns/06-planning-tdmpc" },
-      { text: "Part B: Core Backbone Choices", link: "/en/lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion" },
-      { text: "Part C (optional): JEPA & RWM", link: "/en/lectures/lecture-03-architecture-patterns/02-architectures-jepa-rwm-wam" },
-      { text: "Part C (optional): Spatial 3D/4D Models", link: "/en/lectures/lecture-03-architecture-patterns/03-architectures-spatial-3d4d" },
-      { text: "Part C (optional): Genie", link: "/en/lectures/lecture-03-architecture-patterns/03-architectures-genie-wam" },
-      { text: "Part C (optional): LoopWM, WAM & Selection", link: "/en/lectures/lecture-03-architecture-patterns/04-architectures-loopwm-wam" },
-      { text: "Part C (optional): Integration Patterns", link: "/en/lectures/lecture-03-architecture-patterns/07-system-integration-patterns" },
-      { text: "Part C (optional): LS-Imagine Case Study", link: "/en/lectures/lecture-03-architecture-patterns/07-case-study-ls-imagine" },
+      { text: "Planning & Control: CEM-MPC and Actor-Critic", link: "/en/lectures/lecture-03-architecture-patterns/05-planning-cem-ac" },
+      { text: "Planning & Control: TD-MPC and Comparison", link: "/en/lectures/lecture-03-architecture-patterns/06-planning-tdmpc" },
+      { text: "Backbone Selection: RSSM, Transformer, Diffusion", link: "/en/lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion" },
+      { text: "Optional: JEPA and RWM", link: "/en/lectures/lecture-03-architecture-patterns/02-architectures-jepa-rwm-wam" },
+      { text: "Optional: Spatial 3D/4D Models", link: "/en/lectures/lecture-03-architecture-patterns/03-architectures-spatial-3d4d" },
+      { text: "Optional: Genie", link: "/en/lectures/lecture-03-architecture-patterns/03-architectures-genie-wam" },
+      { text: "Optional: LoopWM, WAM and Selection", link: "/en/lectures/lecture-03-architecture-patterns/04-architectures-loopwm-wam" },
+      { text: "Optional: Integration Patterns", link: "/en/lectures/lecture-03-architecture-patterns/07-system-integration-patterns" },
+      { text: "Optional Case Study: LS-Imagine", link: "/en/lectures/lecture-03-architecture-patterns/07-case-study-ls-imagine" },
     ]
   },
   {

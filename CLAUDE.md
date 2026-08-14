@@ -13,11 +13,11 @@ Lectures and projects are one interleaved path, not independent tracks. Readers 
 | Stage | Goal | Reading | Practice |
 | --- | --- | --- | --- |
 | Foundations | World models, scope, L1-L5 capability ladder | L01 | None |
-| Representation | Compress observations into latent states | L02 Part A | P01, VAE encoder |
-| Dynamics | Predict latent transitions with memory and uncertainty | L02 Part B | P02, RSSM dynamics |
-| Control | Use predicted futures to select actions | L03 Part A | P03, Dreamer agent |
-| Backbone choice | RSSM vs. Transformer vs. diffusion | L03 Part B | P04, Transformer backbone |
-| Frontier survey | Research orientation beyond the build path | L03 Part C, optional | None |
+| Representation | Compress observations into latent states | L02: Observation Encoding | P01, VAE encoder |
+| Dynamics | Predict latent transitions with memory and uncertainty | L02: Latent Dynamics | P02, RSSM dynamics |
+| Control | Use predicted futures to select actions | L03: Planning and Control | P03, Dreamer agent |
+| Backbone choice | RSSM vs. Transformer vs. diffusion | L03: Backbone Selection | P04, Transformer backbone |
+| Frontier survey | Research orientation beyond the build path | L03: Optional Frontier Survey | None |
 | Diagnosis | Evaluate representations, dynamics, planning, rollouts, deployment | L04 | P05, evaluation dashboard; P06, counterfactual fidelity |
 | Open questions | Unresolved technical and philosophical debates | L05 | None |
 
@@ -27,12 +27,12 @@ Preserve the planning-first order in L03 and the model-independent diagnostic fr
 
 **L01**: motivation, vocabulary, history, the L1-L5 capability ladder. Accessible without prior model-based RL. Advanced system-integration detail belongs later.
 
-**L02**: Part A leads to P01. Part B (GRU, MDN-RNN, RSSM, Dreamer series) leads to P02.
+**L02**: Observation Encoding leads to P01. Latent Dynamics (GRU, MDN-RNN, RSSM, Dreamer series) leads to P02.
 
-**L03**, three layers:
-- Part A, core planning (prerequisite for P03): CEM-MPC, latent Actor-Critic, TD-MPC.
-- Part B, core backbone comparison (supports P04): RNN/RSSM, Transformer, diffusion.
-- Part C, optional frontier survey: JEPA, RWM, Spatial 3D/4D, Genie, LoopWM, WAM, system-integration patterns, LS-Imagine.
+**L03**, three named modules:
+- Planning and Control (prerequisite for P03): CEM-MPC, latent Actor-Critic, TD-MPC.
+- Backbone Selection (supports P04): RNN/RSSM, Transformer, diffusion.
+- Optional Frontier Survey: JEPA, RWM, Spatial 3D/4D, Genie, LoopWM, WAM, system-integration patterns, LS-Imagine.
 
 The architecture survey has nine families: RNN/RSSM, Transformer, Diffusion, JEPA, RWM, Spatial 3D/4D, Genie, LoopWM, WAM. The seven system-integration patterns describe where prediction enters an agent; they are not additional families. The Integration Patterns page briefly distinguishes a VLA (Vision-Language-Action model) from a world model, since two patterns route a world model's prediction into one — VLA-internal mechanics (action tokenization, action chunking, embodiment gap) are out of scope and must not be added. CWM is a domain extension into code execution space, not a tenth backbone.
 
@@ -46,10 +46,10 @@ Projects pass trained checkpoints forward.
 
 | Project | Prerequisites | Purpose |
 | --- | --- | --- |
-| P01 | L02 Part A | Train a VAE encoder |
-| P02 | P01, L02 Part B | Build and inspect RSSM dynamics |
-| P03 | P02, L03 Part A | Train the complete Dreamer loop |
-| P04 | P03, L03 Part B | Replace the RSSM backbone with a STORM-style Transformer |
+| P01 | L02: Observation Encoding | Train a VAE encoder |
+| P02 | P01, L02: Latent Dynamics | Build and inspect RSSM dynamics |
+| P03 | P02, L03: Planning and Control | Train the complete Dreamer loop |
+| P04 | P03, L03: Backbone Selection | Replace the RSSM backbone with a STORM-style Transformer |
 | P05 | P03, P04, L04 | Compare trained systems with a diagnostic dashboard |
 | P06 | P03, P04; use the L04 framework | Test action-conditioned and counterfactual fidelity |
 

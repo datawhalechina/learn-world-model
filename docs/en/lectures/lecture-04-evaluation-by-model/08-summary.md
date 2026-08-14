@@ -42,7 +42,7 @@ Across four lectures, each one addressed a concrete problem:
 Starting from Craik's "mental models" (1943), tracing through the 1950s RNN origins, Ha and Schmidhuber's 2018 World Models paper, the end-to-end maturation of Dreamer in 2019, and finally LeCun's JEPA paradigm in 2023, this lecture built a historical intuition for how world models have evolved.
 
 **L02: Observation Encoding and Latent Dynamics**
-Part A implemented a VAE encoder: a CNN compresses 64x64 images into a latent vector `z`, with the ELBO loss (reconstruction term + KL term) regularizing the latent space. Part B started from the GRU, progressed through the MDN-RNN, and arrived at the RSSM, where the dual-track architecture of deterministic state `h_t` and stochastic state `z_t` forms the foundation of Dreamer.
+The Observation Encoding module implemented a VAE encoder: a CNN compresses 64x64 images into a latent vector `z`, with the ELBO loss (reconstruction term + KL term) regularizing the latent space. The Latent Dynamics module started from the GRU, progressed through the MDN-RNN, and arrived at the RSSM, where the dual-track architecture of deterministic state `h_t` and stochastic state `z_t` forms the foundation of Dreamer.
 
 **L03: Architecture Patterns, Learning Paradigms, and Planning Methods**
 Using the RSSM implemented in P02 as the RNN baseline, this lecture compared eight architecture families side by side (RNN/RSSM, Transformer, Diffusion, JEPA, RWM, Genie, LoopWM, WAM), clarified four learning paradigms, and traced the planning progression from CEM-MPC through latent actor-critic to TD-MPC.

@@ -1,10 +1,10 @@
 ---
-title: "Part C (Continued), Optional: Genie"
+title: "Optional Frontier Survey: Genie"
 description: Genie's latent action discovery mechanism, bridging observation-only pretraining and interactive generation without action labels.
 lecture: 3
 ---
 
-# Part C (Continued), Optional: Genie
+# Optional Frontier Survey: Genie
 
 ## Architecture Seven: Genie Discovers Actions Implicitly from Video
 

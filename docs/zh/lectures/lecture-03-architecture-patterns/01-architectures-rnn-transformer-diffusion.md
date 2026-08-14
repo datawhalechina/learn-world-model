@@ -1,10 +1,10 @@
 ---
-title: Part B：核心骨干选择
+title: 骨干选择：RSSM、Transformer 与扩散
 description: 以 RSSM 为基线，剖析 Transformer 和 Diffusion 世界模型的核心机制、学习范式与适用场景。
 lecture: 3
 ---
 
-# Part B：核心骨干选择
+# 骨干选择：RSSM、Transformer 与扩散
 
 请在完成 P03 后阅读本页。此时你已经拥有可运行的 RSSM 智能体，可以把替代方案与自己真正观察到的故障进行比较。RNN/RSSM 与 Transformer 是 P04 所需的核心对比。扩散部分属于扩展阅读，适用于视觉保真度比在线控制延迟更重要的任务。
 
@@ -24,7 +24,7 @@ P02 的 RSSM 有两条并行路径：
 
 **代表系统**：[Ha & Schmidhuber World Models (2018)](https://arxiv.org/abs/1803.10122)、[Dreamer V1 (2019)](https://arxiv.org/abs/1912.01603)、[Dreamer V2 (2020)](https://arxiv.org/abs/2010.02193)
 
-GRU 逐步更新隐状态，单步计算开销 **O(1)**，与序列长度无关。RSSM 在此基础上拆出随机路径 $z_t$，让不确定性成为模型的一等公民（完整机制见 L02 Part B）。
+GRU 逐步更新隐状态，单步计算开销 **O(1)**，与序列长度无关。RSSM 在此基础上拆出随机路径 $z_t$，让不确定性成为模型的一等公民（完整机制见 L02“潜在动力学”）。
 
 **学习范式**：交互型。收集 $(o_t, a_t, r_t, o_{t+1})$ 四元组，学习带动作条件的转移分布 $p(s_{t+1} \mid s_t, a_t)$。交互型范式能回答"如果我换一个动作，世界会怎样"，这是观察型范式（纯视频）做不到的。
 
@@ -114,4 +114,4 @@ Diamond 的关键设计决策：动作信息通过**交叉注意力**（cross-at
 
 ## 核心路线检查点
 
-对 P04 而言，可操作的核心比较是 RSSM 与 Transformer：循环状态提供低延迟在线更新，注意力则用更多计算换取更长的可访问上下文。请先完成 [P04：替换动力学骨干](../../projects/p04_transformer_backbone)，再决定是否继续。后续 Part C 均为选读，介绍项目序列没有实现的研究方向。
+对 P04 而言，可操作的核心比较是 RSSM 与 Transformer：循环状态提供低延迟在线更新，注意力则用更多计算换取更长的可访问上下文。请先完成 [P04：替换动力学骨干](../../projects/p04_transformer_backbone)，再决定是否继续。后续前沿综述页面均为选读，介绍项目序列没有实现的研究方向。

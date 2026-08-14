@@ -8,30 +8,14 @@ lecture: 1
 
 ## One Path Through Lectures and Projects
 
-```mermaid
-flowchart TD
-    L01["L01 Motivation, vocabulary, and scope"] --> L02A["L02A Encode observations"]
-    L02A --> P01["P01 Train a VAE encoder"]
-    P01 --> L02B["L02B Learn latent dynamics"]
-    L02B --> P02["P02 Build an RSSM"]
-    P02 --> L03A["L03A Turn predictions into actions"]
-    L03A --> P03["P03 Train a Dreamer agent"]
-    P03 --> L03B["L03B Compare dynamics backbones"]
-    L03B --> P04["P04 Swap in a Transformer backbone"]
-    P04 --> L04["L04 Diagnose model and planning failures"]
-    L04 --> P05["P05 Build an evaluation dashboard"]
-    P05 --> P06["P06 Test counterfactual action fidelity"]
-    P06 --> L05["L05 Examine frontier debates"]
-```
-
 The lectures and projects are one curriculum, not two separate tracks. Stop and complete each project when it appears in the path. The resulting checkpoint becomes the concrete object used in the next stage, so later ideas attach to a system you have already inspected and trained.
 
 | Stage | Read | Then practice | What you should be able to explain afterward |
 | --- | --- | --- | --- |
-| Foundations | L01, then L02 Part A | [P01: Train a VAE Encoder](../../projects/p01_vae_encoder) | What information an observation encoder keeps and discards |
-| Dynamics | L02 Part B and the Dreamer series | [P02: Build an RSSM](../../projects/p02_rssm_dynamics) | Why a useful latent state needs both memory and uncertainty |
-| Control | L03 Part A | [P03: Train a Dreamer Agent](../../projects/p03_dreamer_agent) | How imagined trajectories train an actor and critic |
-| Alternatives | L03 Part B | [P04: Swap the Dynamics Backbone](../../projects/p04_transformer_backbone) | Which bottleneck justifies replacing RSSM with another backbone |
+| Foundations | L01, then L02 Observation Encoding | [P01: Train a VAE Encoder](../../projects/p01_vae_encoder) | What information an observation encoder keeps and discards |
+| Dynamics | L02 Latent Dynamics and the Dreamer series | [P02: Build an RSSM](../../projects/p02_rssm_dynamics) | Why a useful latent state needs both memory and uncertainty |
+| Control | L03 Planning and Control | [P03: Train a Dreamer Agent](../../projects/p03_dreamer_agent) | How imagined trajectories train an actor and critic |
+| Alternatives | L03 Backbone Selection | [P04: Swap the Dynamics Backbone](../../projects/p04_transformer_backbone) | Which bottleneck justifies replacing RSSM with another backbone |
 | Evaluation | L04 | [P05: Build an Evaluation Dashboard](../../projects/p05_evaluation_dashboard) | Which metric diagnoses each representation, rollout, or planning failure |
 | Causality | Revisit the L1-L5 ladder after L04 | [P06: Test Counterfactual Fidelity](../../projects/p06_counterfactual_world_model) | Whether actions causally change predicted futures rather than merely correlate with them |
 | Frontier | L05 | No required project | Which open questions are empirical, architectural, or philosophical |

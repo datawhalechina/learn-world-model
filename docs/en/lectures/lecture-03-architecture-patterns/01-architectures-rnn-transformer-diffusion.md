@@ -1,10 +1,10 @@
 ---
-title: "Part B: Core Backbone Choices"
+title: "Backbone Selection: RSSM, Transformer, and Diffusion"
 description: RSSM serves as the baseline for comparing the core mechanisms, learning paradigms, and applicable scenarios of Transformer-based and Diffusion-based world models.
 lecture: 3
 ---
 
-# Part B: Core Backbone Choices
+# Backbone Selection: RSSM, Transformer, and Diffusion
 
 Read this page after completing P03. You now have a working RSSM-based agent and can compare alternatives against failures you have actually observed. RNN/RSSM and Transformer are the core comparison needed for P04. The diffusion section is an extension for tasks where visual fidelity, rather than online control latency, is the dominant requirement.
 
@@ -24,7 +24,7 @@ The five architecture families that follow each address this limitation, but tak
 
 **Representative systems**: [Ha & Schmidhuber World Models (2018)](https://arxiv.org/abs/1803.10122), [Dreamer V1 (2019)](https://arxiv.org/abs/1912.01603), [Dreamer V2 (2020)](https://arxiv.org/abs/2010.02193)
 
-The GRU incrementally updates the hidden state with **O(1)** per-step cost, independent of sequence length. RSSM builds on this by splitting out the stochastic path $z_t$, making uncertainty a first-class citizen of the model (see L02 Part B for the full mechanism).
+The GRU incrementally updates the hidden state with **O(1)** per-step cost, independent of sequence length. RSSM builds on this by splitting out the stochastic path $z_t$, making uncertainty a first-class citizen of the model (see L02 Latent Dynamics for the full mechanism).
 
 **Learning paradigm**: Interactive. Collects $(o_t, a_t, r_t, o_{t+1})$ tuples and learns the action-conditioned transition distribution $p(s_{t+1} \mid s_t, a_t)$. The interactive paradigm can answer "what would happen if I took a different action," which observation-only paradigms (pure video) cannot.
 
@@ -114,4 +114,4 @@ The inherent challenge for diffusion world models is **object persistence**: eac
 
 ## Core Path Checkpoint
 
-For P04, the actionable comparison is RSSM versus Transformer: recurrent state gives low-latency online updates, while attention trades additional compute for access to a longer context. Complete [P04: Swap the Dynamics Backbone](../../projects/p04_transformer_backbone) before continuing. The remaining Part C pages are optional and survey research directions that are not implemented by the project sequence.
+For P04, the actionable comparison is RSSM versus Transformer: recurrent state gives low-latency online updates, while attention trades additional compute for access to a longer context. Complete [P04: Swap the Dynamics Backbone](../../projects/p04_transformer_backbone) before continuing. The remaining frontier-survey pages are optional and cover research directions that are not implemented by the project sequence.

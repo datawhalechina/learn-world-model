@@ -1,10 +1,10 @@
 ---
-title: Part B：潜在动力学（GRU、MDN-RNN、RSSM）
+title: 潜在动力学：GRU、MDN-RNN 与 RSSM
 description: 从 GRU 到 MDN-RNN 到 RSSM，理解如何在潜在空间中建模未来状态的动力学，以及先验与后验的分离设计。
 lecture: 2
 ---
 
-# Part B：潜在动力学
+# 潜在动力学
 
 ## 编码器不够用，我们需要预测未来
 

@@ -1,10 +1,10 @@
 ---
-title: "Part B: Latent Dynamics (GRU, MDN-RNN, RSSM)"
+title: "Latent Dynamics: GRU, MDN-RNN, and RSSM"
 description: From GRU to MDN-RNN to RSSM, understanding how to model future-state dynamics in latent space, and the design that separates prior from posterior.
 lecture: 2
 ---
 
-# Part B: Latent Dynamics
+# Latent Dynamics
 
 ## The Encoder Is Not Enough: We Need to Predict the Future
 

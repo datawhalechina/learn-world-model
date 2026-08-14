@@ -1,10 +1,10 @@
 ---
-title: Part B（续）：Dreamer 系列架构迭代
+title: Dreamer 系列架构迭代
 description: Dreamer V1 到 V4 的逐步演进，编码器在 Dreamer 中的桥梁作用，以及 L02 整体小结。
 lecture: 2
 ---
 
-# Part B（续）：Dreamer 系列架构迭代
+# Dreamer 系列架构迭代
 
 ## Transformer 动力学：从 GRU 到序列建模
 

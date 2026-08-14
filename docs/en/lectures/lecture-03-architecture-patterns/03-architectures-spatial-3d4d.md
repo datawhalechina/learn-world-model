@@ -1,10 +1,10 @@
 ---
-title: "Part C (Continued), Optional: Spatial 3D/4D World Models"
+title: "Optional Frontier Survey: Spatial 3D/4D World Models"
 description: Predicting in 3D/4D scene space instead of pixels or a flat latent vector, using camera geometry, depth, NeRF, 3D Gaussian Splatting, and scene flow.
 lecture: 3
 ---
 
-# Part C (Continued), Optional: Spatial 3D/4D World Models
+# Optional Frontier Survey: Spatial 3D/4D World Models
 
 ## Architecture Six: Spatial 3D/4D World Models
 
@@ -32,9 +32,9 @@ Two representative approaches make 3D structure explicit and learnable:
 
 A static NeRF or a static Gaussian scene answers "what does this scene look like," which is an L1 compression capability in the taxonomy from L01, not yet a dynamics model. **4D extensions** add a time or state dimension: each Gaussian (or the radiance field) is allowed to deform over time, conditioned on an observed trajectory or, in the action-conditioned case, on an agent's action. This produces **scene flow**, the 3D-space analogue of optical flow: a per-point velocity field describing how each part of the scene moves between frames. Predicting scene flow forward in time is a 3D/4D world model's version of the dynamics prediction covered in L02, $z_{t+1} = \text{Predictor}(z_{\le t})$, except the representation being rolled forward is explicit 3D geometry rather than an abstract vector.
 
-> **📖 Object permanence via multi-view consistency**: A 3D representation is naturally shared across viewpoints, since it is a single underlying geometry that different camera poses simply render differently. If a model maintains one consistent 3D/4D state rather than predicting each frame independently, an object that a moving camera temporarily loses from view does not need to be "re-discovered" when it reappears. This is a structural advantage over frame-by-frame 2D prediction, which has no mechanism forcing consistency between a frame before and after an occlusion (the same object-persistence weakness noted for Diamond's frame-by-frame diffusion process in L03 Part B applies to any 2D-only predictor).
+> **📖 Object permanence via multi-view consistency**: A 3D representation is naturally shared across viewpoints, since it is a single underlying geometry that different camera poses simply render differently. If a model maintains one consistent 3D/4D state rather than predicting each frame independently, an object that a moving camera temporarily loses from view does not need to be "re-discovered" when it reappears. This is a structural advantage over frame-by-frame 2D prediction, which has no mechanism forcing consistency between a frame before and after an occlusion (the same object-persistence weakness noted for Diamond's frame-by-frame diffusion process in L03 Backbone Selection applies to any 2D-only predictor).
 
-**Learning paradigm**: primarily observation-based. Most NeRF and 3DGS training reconstructs a static or passively-observed dynamic scene from multi-view images or video, with no action label required. Action-conditioned 4D world models exist in robotics and driving research (predicting how a scene deforms given a robot's or vehicle's action) but are less mature than the 2D action-conditioned backbones covered in Part B.
+**Learning paradigm**: primarily observation-based. Most NeRF and 3DGS training reconstructs a static or passively-observed dynamic scene from multi-view images or video, with no action label required. Action-conditioned 4D world models exist in robotics and driving research (predicting how a scene deforms given a robot's or vehicle's action) but are less mature than the 2D action-conditioned backbones covered in Backbone Selection.
 
 **Applicable scenarios**: autonomous driving perception and forecasting (bird's-eye-view occupancy prediction is a coarse, voxelized cousin of full 4D scene modeling), robotic manipulation where precise 3D object pose matters, and any setting where multi-view consistency or object permanence is a first-class requirement rather than an incidental benefit.
 

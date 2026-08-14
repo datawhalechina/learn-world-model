@@ -1,10 +1,10 @@
 ---
-title: Part A：CEM-MPC 与潜在 Actor-Critic
+title: 规划与控制：CEM-MPC 与潜在 Actor-Critic
 description: 反事实型范式与 MuZero 隐式世界模型，CEM 射击法随机搜索，以及 Dreamer 潜在 Actor-Critic 的可微分规划。
 lecture: 3
 ---
 
-# Part A：CEM-MPC 与潜在 Actor-Critic
+# 规划与控制：CEM-MPC 与潜在 Actor-Critic
 
 有了世界模型，智能体如何用它来选择动作？这一部分是 P03 的直接前置，也为后续架构比较提供规划语境。这里介绍三种规划机制：从最直觉的随机搜索，到 Dreamer 的想象训练，再到 TD-MPC 的混合方案。
 

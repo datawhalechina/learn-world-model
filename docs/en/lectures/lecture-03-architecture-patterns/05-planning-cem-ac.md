@@ -1,10 +1,10 @@
 ---
-title: "Part A: CEM-MPC and Latent Actor-Critic"
+title: "Planning and Control: CEM-MPC and Latent Actor-Critic"
 description: The counterfactual paradigm and MuZero's implicit world model, CEM shooting-method random search, and Dreamer's differentiable latent Actor-Critic planning.
 lecture: 3
 ---
 
-# Part A: CEM-MPC and Latent Actor-Critic
+# Planning and Control: CEM-MPC and Latent Actor-Critic
 
 Given a world model, how does an agent use it to select actions? This section is the direct prerequisite for P03 and provides the planning context used later to compare architectures. It introduces three planning mechanisms: from the most intuitive random search, to Dreamer's imagination-based training, to TD-MPC's hybrid approach.
 

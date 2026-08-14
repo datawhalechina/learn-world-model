@@ -1,10 +1,10 @@
 ---
-title: "Part C（续，选读）：Genie"
+title: "选读前沿：Genie"
 description: Genie 的 latent action 发现机制，介于观察型预训练与无需动作标签的交互式生成之间。
 lecture: 3
 ---
 
-# Part C（续，选读）：Genie
+# 选读前沿：Genie
 
 ## 架构七：Genie 从视频隐式发现动作
 

@@ -1,10 +1,10 @@
 ---
-title: Part A（续）：TD-MPC 与规划机制对比
+title: 规划与控制：TD-MPC 与机制对比
 description: TD-MPC 的时序差分混合规划方案、与 DreamerV3 的对比，以及三种规划机制的综合总结。
 lecture: 3
 ---
 
-# Part A（续）：TD-MPC 与规划机制对比
+# 规划与控制：TD-MPC 与机制对比
 
 ## 机制三：TD-MPC，两者的桥梁
 
@@ -59,7 +59,7 @@ TD 学习用 Bellman 方程，以"当前奖励 + 下一步 Q 值估计"代替完
 
 ## 下一步
 
-现在你已经具备完成 [P03：训练 Dreamer 智能体](../../projects/p03_dreamer_agent)所需的概念工具。运行编码器、RSSM、actor 与 critic 组成的完整闭环后，再回到 Part B 比较 RSSM、Transformer 与扩散替代方案。这样，每次架构选择都会回应你实际观察到的瓶颈，而不是只对应一个刚见过的名字。
+现在你已经具备完成 [P03：训练 Dreamer 智能体](../../projects/p03_dreamer_agent)所需的概念工具。运行编码器、RSSM、actor 与 critic 组成的完整闭环后，再进入“骨干选择”比较 RSSM、Transformer 与扩散替代方案。这样，每次架构选择都会回应你实际观察到的瓶颈，而不是只对应一个刚见过的名字。
 
 
 ## 延伸阅读

@@ -1,10 +1,10 @@
 ---
-title: "Part A (Continued): TD-MPC and Planning Mechanism Comparison"
+title: "Planning and Control: TD-MPC and Mechanism Comparison"
 description: TD-MPC's temporal-difference hybrid planning scheme, its comparison with DreamerV3, and a comprehensive summary of the three planning mechanisms.
 lecture: 3
 ---
 
-# Part A (Continued): TD-MPC and Planning Mechanism Comparison
+# Planning and Control: TD-MPC and Mechanism Comparison
 
 ## Mechanism 3: TD-MPC, the Bridge Between the Two
 
@@ -59,7 +59,7 @@ TD learning uses the Bellman equation to substitute "current reward + next-step 
 
 ## Next Step
 
-You now have enough conceptual machinery to complete [P03: Train a Dreamer Agent](../../projects/p03_dreamer_agent). After running the complete encoder, RSSM, actor, and critic loop, return to Part B to compare the RSSM against Transformer and diffusion alternatives. That ordering makes each architecture choice answer a bottleneck you have observed rather than a name you have merely encountered.
+You now have enough conceptual machinery to complete [P03: Train a Dreamer Agent](../../projects/p03_dreamer_agent). After running the complete encoder, RSSM, actor, and critic loop, continue to Backbone Selection to compare the RSSM against Transformer and diffusion alternatives. That ordering makes each architecture choice answer a bottleneck you have observed rather than a name you have merely encountered.
 
 
 ## Further Reading

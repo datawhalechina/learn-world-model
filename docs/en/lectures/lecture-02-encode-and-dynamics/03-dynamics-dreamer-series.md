@@ -1,10 +1,10 @@
 ---
-title: "Part B (Continued): Dreamer Series Architecture Iterations"
+title: "Dreamer Series Architecture Evolution"
 description: Stepwise evolution from Dreamer V1 to V4, the encoder's role as a bridge in Dreamer, and an overall summary of Lecture 02.
 lecture: 2
 ---
 
-# Part B (Continued): Dreamer Series Architecture Iterations
+# Dreamer Series Architecture Evolution
 
 ## Transformer Dynamics: From GRU to Sequence Modeling
 

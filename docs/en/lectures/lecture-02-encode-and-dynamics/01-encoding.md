@@ -1,10 +1,10 @@
 ---
-title: "Part A: Observation Encoding"
+title: "Observation Encoding"
 description: The compression principle behind VAEs, the intuition for the ELBO loss, and the structure of a CNN encoder.
 lecture: 2
 ---
 
-# Part A: Observation Encoding
+# Observation Encoding
 
 ## Why Compress?
 

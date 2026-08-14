@@ -1,10 +1,10 @@
 ---
-title: Part C（选读）：JEPA 与 RWM
+title: 选读前沿：JEPA 与 RWM
 description: JEPA 的语义预测范式与机器人专属的 RWM 稳定性设计。
 lecture: 3
 ---
 
-# Part C（选读）：JEPA 与 RWM
+# 选读前沿：JEPA 与 RWM
 
 本页不是实践主线的前置要求，而是把比较范围扩展到 P03 与 P04 未实现的系统。JEPA 追问应该预测什么，RWM 则追问预测如何在机器人部署中保持可靠。
 
