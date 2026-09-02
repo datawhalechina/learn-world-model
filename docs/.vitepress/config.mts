@@ -156,6 +156,76 @@ const enWorldModelItems = [
   },
 ];
 
+const koWorldModelItems = [
+  { text: "환영합니다", link: "/ko/" },
+  {
+    text: "제1강: 내부 시뮬레이션과 역사적 맥락",
+    collapsed: false,
+    items: [
+      { text: "개요", link: "/ko/lectures/lecture-01-internal-simulation/" },
+      { text: "이론적 초석", link: "/ko/lectures/lecture-01-internal-simulation/01-foundations" },
+      { text: "월드모델이란 무엇인가: 렌더링, 시뮬레이션, 계획", link: "/ko/lectures/lecture-01-internal-simulation/02-what-is-a-world-model" },
+      { text: "월드모델의 엄격한 분류와 네 시대", link: "/ko/lectures/lecture-01-internal-simulation/02-world-model-taxonomy" },
+      { text: "월드모델은 무엇을 해결하는가, 그리고 왜 지금인가", link: "/ko/lectures/lecture-01-internal-simulation/03-why-now" },
+      { text: "강좌 로드맵", link: "/ko/lectures/lecture-01-internal-simulation/04-roadmap" },
+    ]
+  },
+  {
+    text: "제2강: 관측 인코딩과 잠재 동역학",
+    collapsed: false,
+    items: [
+      { text: "개요", link: "/ko/lectures/lecture-02-encode-and-dynamics/" },
+      { text: "Part A: 관측 인코딩", link: "/ko/lectures/lecture-02-encode-and-dynamics/01-encoding" },
+      { text: "Part B: GRU, MDN-RNN, RSSM", link: "/ko/lectures/lecture-02-encode-and-dynamics/02-dynamics" },
+      { text: "Part B(계속): Dreamer 시리즈", link: "/ko/lectures/lecture-02-encode-and-dynamics/03-dynamics-dreamer-series" },
+    ]
+  },
+  {
+    text: "제3강: 아키텍처 패턴, 학습 패러다임과 계획",
+    collapsed: false,
+    items: [
+      { text: "개요", link: "/ko/lectures/lecture-03-architecture-patterns/" },
+      { text: "계획과 제어: CEM-MPC, Actor-Critic", link: "/ko/lectures/lecture-03-architecture-patterns/05-planning-cem-ac" },
+      { text: "계획과 제어: TD-MPC와 비교", link: "/ko/lectures/lecture-03-architecture-patterns/06-planning-tdmpc" },
+      { text: "백본 선택: RSSM, Transformer, Diffusion", link: "/ko/lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion" },
+      { text: "선택: JEPA와 RWM", link: "/ko/lectures/lecture-03-architecture-patterns/02-architectures-jepa-rwm-wam" },
+      { text: "선택: 공간 3D/4D 모델", link: "/ko/lectures/lecture-03-architecture-patterns/03-architectures-spatial-3d4d" },
+      { text: "선택: Genie", link: "/ko/lectures/lecture-03-architecture-patterns/03-architectures-genie-wam" },
+      { text: "선택: LoopWM, WAM과 아키텍처 선택", link: "/ko/lectures/lecture-03-architecture-patterns/04-architectures-loopwm-wam" },
+      { text: "선택: 일곱 가지 시스템 통합 패턴", link: "/ko/lectures/lecture-03-architecture-patterns/07-system-integration-patterns" },
+      { text: "선택적 사례: LS-Imagine", link: "/ko/lectures/lecture-03-architecture-patterns/07-case-study-ls-imagine" },
+    ]
+  },
+  {
+    text: "제4강: 월드모델 진단하기",
+    collapsed: false,
+    items: [
+      { text: "개요", link: "/ko/lectures/lecture-04-evaluation-by-model/" },
+      { text: "진단 프레임워크: 여섯 인터페이스", link: "/ko/lectures/lecture-04-evaluation-by-model/00-diagnostic-framework" },
+      { text: "표현과 과제 수행 신호: Dreamer", link: "/ko/lectures/lecture-04-evaluation-by-model/01-model-metrics-dreamer" },
+      { text: "잠재 동역학과 계획: TD-MPC", link: "/ko/lectures/lecture-04-evaluation-by-model/03-model-metrics-tdmpc" },
+      { text: "가치와 탐색: MuZero", link: "/ko/lectures/lecture-04-evaluation-by-model/02-model-metrics-muzero" },
+      { text: "자기회귀 롤아웃: STORM", link: "/ko/lectures/lecture-04-evaluation-by-model/04-storm-diffusion-drift" },
+      { text: "물리적 일관성과 호라이즌 드리프트", link: "/ko/lectures/lecture-04-evaluation-by-model/05-diffusion-drift" },
+      { text: "배포 지표", link: "/ko/lectures/lecture-04-evaluation-by-model/06-deployment-metrics" },
+      { text: "배포 실패와 전략", link: "/ko/lectures/lecture-04-evaluation-by-model/07-deployment-pitfalls" },
+      { text: "진단 종합과 전망", link: "/ko/lectures/lecture-04-evaluation-by-model/08-summary" },
+    ]
+  },
+  {
+    text: "제5강: 최전선 논쟁",
+    collapsed: false,
+    items: [
+      { text: "개요", link: "/ko/lectures/lecture-05-frontier-debates/" },
+      { text: "언어라는 아편과 Bitter Lesson", link: "/ko/lectures/lecture-05-frontier-debates/01-language-and-bitter-lesson" },
+      { text: "월드모델과 LLM의 분업과 수렴", link: "/ko/lectures/lecture-05-frontier-debates/02-agi-and-convergence" },
+      { text: "데이터는 어디서 오는가", link: "/ko/lectures/lecture-05-frontier-debates/03-data-and-future" },
+      { text: "각 노선의 핵심 베팅과 마무리 질문", link: "/ko/lectures/lecture-05-frontier-debates/04-bets-and-questions" },
+      { text: "철학적 후기: 행화 인지", link: "/ko/lectures/lecture-05-frontier-debates/05-enactive-cognition" },
+    ]
+  },
+];
+
 const enProjectItems = [
   { text: "Welcome", link: "/en/projects/" },
   { text: "P01: Train a VAE Encoder", link: "/en/projects/p01_vae_encoder" },
@@ -164,6 +234,16 @@ const enProjectItems = [
   { text: "P04: Swap the Dynamics Backbone", link: "/en/projects/p04_transformer_backbone" },
   { text: "P05: World Model Evaluation Dashboard", link: "/en/projects/p05_evaluation_dashboard" },
   { text: "P06: Counterfactual Action-Conditioned World Model", link: "/en/projects/p06_counterfactual_world_model" },
+];
+
+const koProjectItems = [
+  { text: "개요", link: "/ko/projects/" },
+  { text: "P01: VAE 인코더 학습", link: "/ko/projects/p01_vae_encoder" },
+  { text: "P02: RSSM 동역학 모델 구축", link: "/ko/projects/p02_rssm_dynamics" },
+  { text: "P03: Dreamer 에이전트 학습", link: "/ko/projects/p03_dreamer_agent" },
+  { text: "P04: 동역학 백본 교체", link: "/ko/projects/p04_transformer_backbone" },
+  { text: "P05: 월드모델 평가 대시보드", link: "/ko/projects/p05_evaluation_dashboard" },
+  { text: "P06: 동작 조건화 반사실적 월드모델", link: "/ko/projects/p06_counterfactual_world_model" },
 ];
 
 export default withMermaid(
@@ -264,6 +344,42 @@ export default withMermaid(
             '/en/lectures/lecture-04-evaluation-by-model/': [{ text: "World Models", items: enWorldModelItems }],
             '/en/lectures/lecture-05-frontier-debates/': [{ text: "World Models", items: enWorldModelItems }],
           },
+          socialLinks: [{ icon: "github", link: githubRepoTreeLink }]
+        }
+      },
+      ko: {
+        label: "한국어",
+        lang: "ko-KR",
+        link: "/ko/",
+        themeConfig: {
+          nav: [
+            { text: "강의", link: "/ko/", activeMatch: '^/ko/(|lectures/)' },
+            { text: "프로젝트", link: koProjectItems[0].link, activeMatch: '^/ko/projects/' },
+          ],
+          sidebar: {
+            '/ko/projects/': [{ text: "프로젝트", items: koProjectItems }],
+            '/ko/': [{ text: "월드모델", items: koWorldModelItems }],
+            '/ko/lectures/lecture-01-internal-simulation/': [{ text: "월드모델", items: koWorldModelItems }],
+            '/ko/lectures/lecture-02-encode-and-dynamics/': [{ text: "월드모델", items: koWorldModelItems }],
+            '/ko/lectures/lecture-03-architecture-patterns/': [{ text: "월드모델", items: koWorldModelItems }],
+            '/ko/lectures/lecture-04-evaluation-by-model/': [{ text: "월드모델", items: koWorldModelItems }],
+            '/ko/lectures/lecture-05-frontier-debates/': [{ text: "월드모델", items: koWorldModelItems }],
+          },
+          outline: {
+            level: [2, 3]
+          },
+          docFooter: {
+            prev: "이전 글",
+            next: "다음 글"
+          },
+          lastUpdated: {
+            text: "마지막 업데이트"
+          },
+          returnToTopLabel: "맨 위로",
+          sidebarMenuLabel: "메뉴",
+          darkModeSwitchLabel: "테마",
+          lightModeSwitchTitle: "라이트 모드로 전환",
+          darkModeSwitchTitle: "다크 모드로 전환",
           socialLinks: [{ icon: "github", link: githubRepoTreeLink }]
         }
       }
