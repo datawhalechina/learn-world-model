@@ -118,7 +118,7 @@ learn-world-model/
 Scan the QR code to join the WeChat discussion group (微信交流群):
 
 <div align="center">
-  <img src="./docs/public/wechat.png" width="300" alt="WeChat Group QR Code">
+  <img src="./docs/public/wechat.jpg" width="300" alt="WeChat Group QR Code">
 </div>
 
 ---
