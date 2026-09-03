@@ -59,6 +59,14 @@ $$
 
 > **📖 重参数化技巧（Reparameterization Trick）**：编码器输出均值 $\mu$ 和标准差 $\sigma$ 后，需要从分布 $\mathcal{N}(\mu, \sigma^2)$ 中**采样** $\mathbf{z}$。直接采样的问题是：采样操作本身不可微，梯度无法从 $\mathbf{z}$ 流回 $\mu$ 和 $\sigma$，编码器就无法被训练。解决方法是把采样改写为：$\mathbf{z} = \mu + \sigma \cdot \varepsilon$，其中 $\varepsilon \sim \mathcal{N}(0, I)$ 是独立采样的噪声（与网络参数无关）。现在 $\mathbf{z}$ 对 $\mu$ 和 $\sigma$ 是可微的，梯度可以正常流过，编码器可以被端到端训练。
 
+**手算一遍**：假设某张图像经过编码器后，某一潜在维度的输出是 $\mu = 0.50$，$\sigma = 0.20$。采样噪声 $\varepsilon = 1.30$（来自 $\mathcal{N}(0, I)$）。代入 $\mathbf{z} = \mu + \sigma \cdot \varepsilon$：
+
+$$
+z = 0.50 + 0.20 \times 1.30 = 0.76
+$$
+
+如果 $\mu$ 或 $\sigma$ 因为反向传播发生变化（比如 $\sigma$ 从 0.20 变为 0.21），$z$ 会随之平滑变化为 $0.50 + 0.21 \times 1.30 = 0.773$，梯度就是这样从 $z$ 传回 $\mu$ 和 $\sigma$ 的。注意 $\varepsilon$ 全程固定为 1.30，不参与反向传播，它只是采样时的随机噪声。P01 项目的 `reparameterize` 函数会用同一组数字验证这个计算。
+
 
 ## CNN 编码器结构
 

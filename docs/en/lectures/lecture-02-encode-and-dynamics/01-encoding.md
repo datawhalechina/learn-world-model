@@ -59,6 +59,14 @@ The two terms work together: the reconstruction loss ensures $\mathbf{z}$ retain
 
 > **📖 Reparameterization Trick**: After the encoder outputs mean $\mu$ and standard deviation $\sigma$, we need to **sample** $\mathbf{z}$ from the distribution $\mathcal{N}(\mu, \sigma^2)$. The problem with direct sampling is that the sampling operation itself is not differentiable, so gradients cannot flow from $\mathbf{z}$ back to $\mu$ and $\sigma$, preventing the encoder from being trained. The solution is to rewrite sampling as: $\mathbf{z} = \mu + \sigma \cdot \varepsilon$, where $\varepsilon \sim \mathcal{N}(0, I)$ is independently sampled noise (independent of the network parameters). Now $\mathbf{z}$ is differentiable with respect to $\mu$ and $\sigma$, gradients flow normally, and the encoder can be trained end-to-end.
 
+**Worked example**: suppose the encoder outputs $\mu = 0.50$ and $\sigma = 0.20$ for one latent dimension of some image. Sampling noise $\varepsilon = 1.30$ (drawn from $\mathcal{N}(0, I)$). Plugging into $\mathbf{z} = \mu + \sigma \cdot \varepsilon$:
+
+$$
+z = 0.50 + 0.20 \times 1.30 = 0.76
+$$
+
+If $\mu$ or $\sigma$ changes during backpropagation (say $\sigma$ moves from 0.20 to 0.21), $z$ changes smoothly to $0.50 + 0.21 \times 1.30 = 0.773$; this is exactly how gradients flow from $z$ back to $\mu$ and $\sigma$. Note that $\varepsilon$ stays fixed at 1.30 throughout and never receives a gradient, it is only sampling noise. P01's `reparameterize` function verifies this exact computation.
+
 
 ## CNN Encoder Structure
 
