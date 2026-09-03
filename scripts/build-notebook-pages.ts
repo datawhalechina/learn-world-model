@@ -3,7 +3,7 @@
  * Convert project Jupyter notebooks into VitePress markdown pages.
  *
  * VitePress only routes `.md` files, so a linked `.ipynb` 404s. This script
- * renders each `docs/{en,zh}/projects/*.ipynb` into a sibling `.md` page:
+ * renders each `docs/{en,zh,ko}/projects/*.ipynb` into a sibling `.md` page:
  *   - markdown cells pass through as-is
  *   - code cells become ```python fenced blocks
  *   - notebook outputs are intentionally omitted from the markdown pages
@@ -24,6 +24,7 @@ const ROOT = path.resolve(SCRIPT_DIR, "..");
 const PROJECT_DIRS = [
   path.join(ROOT, "docs", "en", "projects"),
   path.join(ROOT, "docs", "zh", "projects"),
+  path.join(ROOT, "docs", "ko", "projects"),
 ];
 const GITHUB_BLOB_BASE =
   "https://github.com/datawhalechina/learn-world-model/blob/main/";
@@ -55,7 +56,7 @@ function codeFenceLanguage(code: string): string {
 
 function projectPageUrl(nbPath: string): string {
   const relPath = path.relative(ROOT, nbPath).split(path.sep).join("/");
-  const match = relPath.match(/^docs\/(en|zh)\/projects\/([^/]+)\.ipynb$/);
+  const match = relPath.match(/^docs\/(en|zh|ko)\/projects\/([^/]+)\.ipynb$/);
   if (!match) {
     throw new Error(`Unexpected notebook path: ${nbPath}`);
   }
@@ -82,9 +83,9 @@ async function convertNotebook(nbPath: string): Promise<void> {
   const nb = JSON.parse(raw) as Notebook;
   const base = path.basename(nbPath, ".ipynb");
   const relPath = path.relative(ROOT, nbPath).split(path.sep).join("/");
-  const isZh = relPath.startsWith("docs/zh/");
-  const sourceLabel = isZh ? "Notebook 源文件" : "Notebook source";
-  const projectLabel = isZh ? "项目页面" : "Project page";
+  const locale = relPath.startsWith("docs/zh/") ? "zh" : relPath.startsWith("docs/ko/") ? "ko" : "en";
+  const sourceLabel = locale === "zh" ? "Notebook 源文件" : locale === "ko" ? "Notebook 원본" : "Notebook source";
+  const projectLabel = locale === "zh" ? "项目页面" : locale === "ko" ? "프로젝트 페이지" : "Project page";
   const projectUrl = projectPageUrl(nbPath);
   const notebookUrl = sourceNotebookUrl(nbPath);
 
