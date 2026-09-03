@@ -169,13 +169,9 @@ fig.suptitle('Sample images from synthetic dataset', y=1.02)
 plt.tight_layout()
 plt.show()
 ```
-## 2. Model
+## 2. Model: Encoder
 
 The `Encoder` is the CNN from [L02 Observation Encoding](../lectures/lecture-02-encode-and-dynamics/01-encoding): four stride-2 convolutions halve the spatial resolution each time (64 -> 32 -> 16 -> 8 -> 4), so the final feature map is `256 x 4 x 4`. Flattening that map and passing it through two linear heads gives `mu` and `log_var`, the mean and log-variance of the approximate posterior $q(z \mid x)$ introduced on that page. We predict `log_var` rather than `var` or `sigma` directly so the network's raw output can be any real number; exponentiating it later guarantees the variance stays positive without needing a constrained activation function.
-
-The `Decoder` mirrors the encoder with transposed convolutions (see the "Transposed Convolution" callout on the encoding page) that each double spatial resolution, undoing the encoder's compression: `4 -> 8 -> 16 -> 32 -> 64`. The final `Sigmoid` keeps output pixels in `[0, 1]`, matching how the synthetic images were generated.
-
-`reparameterize` is the reparameterization trick from the lecture, `z = mu + sigma * epsilon`, implemented with `std = exp(0.5 * log_var)` because `log_var = log(sigma^2)`, so `0.5 * log_var = log(sigma)` and exponentiating recovers `sigma`. `torch.randn_like(std)` draws `epsilon ~ N(0, I)` independently of the network parameters, which is exactly what keeps this operation differentiable: gradients flow through `mu` and `std`, never through the random draw itself.
 
 ```python
 LATENT_DIM = 32
@@ -205,8 +201,10 @@ class Encoder(nn.Module):
     def forward(self, x):
         h = self.conv(x).flatten(start_dim=1)
         return self.fc_mu(h), self.fc_log_var(h)
+```
+The `Decoder` mirrors the encoder with transposed convolutions (see the "Transposed Convolution" callout on the encoding page) that each double spatial resolution, undoing the encoder's compression: `4 -> 8 -> 16 -> 32 -> 64`. The final `Sigmoid` keeps output pixels in `[0, 1]`, matching how the synthetic images were generated.
 
-
+```python
 class Decoder(nn.Module):
     """Decode latent vectors back to 3x64x64 images."""
 
@@ -228,8 +226,10 @@ class Decoder(nn.Module):
     def forward(self, z):
         h = self.fc(z).view(-1, 256, 4, 4)
         return self.deconv(h)
+```
+`VAE` combines the encoder and decoder. `reparameterize` is the reparameterization trick from the lecture, `z = mu + sigma * epsilon`, implemented with `std = exp(0.5 * log_var)` because `log_var = log(sigma^2)`, so `0.5 * log_var = log(sigma)` and exponentiating recovers `sigma`. `torch.randn_like(std)` draws `epsilon ~ N(0, I)` independently of the network parameters, which is exactly what keeps this operation differentiable: gradients flow through `mu` and `std`, never through the random draw itself.
 
-
+```python
 class VAE(nn.Module):
     """Variational Autoencoder combining encoder and decoder."""
 
@@ -271,6 +271,16 @@ print(f'Input  shape : {dummy.shape}')
 print(f'mu shape     : {mu_dummy.shape}')
 print(f'log_var shape: {lv_dummy.shape}')
 print(f'Recon  shape : {recon_dummy.shape}')
+```
+**Checking the lecture's worked example**: the lecture hand-computes $z = 0.76$ from $\mu = 0.50$, $\sigma = 0.20$, $\varepsilon = 1.30$. Running the same numbers through `reparameterize`'s formula confirms the code matches the math exactly.
+
+```python
+demo_mu = torch.tensor([[0.50]])
+demo_std = torch.tensor([[0.20]])
+demo_eps = torch.tensor([[1.30]])
+demo_z = demo_mu + demo_std * demo_eps
+print(f'z = mu + std * eps = {demo_mu.item()} + {demo_std.item()} * {demo_eps.item()} = {demo_z.item():.2f}')
+assert abs(demo_z.item() - 0.76) < 1e-6, "does not match the lecture's hand-worked result"
 ```
 ## 3. ELBO Loss
 
@@ -504,7 +514,7 @@ plt.show()
 ```
 ## Save Checkpoint
 
-Save the checkpoint as `vae_encoder.pt` so P02 and P03 can reuse the encoder weights. A good run should end with low reconstruction loss, visually coherent reconstructions, and latent traversals that change the decoded shape in a predictable way. P02 loads this checkpoint via `model.encoder`, using it as a frozen (non-trainable) feature extractor: it maps each raw observation `o_t` to the latent `z_t` that the dynamics models (GRU, MDN-RNN, RSSM) then learn to predict forward in time, exactly the encoder-to-dynamics handoff described in the [Dreamer pipeline summary](../lectures/lecture-02-encode-and-dynamics/03-dynamics-dreamer-series#the-encoders-role-as-a-bridge-in-dreamer).
+Save the checkpoint as `vae_encoder.pt` so P02 and P03 can reuse the encoder weights. A good run should end with low reconstruction loss, visually coherent reconstructions, and latent traversals that change the decoded shape in a predictable way. P02 loads this checkpoint via `model.encoder`, using it as a frozen (non-trainable) feature extractor: it maps each raw observation `o_t` to the latent `z_t` that the dynamics models (GRU, MDN-RNN, RSSM) then learn to predict forward in time, exactly the encoder-to-dynamics handoff described in the [Dreamer pipeline summary](../lectures/lecture-02-encode-and-dynamics/03-dynamics-dreamer-series#the-encoder-s-role-as-a-bridge-in-dreamer).
 
 ```python
 import os
