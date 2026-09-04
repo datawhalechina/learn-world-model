@@ -66,7 +66,7 @@ L01 的 roadmap/taxonomy 概览页与整个 L05（前沿 debates）保持现有�
 | L03 | 03-architectures-spatial-3d4d | 0 | 2 | 0 | 缺层2/3 |
 | L03 | 04-architectures-loopwm-wam | 0 | 0 | 0 | 缺层2/3/4 |
 | L03 | 05-planning-cem-ac | 1 | 3 | 1 | 尚可，补层4 |
-| L03 | 06-planning-tdmpc | 0 | 1 | 0 | 缺层2/3/4 |
+| L03 | 06-planning-tdmpc | 0 | 1 | 0 | 扫描信号同样误导：实读后发现内容扎实（一致性损失表、stop-gradient/模式坍塌解释、Bellman 深挖框、与 DreamerV3 的对比表、三种规划机制对比表都在），只是用内联数学和表格表达。已在「下一步」里桥接到 P03，无需改动。 |
 | L03 | 07-case-study-ls-imagine | 0 | 0 | 1 | 案例页，需要至少一层机制描述 |
 | L03 | 07-system-integration-patterns | 0 | 1 | 1 | 尚可 |
 | L04 | 00-diagnostic-framework | 0 | 0 | 0 | **需要可计算的定义**（诊断指标不能只是清单）|
