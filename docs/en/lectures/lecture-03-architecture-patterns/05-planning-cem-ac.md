@@ -72,6 +72,14 @@ Input: current state s_t, world model f, reward model r, planning steps H, refin
 3. Execute the first action from μ: a_t ← μ[0]
 ```
 
+**Worked example**: suppose one refinement round samples 5 candidate action sequences, and rolling out the imagination gives cumulative rewards $R = [3.0,\ 7.0,\ 1.0,\ 9.0,\ 4.0]$. Taking Top-K ($K=2$): sorting by $R$ descending keeps the 4th sequence ($R=9.0$) and the 2nd sequence ($R=7.0$). Refitting the distribution with these two elite sequences:
+
+$$
+\mu_{\text{new}} = \frac{9.0 + 7.0}{2} = 8.0, \qquad \sigma_{\text{new}} = \sqrt{\frac{(9.0-8.0)^2 + (7.0-8.0)^2}{2}} = \sqrt{1.0} = 1.0
+$$
+
+The next round samples again centered on $\mu=8.0, \sigma=1.0$, more concentrated around the high-return region than this round was. This is the complete mechanism by which CEM shrinks its search over successive rounds.
+
 The first round of sampling covers a broad range with low precision, identifying roughly "where the high-return regions are." Subsequent rounds refit the distribution using elite sequences, progressively narrowing the sampling range toward high-return regions.
 
 **Limitation**: in high-dimensional continuous action spaces (e.g., a robotic arm controlling 7 joints simultaneously), random search is extremely inefficient. This is the core problem TD-MPC addresses: guiding the search with a Q-function rather than sampling blindly.
