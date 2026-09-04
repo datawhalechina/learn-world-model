@@ -62,13 +62,14 @@ L01 的 roadmap/taxonomy 概览页与整个 L05（前沿 debates）保持现有�
 | L02 | 03-dynamics-dreamer-series | 0 | 0 | 0 | 扫描信号具有误导性：实地读取后发现内容并不薄弱（GRU 瓶颈分析、V1-V4 演进表、编码器桥梁小节都在），只是用内联数学和表格而非 `$$` 块和 📖 深挖框表达。真正缺口是层4桥接指向 P02 的具体位置。**教训**：`$$`/📖 计数只能筛查候选，不能替代实读；本 spec 早期扫描表的判断在执行阶段需逐项核实。 |
 | L03 | 01-architectures-rnn-transformer-diffusion | 3 | 4 | 0 | 缺层3原理对比 |
 | L03 | 02-architectures-jepa-rwm-wam | 3 | 2 | 0 | 缺层3 |
-| L03 | 03-architectures-genie-wam | 0 | 1 | 0 | 缺层2/3 |
-| L03 | 03-architectures-spatial-3d4d | 0 | 2 | 0 | 缺层2/3 |
-| L03 | 04-architectures-loopwm-wam | 0 | 0 | 0 | 缺层2/3/4 |
-| L03 | 05-planning-cem-ac | 1 | 3 | 1 | 尚可，补层4 |
+| L03 | 02-architectures-jepa-rwm-wam | 3 | 2 | 0 | 扫描信号误导：实读后内容扎实（JEPA 三件套、stop-gradient/EMA 深挖框、RWM 两个核心问题、认知不确定性深挖框、学习范式/适用场景/局限一应俱全），无需改动 |
+| L03 | 03-architectures-genie-wam | 0 | 1 | 0 | 同上，实读后内容扎实（latent action 深挖框、三模块机制、学习范式/局限齐全），无需改动 |
+| L03 | 03-architectures-spatial-3d4d | 0 | 2 | 0 | 同上，实读后内容扎实（相机几何深挖框、NeRF/3DGS 机制、3D 到 4D 扩展、多视角一致性深挖框），无需改动 |
+| L03 | 04-architectures-loopwm-wam | 0 | 0 | 0 | 同上，实读后内容扎实（LoopWM 谱稳定化机制、WAM 对比表、九架构族总结表、选型建议），无需改动 |
+| L03 | 05-planning-cem-ac | 1 | 3 | 1 | 已在 Stage 4 补手算例子3（CEM top-k 淘汰） |
 | L03 | 06-planning-tdmpc | 0 | 1 | 0 | 扫描信号同样误导：实读后发现内容扎实（一致性损失表、stop-gradient/模式坍塌解释、Bellman 深挖框、与 DreamerV3 的对比表、三种规划机制对比表都在），只是用内联数学和表格表达。已在「下一步」里桥接到 P03，无需改动。 |
-| L03 | 07-case-study-ls-imagine | 0 | 0 | 1 | 案例页，需要至少一层机制描述 |
-| L03 | 07-system-integration-patterns | 0 | 1 | 1 | 尚可 |
+| L03 | 07-case-study-ls-imagine | 0 | 0 | 1 | 扫描信号误导：实读后内容扎实（两种状态转换机制、功用性图完整解释、与其他规划机制的关系），无需改动 |
+| L03 | 07-system-integration-patterns | 0 | 1 | 1 | 扫描信号误导：实读后内容扎实（七种模式对比表、VLA 关系澄清、与核心规划机制的关系），无需改动 |
 | L04 | 00-diagnostic-framework | 0 | 0 | 0 | **需要可计算的定义**（诊断指标不能只是清单）|
 | L04 | 01-model-metrics-dreamer | 3 | 2 | 1 | 良好 |
 | L04 | 02-model-metrics-muzero | 3 | 1 | 1 | 良好 |
