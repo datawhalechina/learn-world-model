@@ -22,7 +22,7 @@ else
   pip install torch torchvision matplotlib numpy
 fi
 ```
-环境准备完成后，先导入整块 dashboard 会用到的轨迹生成和打分工具。
+环境准备完成后，先导入整块 dashboard 会用到的轨迹生成和打分工具。本 notebook 直接实现了 [L04 的模型无关诊断框架](../lectures/lecture-04-evaluation-by-model/00-diagnostic-framework)：不是只报告一个聚合分数，而是在同一批留出轨迹上，为 P03 的 Dreamer 和 P04 的 Transformer 计算同一小组指标，这样两组数字才能直接比较，而不是各自按各自的标准打分。
 
 ```python
 import math
@@ -142,7 +142,7 @@ print('Transformer 权重文件存在:', TRANS_CKPT.exists())
 ```
 ## 1. 合成环境与轨迹生成
 
-从 P03 使用的同一环境中生成 20 条留出 episode。
+从 P03 使用的同一环境中生成 20 条留出 episode。「留出」在这里很关键：这些 episode 是全新生成的（不复用任何一个训练过程产生的数据），这才让下面的指标真正检验泛化能力，而不是检查每个模型是否只是记住了自己的训练轨迹，这正是诊断框架讲义在「三种评估情形」一节里强调的同分布 vs. 留出数据的区别。
 
 ```python
 class SyntheticEnv:
@@ -215,6 +215,8 @@ print('奖励均值（应接近 0.5）:', eval_rew.mean().item())
 - `HIDDEN_DIM = 128`，`LATENT_DIM = 32`，`N_CATEGORIES = 32`
 - **Dreamer 侧：** CNN VAE 编码器/解码器、RSSM（GRU + 先验/后验网络）、Actor、Critic
 - **Transformer 侧：** CatVAE（与 P04 相同）、CausalTransformerWM（与 P04 相同）
+
+选择重新实现而不是从 P03/P04 导入是刻意的：本 notebook 只通过 `state_dict` 加载训练好的*权重*（`dreamer.pt`、`transformer_wm.pt`），所以这里的类定义只需要和这些权重文件的形状精确匹配，P05 的运行不依赖 P03 或 P04 的 notebook 代码是否存在或是否被改动过。
 
 ```python
 # Dreamer 组件。
@@ -389,7 +391,7 @@ class Critic(nn.Module):
 print('Dreamer 架构类定义完毕。')
 print(f'  RSSM hidden_dim={HIDDEN_DIM}, latent_dim={LATENT_DIM}')
 ```
-Dreamer 侧的组件已经定义好，接着补上 Transformer 世界模型部分，这样后面就能直接并排比较。
+Dreamer 侧的组件已经定义好，接着补上 Transformer 世界模型部分，这样后面就能直接并排比较。这些是 P04 的 `CatVAE`、`straight_through_gumbel` 和 `CausalTransformerWM` 的原样拷贝，保持完全一致，这样 P04 最后保存的权重文件才能不出现形状不匹配地加载进来。
 
 ```python
 # 基于 Transformer 的世界模型组件。
@@ -512,7 +514,7 @@ print(f'  CausalTransformerWM d_model={HIDDEN_DIM}, n_categories={N_CATEGORIES}'
 ```
 ## 3. 加载或初始化两个模型
 
-有权重文件时加载，否则回退到随机初始化权重。
+有权重文件时加载，否则回退到随机初始化权重。正如本 notebook 开头所说，这个回退机制的唯一目的是让仪表盘在没有任何预训练权重文件的情况下也能作为冒烟测试运行；从随机初始化模型算出的每一项指标都毫无对比意义，只能当作「代码能正常跑通」的确认，绝不能当作模型质量的证据。
 
 ```python
 # 构建模型实例。
@@ -593,6 +595,8 @@ print('所有模型已冻结并处于评估模式。')
 **奖励相关性**（皮尔逊相关系数 rho）检验 RSSM 在想象推演中能否预测哪些步骤会获得奖励。
 **token 预测损失**（交叉熵）是 Transformer 在测试时的训练信号。
 
+每个指标都对应 [L04 六问框架](../lectures/lecture-04-evaluation-by-model/00-diagnostic-framework#六个诊断问题)里的一个具体诊断层：PSNR 和潜在漂移都在探测「长时程 rollout」这一层（预测变成自己的下一步输入时，误差是否仍受控），而奖励相关性专门探测 Dreamer 的「任务信号」层，对应 [L04 自己的奖励相关性诊断](../lectures/lecture-04-evaluation-by-model/01-model-metrics-dreamer#奖励相关性-reward-correlation)，只是这里用的是全新的留出数据而不是训练轨迹。token 预测损失是 Transformer 专属的「单步动力学」层代理指标，因为 Transformer 没有像 Dreamer 的 actor-critic 那样一个独立的、以奖励为条件的 rollout 机制可供探测。
+
 ```python
 def psnr_fn(pred, target):
     """峰值信噪比（dB）。两个张量均在 [0,1] 范围内。"""
@@ -615,7 +619,7 @@ print('辅助函数已定义。')
 print('PSNR 评估步骤:', PSNR_STEPS)
 print('潜在漂移步骤 :', DRIFT_STEPS)
 ```
-共享指标函数已经准备好，先把 Dreamer 的 rollout 统计量算出来。
+共享指标函数已经准备好，先把 Dreamer 的 rollout 统计量算出来。代码里有两处细节值得追踪：`s_cur = z0.clone()` 用*编码后的真实*首帧观测为 rollout 提供起点（`z0 = encoder.forward(obs_seq[0:1])`，编码器的均值，是一个点估计而不是采样），之后每一步都只调用 `rssm.prior_step`，不再有任何真实观测介入，这正对应讲义里「想象就是只用先验的 rollout」这一描述。`imagined_rewards` 累积奖励模型在每个想象步骤的预测；把这个序列和 `rew_seq[:ROLLOUT_LEN]`（同一条轨迹真实环境给出的奖励）用 `pearson_rho` 做比较，正是 L04 的[奖励相关性诊断](../lectures/lecture-04-evaluation-by-model/01-model-metrics-dreamer#奖励相关性-reward-correlation)，只是现在是在 Dreamer 智能体在 P03 训练时从未见过的 20 条全新 episode 上测量的。
 
 ```python
 # Dreamer 指标。
@@ -690,7 +694,7 @@ print(f'  PSNR@5  : {dreamer_psnr_mean[5]:.2f} dB')
 print(f'  PSNR@10 : {dreamer_psnr_mean[10]:.2f} dB')
 print(f'  潜在漂移@10 : {dreamer_drift_mean[10]:.4f}')
 ```
-Dreamer 的指标收集完毕后，再对 Transformer 基线做同样的评估，把结果并排放在一起。
+Dreamer 的指标记录完毕后，对 Transformer 基线跑同样的评估，把结果并排放在一起。注意这个 cell 是在**教师强制**条件下计算 `trans_tok_loss` 的（`transformer(z_seq_in, a_seq_in)` 在每个位置都拿到真实 token 序列作为上下文，与 P04 的训练方式一致），但 `trans_psnr` 和 `trans_drift` 是从**完全自回归**的 rollout 算出来的（`z_context = torch.cat([z_context, next_z.unsqueeze(0)], dim=1)` 每一步都用模型自己预测的 token 扩展上下文，第 0 步之后再没有任何真实 token）。同时报告两者是刻意的：教师强制损失和开环 PSNR/漂移数字之间的差距，正是 [L04 STORM 页面](../lectures/lecture-04-evaluation-by-model/04-storm-diffusion-drift#long-horizon-psnr)点名的**教师强制差距**，也是自回归世界模型的主要失效模式，下面第 8 节会明确回到这个差距上。
 
 ```python
 # Transformer 指标。
@@ -771,6 +775,8 @@ print(f'  潜在漂移@10 : {trans_drift_mean[10]:.4f}')
 
 下表汇总了两个模型的所有计算指标。标注 `N/A` 的条目表示该指标在概念上对该架构无意义：奖励相关性要求 RSSM 中存在专用奖励头，token 预测损失则要求离散类别潜在表示（Transformer 架构所具备）。
 
+这个 `N/A` 处理方式本身就是 [L04 开篇原则](../lectures/lecture-04-evaluation-by-model/00-diagnostic-framework#与模型名称无关的诊断框架)的一个小示例：「没有单一指标能覆盖全部六层」，如果强行给每种架构套用同一套指标（比如给 Dreamer 的连续潜变量算一个 token 预测损失，而它根本没有 token），得到的数字看起来可以比较，实际上什么都没测出来。
+
 ```python
 # 打印指标汇总表。
 header = f"{'模型':<15} | {'PSNR@1':>8} | {'PSNR@5':>8} | {'PSNR@10':>9} | {'LatentDrift@10':>14} | {'RewardCorr':>11} | {'TokenLoss':>10}"
@@ -808,6 +814,8 @@ print(sep)
 2. 潜在漂移（L2 范数）随步骤的变化（两个模型）
 3. Dreamer 的奖励相关性 rho（柱状图）
 4. Transformer 的 token 预测损失（柱状图）
+
+面板 1 和 2 刻意把两个模型放在同一坐标轴上，为的是让退化的*速率*可以比较，这正是 P02 和 P04 各自在比较自己架构时用过的同一种「时域-误差曲线」诊断；面板 3 和 4 是架构专属指标，之所以分开画，是因为如第 5 节所说，它们没有跨架构的对应量可以放在一起比较。
 
 ```python
 fig, axes = plt.subplots(2, 2, figsize=(13, 9))
@@ -872,6 +880,8 @@ plt.show()
 ## 7. 解码帧序列：并排可视化
 
 3 行图像网格将真实观测与两个模型在推演步骤 1、5、10 以及最终步骤（第 20 步，即轨迹最后一帧）的想象帧并排对比。这使得 PSNR 随时域的衰减一目了然。
+
+这正是 P02 的 rollout 网格和 P04 的图像对比都依赖的同一个原则：「单纯的数字会掩盖失效模式，图像才能揭示误差的具体类型」：PSNR 曲线只能说明预测质量下降了*多少*，而每一步解码出的帧能看出具体*丢失了什么*：模糊、颜色漂移，还是位置漂移，这是单一标量分不清的。
 
 ```python
 DISPLAY_STEPS = [1, 5, 10, SEQ_LEN - 1]  # 1-indexed，最后一个除外

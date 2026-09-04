@@ -489,6 +489,8 @@ print('两个模型的干预式 rollout 已计算完成。')
 ```
 拿到两组干预式 rollout 后，接着度量两种动作制度在每个时域步上到底拉开了多大差距。对于 Dreamer，我们使用解码帧之间的像素级 RMS 差异。对于 Transformer，解码帧会先对离散 token 做一次 `argmax`，即使存在微弱的动作信号，也可能把两条动作分支都吸附到同一个 token 上，从而汇报出精确的零。为了看见这部分信号，我们改用两组预测 token 分布之间的对称 KL 散度。因果模型会把这些曲线抬起来。动作失明的模型则会让它们贴着地板。
 
+具体来说：`frame_divergence` 计算两组解码帧序列之间的均方根像素差异（Dreamer 里的 `d_frm_r` 对比 `d_frm_l`），直接回答「两条钳制动作的 rollout 是否产生了肉眼可见不同的图像」。Transformer 的差异度量比较的则是 `t_prob_r` 和 `t_prob_l`，也就是每一步在 32 个可能 token 上的两个类别分布，用对称 KL 散度衡量，即使两个分布的 `argmax` 恰好重合，这个指标依然能保持信息量。不管哪个模型，只要曲线随时域上升，就是直接的视觉证据：世界模型的*预测*，而不只是它的训练损失，确实依赖动作，这正是 P01-P05 从未测试过的性质，因为它们的评估从来没有在固定过去的情况下改变过动作。
+
 ```python
 def frame_divergence(frames_a, frames_b):
     return [(fa - fb).pow(2).mean().sqrt().item() for fa, fb in zip(frames_a, frames_b)]
@@ -532,6 +534,10 @@ plt.show()
 
 溯因要做的是推断出真正产生这条观测轨迹的潜在状态。RSSM 的后验恰好在做这件事，因此我们把真实帧和真实动作一直送到某个分叉点。动作步骤是在这个分叉点用另一个选择替代真实动作。预测步骤则是从溯因得到的状态出发，在新动作下把先验向前 rollout。事实分支和反事实分支共享完全相同的过去，只在被干预的动作上不同，因此这个比较才是干净的反事实比较。
 
+`abduct_state` 就是代码里的溯因步骤：它在每个时间步、一直到 `branch_t` 为止，调用的都是 `rssm.posterior_step`（而不是 `prior_step`），也就是说每一步都用了*真实*编码观测，这正对应 [L02 里先验-后验的区别](../lectures/lecture-02-encode-and-dynamics/02-dynamics#rssm-分离确定性与随机性)：后验是「看到数据之后更新的信念」，这正是溯因出真正产生了这条观测轨迹的潜在状态所需要的。`counterfactual_branch` 把「施加动作」和「预测」两步合在一起：从溯因得到的 `(h_b, s_b)` 出发，只用 `rssm.prior_step` 向前滚动（不再有任何真实观测），这和本课程其他地方用的是同一套想象机制，只是这里的起点是从真实历史里溯因出来的状态，而不是从零开始。
+
+`cf_actions = [1 - a for a in factual_actions]` 就是真正的干预：把分叉点之后真实发生过的每个二元动作都翻转（0 变 1，1 变 0）。`factual_frames` 和 `cf_frames` 都从完全相同的溯因状态 `h_b, s_b` 出发，所以从那一点往后的任何差异，都只能归因于被翻转的动作本身，而不是之前发生了什么不同，这正是反事实比较（相对于比较两条互不相关的轨迹）的定义性特征。
+
 ```python
 @torch.no_grad()
 def abduct_state(obs_seq, act_seq, branch_t):
@@ -572,6 +578,8 @@ print(f'已在第 {BRANCH} 步完成状态溯因，并向前 rollout 事实分�
 ```
 两条分支 rollout 完成后，将它们并排展示。共享前缀按构造方式本来就完全一致，因此后续任何可见差异，都是翻转动作带来的因果效应。
 
+重点关注分歧出现的位置：两条分支在分叉步（含）之前应该逐像素完全一致，之后才开始分离，因为 `factual_actions` 和 `cf_actions` 正是从那里开始不同的。
+
 ```python
 n_show = len(factual_actions)
 fig, axes = plt.subplots(2, n_show, figsize=(2.2 * n_show, 4.6))
@@ -592,6 +600,8 @@ plt.show()
 上面的 rollout 检查的是为预测而训练的模型，而不是为因果忠实性而训练的模型，所以一个模型即使重构分数很好，也可能在暗中忽略动作。World-Action Model 这一路工作通过逆动力学正则项来修正这一点：除了前向预测损失之外，再加一个小头，要求它从 `s_t` 到 `s_{t+1}` 的潜在转移中恢复出动作 `a_t`。如果无法从这段转移中读回动作，就说明动力学并没有真正以动作为条件。加入这个损失后，潜在状态转移就被迫携带动作带来的影响。
 
 我们在这个合成环境上训练两个紧凑世界模型，一个带逆动力学项，一个不带，然后比较它们最终会对动作变得多敏感。
+
+`CompactWM.inv` 就是逆动力学头本身：给定 `(s_t, s_next)`，它必须预测出是哪个动作 `a_t` 导致了这次特定的转移，方向正好和通常的前向预测相反。在 `train_compact_wm` 里，`fwd_loss = F.mse_loss(pred_next, s_next...)` 是两个模型共用的普通前向动力学损失；`use_inverse` 分支只对带动作正则化的模型额外加上 `lam * F.cross_entropy(a_logits, a_t...)`。这背后的机制是：如果编码器把动作的影响「压没了」（不同动作被映射到相近的 `s_next`），逆动力学头就无法可靠地把 `a_t` 预测回来，它的交叉熵损失就会居高不下，这个损失产生的梯度会反过来推动编码器和前向动力学网络，让动作的影响在潜在空间里真正变得可以区分。这正是 [L03 WAM 一节](../lectures/lecture-03-architecture-patterns/04-architectures-loopwm-wam#架构九-从-world-model-到-world-action-model-wam)里「World-Action Model」这个思路在最小规模上的应用：用一个辅助预测任务，强迫动作的因果印记不被优化掉。
 
 ```python
 def make_training_set(n_traj=300, horizon=SEQ_LEN, base_seed=0):
@@ -683,6 +693,8 @@ print('两个紧凑模型均已训练完成。')
 
 为了把动作条件性变成一个数字，我们测量：在留出状态上，只翻转动作而保持其他条件不变时，预测的下一个潜在状态会改变多少，并对这些状态求平均。尊重动作的模型会得到较大的 influence score。动作塌缩的模型则会得到接近零的分数。这里我们分别汇报带动作正则化的模型、基线模型，以及加载得到的 Dreamer RSSM。
 
+`action_influence_compact` 对每个状态恰好算一次钳制干预对比：`s0 = model.forward_dynamics(s, a0)` 和 `s1 = model.forward_dynamics(s, a1)` 从*同一个*编码状态 `s` 出发，分别预测 `do(a=0)` 和 `do(a=1)` 下的下一个潜在状态，`(s0 - s1).pow(2).sum(-1).sqrt().mean()` 就是这两个预测之间的平均欧氏距离。这是第 4 节干预式发散曲线的单步、单数字版本：不是 10 步 rollout 上的一条曲线，而是在 256 个留出状态上求平均得到的一个标量，方便在看完整曲线之前，先对三个模型做一次快速的整体对比。
+
 ```python
 @torch.no_grad()
 def action_influence_compact(model, obs, n=256):
@@ -726,6 +738,8 @@ plt.show()
 ```
 上面的标量只是一阶摘要。为了看见效应如何累积，我们让带动作正则化的模型和基线模型都从同一个编码状态出发，在 `do(向右)` 与 `do(向左)` 下分别向前 rollout，并绘制每一步预测潜在状态之间的分离程度。正则化模型应该会逐步张开，而基线模型会保持扁平，从而给出加载 checkpoint 时那些模型没有展示出来的清晰对比。
 
+`compact_intervention_divergence`（定义在下面的代码 cell 里，和第 4 节的 `dreamer_rollout`/`frame_divergence` 是同一种模式）反复在每种钳制动作下调用 `forward_dynamics`，逐步跟踪潜在空间里差距的增长，把上面第 7 节的单一标量变成了和第 4 节针对预训练 Dreamer、Transformer checkpoint 画的同一种时域曲线，只是这次比较的是一对受控模型：两者唯一的区别就是训练时有没有逆动力学损失。
+
 ```python
 @torch.no_grad()
 def compact_intervention_divergence(model, seed_obs, steps=ROLLOUT_LEN):
@@ -761,6 +775,8 @@ plt.show()
 ## 8. 保存 Checkpoint 与总结
 
 保存带动作正则化的模型，记录最关键的结果数字。
+
+保存的是 `causal_wm`，也就是带逆动力学正则项训练出来的模型：它是这个 notebook 演示为真正具有动作因果性的模型，所以是值得留下来复用的产物，不像 `baseline_wm`，它在这个 notebook 里只是一个对照点，用来展示没有正则项时会发生什么。
 
 ```python
 torch.save({
