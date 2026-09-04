@@ -127,7 +127,7 @@ print('PyTorch version:', torch.__version__)
 ```
 ## 1. 类别 VAE
 
-将每一帧 tokenize 为单个 32 维的离散编码。
+将每一帧 tokenize 为单个 32 维的离散编码。这是 [IRIS 和 STORM](../lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion#架构二-transformer-based-2022-2023) 背后 tokenizer 的简化版本：STORM 用的类别 VAE 有 32 个类别、每类 32 维（每帧 32×32=1024 种可能的联合状态），而本 notebook 的 `CatVAE` 只用单个 32 选一的类别编码（`NUM_CATEGORIES = 32` 个选项，每帧一个），以便在 CPU 上快速训练。底层机制是同一套：把连续的编码器输出通过可微松弛映射成离散 token，讲义里说的 IRIS 的 VQ-VAE 和 STORM 的类别 VAE 用的正是这套机制。
 
 ```python
 # 合成图形图像数据集。
@@ -170,7 +170,11 @@ plt.suptitle('合成图像样例', y=1.02)
 plt.tight_layout()
 plt.show()
 ```
-合成形状数据就位后，先定义直通 Gumbel-softmax 近似，让 categorical VAE 可以端到端训练。
+合成形状数据就位后，先定义直通 Gumbel-softmax 近似，让 categorical VAE 可以端到端训练。这是[骨干选择页面 VQ 深挖框](../lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion#iris-把图像变成-句子)里描述的**直通估计器**在代码层面的实现：`straight_through_gumbel` 需要从 32 个离散类别里选一个，但 `argmax`（前向传播需要它）处处梯度为零，会让编码器无法训练。
+
+`F.gumbel_softmax(logits, tau=tau, hard=False)` 产生 `y_soft`，是 one-hot 向量的*连续*松弛（对 32 个类别的一个完整概率分布，权重集中在最可能的类别上，`tau -> 0` 时会越来越接近真正的 one-hot 向量）。`y_hard` 是通过 `argmax` 得到的真正离散 one-hot 向量。返回这一行 `(y_hard - y_soft).detach() + y_soft` 就是这个技巧本身：前向传播时这一行数值上恰好等于 `y_hard`（因为 `(y_hard - y_soft).detach() + y_soft = y_hard`），所以模型看到的是真正的离散 token。反向传播时，`.detach()` 让 `(y_hard - y_soft)` 变成一个梯度为零的常数，梯度只通过 `+ y_soft` 这一项流动，也就是说编码器收到的梯度，就好像它输出的是*软*的连续松弛一样。这正是讲义里说的：「前向传播用量化后的离散向量，反向传播时假装量化操作不存在，梯度直接流过」。
+
+`CatVAEEncoder` 和 `CatVAEDecoder` 在其他方面和 P01 的 VAE 是同一套卷积结构，编码器输出的东西有一处关键区别：`CatVAEEncoder.forward` 返回的是 32 个类别上的原始 logits（不是连续高斯分布的 `mu, log_var` 对），`CatVAE.encode` 对这些 logits 应用直通 Gumbel-softmax，得到一个可训练的离散 token。
 
 ```python
 # 直通 Gumbel-softmax。
@@ -259,7 +263,7 @@ catvae = CatVAE(num_categories=NUM_CATEGORIES, tau=1.0).to(DEVICE)
 total_params = sum(p.numel() for p in catvae.parameters())
 print(f'CatVAE 参数量：{total_params:,}')
 ```
-松弛形式准备好后，就直接在合成图像上训练 CatVAE，让离散潜变量学到紧凑表示。
+松弛形式准备好后，就直接在合成图像上训练 CatVAE，让离散潜变量学到紧凑表示。损失把 `recon_loss`（和 P01 一样的 MSE 重建项）与 P01 没有的 `entropy_reg` 项结合起来：`probs = F.softmax(logits, dim=-1).mean(0)` 是一个 batch 内各类别使用频率的平均分布，`entropy_reg = (probs * (probs + 1e-8).log()).sum()` 是这个分布的负熵。最小化 `0.01 * entropy_reg` 也就是在*最大化*熵，推动模型大致均匀地使用全部 32 个类别，而不是坍缩到一小部分类别上。这是连续 VAE 里 P01 那个 KL 项在离散潜变量上的对应物：两者都是为了让潜在空间保持良好组织（这里是让各类别的使用频率均匀分布）而不是退化，只是用了适合离散而非连续潜变量的不同机制。
 
 ```python
 # 训练 CatVAE。
@@ -304,7 +308,7 @@ plt.grid(True, alpha=0.3)
 plt.tight_layout()
 plt.show()
 ```
-训练开始后，先做一次重建检查，确认类别瓶颈没有把图像结构压坏。
+训练开始后，先做一次重建检查，确认类别瓶颈没有把图像结构压坏。这和 P01 在连续潜在空间上做的健全性检查是同一回事，现在应用到每帧一个离散 32 选一编码上：这比 P01 的 32 个连续维度要窄得多的瓶颈，所以预期重建能保留大致的形状和颜色，但会丢失精细的位置信息。
 
 ```python
 # 可视化 CatVAE 重建效果。
@@ -337,6 +341,8 @@ catvae.train()
 因果掩码保证位置 t 只能注意到位置 t 及其之前的位置，从而在训练时防止模型窥视未来观测。
 
 位置 t 的输出预测以下内容：下一个离散潜在 token z_{t+1}（交叉熵）、奖励 r_t（MSE），以及结束标志 d_t（BCE）。
+
+这套架构更接近 [IRIS 的设计](../lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion#iris-把图像变成-句子)，而不是 STORM 的：IRIS 同样把帧 token 和动作 token 交错拼进一条序列（`torch.stack([z_emb, a_emb], dim=2).view(B, 2*T, D)` 构造出的正是 `[z0, a0, z1, a1, ...]` 这种交错），而 STORM 是在送进 Transformer 之前就把每步的 `z_t` 和 `a_t` 融合成一个 token，序列长度因此减半。IRIS 的三个联合预测目标（转移、奖励、终止）正好对应下面的 `token_head`、`reward_head`、`done_head`。`_causal_mask` 方法直接构建了[自注意力深挖框](../lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion#核心机制)里说的上三角掩码：`torch.triu(..., diagonal=1)` 把严格位于对角线上方的每个位置（也就是每个未来位置）标记为 `True`，表示「忽略」，这样位置 `t` 就只能关注 `0..t`，看不到更靠后的位置，这正是讲义里说的自回归约束。
 
 ```python
 # 因果 Transformer 世界模型。
@@ -470,7 +476,7 @@ print('正在生成 200 条合成轨迹（每条 20 步）...')
 obs_arr, act_arr, rew_arr, done_arr = generate_trajectories(n_traj=200, horizon=SEQ_LEN)
 print(f'obs: {obs_arr.shape}, act: {act_arr.shape}, rew: {rew_arr.shape}')
 ```
-图像这部分完成后，切到轨迹数据，让 Transformer 世界模型开始处理时间序列。
+图像这部分完成后，切到轨迹数据，让 Transformer 世界模型开始处理时间序列。`generate_trajectories` 构建了一个比 P02/P03 更简单的新合成环境：一个球根据动作向左或向右移动固定步长，球在中心右侧时奖励为 `1.0`。这里刻意比 P03 的环境简单，因为这个 notebook 的目标是对 RSSM 和 Transformer 的预测质量做受控比较，而不是演示策略学习；本 notebook 不训练任何 actor 或 critic。
 
 ```python
 # 用 CatVAE 对所有观测进行编码。
@@ -490,7 +496,7 @@ unique_tokens = idx_all.unique().numel()
 print(f'实际使用的类别 token 数：{unique_tokens} / {NUM_CATEGORIES}')
 catvae.train()
 ```
-观测已经编码成离散 token，接下来让 Transformer 直接在潜在序列上学习时间动力学。
+观测已经编码成离散 token 后，Transformer 就能直接在潜在序列上学习时间动力学。全部 200 条轨迹的每个观测都通过冻结的 `catvae.encoder` 做一次批量前向传播（`obs_arr.view(N * T, C, H, W)`），再用 `argmax` 而不是训练 CatVAE 时用的直通松弛转换成硬 one-hot 向量：这个阶段编码器是固定的，只是为 Transformer 生成训练目标，不需要梯度回传经过 tokenization，用真正的离散选择（而不是软松弛）能给 Transformer 提供干净、无歧义的 token 标签。
 
 ```python
 # 训练因果 Transformer。
@@ -553,7 +559,7 @@ for epoch in range(TRANS_EPOCHS):
 
 print('Transformer 训练完成。')
 ```
-优化开始后，把 token loss 和 reward loss 一起跟踪，确认两个预测头都在正常学习。
+优化开始后，把 token loss 和 reward loss 一起跟踪，确认两个预测头都在正常学习。标签的构造值得仔细看一下：`target_idx = z_b[:, 1:, :].argmax(-1)` 取的是从第 1 个位置往后每个位置的*真实* token，`pred_logits = token_logits[:, :-1, :]` 取的是从第一个位置到倒数第二个位置模型的预测。因为有因果掩码，`token_logits[:, t, :]` 是模型对位置 `t` *之后*内容的预测，所以把 `pred_logits[t]` 和 `target_idx[t]`（也就是 `z_b[t+1]`）配对，正是讲义描述的「根据目前看到的一切预测下一个 token」这个目标，实现方式和 IRIS、STORM 一样，就是普通的下一 token 交叉熵。总损失对三项加权（`tok_loss + 0.5 * rew_loss + 0.1 * done_loss`）；这样选权重是为了让 token 预测（最难、最需要样本的目标）在训练早期主导梯度。
 
 ```python
 # --- 绘制 token 损失和奖励损失 ---
@@ -657,7 +663,7 @@ rssm.eval()
 transformer_wm.eval()
 catvae.eval()
 ```
-PSNR 工具已经准备好，下面按 rollout horizon 逐步评估，看看预测质量如何随时间衰减。
+PSNR 工具定义好之后，在不同 rollout horizon 上评估，看看预测质量随时间怎样衰减。`psnr` 实现的是 [L04 STORM 指标页](../lectures/lecture-04-evaluation-by-model/04-storm-diffusion-drift#long-horizon-psnr)里的公式：$\text{PSNR} = 10 \log_{10}(\text{MAX}^2 / \text{MSE})$，这里 `MAX = 1.0`，因为像素被归一化到 `[0, 1]`。两个 rollout 都是从共享的起始帧 `z0` 开始完全开环的：RSSM 循环反复调用 `rssm.prior_step`（第 0 步之后不再有观测），Transformer 循环把自己预测的 token 追加进 `z_seq` 再重新喂入不断变长的序列（`z_seq = torch.cat([z_seq, next_z.unsqueeze(1)], dim=1)`），所以两者都会遇到 L04 讨论 STORM 时提到的同一个教师强制差距：每个模型的预测都会变成自己的下一步输入，早期的小误差可能在 10 步的展望里累积放大。
 
 ```python
 # 计算各预测步数的 PSNR。
@@ -720,7 +726,7 @@ print(f'{"预测步数":>10}  {"RSSM":>10}  {"Transformer":>12}')
 for h, r, t in zip(horizons, psnr_rssm_mean, psnr_trans_mean):
     print(f'{h:>10}  {r:>10.2f}  {t:>12.2f}')
 ```
-分数收集完毕后，把它们画成 horizon 曲线，整体趋势会更容易读。
+分数收集完毕后，把它们画成 horizon 曲线，让整体趋势更容易看清。把这张图和 [L04 的时程漂移讨论](../lectures/lecture-04-evaluation-by-model/05-diffusion-drift#时程漂移-所有世界模型的共同失效模式)放在一起看：两条曲线都会随 horizon 增大而下降（漂移在所有架构上都存在），但真正值得比较的是下降的*速率*，也就是 RSSM 固定大小的循环状态和 Transformer 全上下文注意力之间的差异。
 
 ```python
 # --- 绘制 PSNR 与预测步数的关系 ---
@@ -736,7 +742,7 @@ ax.grid(True, alpha=0.3)
 plt.tight_layout()
 plt.show()
 ```
-horizon 曲线先给出整体趋势，下面再用关键步的图像网格，把每一步的差异看得更具体。
+horizon 曲线给出的是整体趋势，图像网格则把逐步的差异变得具体：把第 1、5、10 步实际解码出来的帧和真实帧放在一起看，能看出每种骨干网络积累的是*哪一类*误差（模糊、颜色漂移、位置漂移），这是上面单一 PSNR 数字会平均掉的信息。
 
 ```python
 # 图像网格：真实帧 / RSSM / Transformer。
@@ -851,7 +857,7 @@ for epoch in range(RSSM_EPOCHS):
 print(f'RSSM 平均每轮耗时：{np.mean(rssm_times):.3f}s')
 print(f'Transformer 平均每轮耗时：{np.mean(epoch_times):.3f}s')
 ```
-计时基线记录完毕后，再把验证损失和墙钟时间放在一起比较，把效率上的取舍说清楚。
+计时基线记录完毕后，再把验证损失和墙钟时间放在一起比较，把效率上的取舍说清楚。左边的图把每个模型自己的损失曲线画在自己累计训练时间上，而不是按 epoch 数对齐，这是更公平的比较：两个模型跑完同样数量的 epoch 可能花费不同的墙钟时间，如果按 epoch 数把损失曲线叠在一起看，恰恰会掩盖这一节想要揭示的计算效率差异。
 
 ```python
 # 绘制验证损失与累计训练时间的关系。
