@@ -86,6 +86,26 @@ After separation, the model can roll forward using only the prior $p(\mathbf{z}_
 
 The PlaNet paper (Hafner et al., ICML 2019) verified this design through **ablation studies** (systematically removing one component of the model and observing the change in performance, thereby confirming the component's necessity): a purely stochastic path (no deterministic $h_t$) struggles to reliably retain information across multiple steps, and training optimization may fail to find solutions where some dimensions collapse to near-zero variance to store long-term information. A purely deterministic path (no stochastic $z_t$) cannot express the inherent stochasticity of the environment, and the distribution gap between imagined and real trajectories grows larger. **Both paths are indispensable.** The observation model is therefore conditioned on both $h_t$ and $z_t$: $o_t \sim p(o_t | h_t, z_t)$, with deterministic memory and stochastic perception jointly determining the reconstructed image.
 
+**Worked example (simplified single-step transition)**: the real $f_\phi$ is a gated GRU, which is not convenient to compute by hand, so this uses a simplified version with the gates removed, keeping only a linear combination, to demonstrate the same mechanism. Suppose $\mathbf{h}_{t-1} = [0, 0]$ (start of the sequence, hidden state initialized to zero), $z_{t-1} = 0.50$, $a_{t-1} = 1.0$, and the deterministic update uses weights $w_z = [0.4, 0.2]$, $w_a = [0.3, 0.1]$, bias $b = [0.1, 0]$:
+
+$$
+\mathbf{h}_t = w_z \cdot z_{t-1} + w_a \cdot a_{t-1} + b = [0.4, 0.2] \times 0.50 + [0.3, 0.1] \times 1.0 + [0.1, 0] = [0.60,\ 0.20]
+$$
+
+Using the prior network (also simplified to a linear layer) with $w_\mu = [0.5, 0.5]$ and a fixed $\sigma_{\text{pr}} = 0.20$, compute the prior's mean:
+
+$$
+\mu_{\text{pr}} = w_\mu \cdot \mathbf{h}_t = 0.5 \times 0.60 + 0.5 \times 0.20 = 0.40
+$$
+
+Finally, sample $z_t$ using the reparameterization trick (sampling noise $\varepsilon = 0.50$):
+
+$$
+z_t = \mu_{\text{pr}} + \sigma_{\text{pr}} \cdot \varepsilon = 0.40 + 0.20 \times 0.50 = 0.50
+$$
+
+This chain shows the complete data flow of one RSSM transition step: $(\mathbf{h}_{t-1}, z_{t-1}, a_{t-1}) \to \mathbf{h}_t \to \mu_{\text{pr}} \to z_t$. In the real code, $f_\phi$ is PyTorch's `GRUCell` (with reset and update gates, see the GRU callout above), and the prior network is more than a single linear layer, so the actual numbers will differ, but every step the data flows through is exactly the same as here. P02 runs the same numbers through this simplified chain to verify the formula and the code agree.
+
 
 ## Comparison of Three Dynamics Models
 
