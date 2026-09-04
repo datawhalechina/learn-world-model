@@ -468,6 +468,32 @@ class RSSM(nn.Module):
 rssm_model = RSSM(LATENT_DIM, ACTION_DIM, HIDDEN_DIM).to(DEVICE)
 print(f'RSSM params: {sum(p.numel() for p in rssm_model.parameters()):,}')
 ```
+**Checking the lecture's worked example**: the lecture hand-computes one simplified (gate-free, linear) RSSM transition step, getting $\mathbf{h}_t = [0.60, 0.20]$, $\mu_{\text{pr}} = 0.40$, $z_t = 0.50$. The cell below runs the same numbers and weights through the same computation. Note this deliberately does not use the `RSSM` class above (which internally uses a real `GRUCell` plus a multi-layer prior network, so its numbers will not match this simplified version); this cell only checks that the formula's derivation itself is correct.
+
+```python
+# Simplified single-step transition matching the lecture's worked example (not the real RSSM class).
+h_prev = torch.tensor([0.0, 0.0])
+z_prev = torch.tensor(0.50)
+a_prev = torch.tensor(1.0)
+
+w_z = torch.tensor([0.4, 0.2])
+w_a = torch.tensor([0.3, 0.1])
+b_h = torch.tensor([0.1, 0.0])
+h_t = w_z * z_prev + w_a * a_prev + b_h
+print(f'h_t = {h_t.tolist()}')
+assert torch.allclose(h_t, torch.tensor([0.60, 0.20]), atol=1e-6)
+
+w_mu = torch.tensor([0.5, 0.5])
+sigma_pr = 0.20
+mu_pr = (w_mu * h_t).sum()
+print(f'mu_pr = {mu_pr.item():.2f}')
+assert abs(mu_pr.item() - 0.40) < 1e-6
+
+eps = torch.tensor(0.50)
+z_t = mu_pr + sigma_pr * eps
+print(f'z_t = {z_t.item():.2f}')
+assert abs(z_t.item() - 0.50) < 1e-6
+```
 ## 3. Training
 
 All three models are trained for 20 epochs on the 180 training trajectories using Adam (lr=1e-3).
@@ -531,14 +557,6 @@ for epoch in range(1, EPOCHS + 1):
 
 print('Training complete.')
 ```
-## 3. Training
-
-All three models are trained for 20 epochs on the 180 training trajectories using Adam (lr=1e-3).
-Loss functions:
-- GRU: MSE between predicted z and actual z
-- MDN-RNN: negative log-likelihood of the Gaussian mixture
-- RSSM: ELBO = MSE reconstruction of z + KL divergence
-
 `run_epoch` is the shared training loop used for all three models: standard minibatch SGD with `clip_grad_norm_(model.parameters(), 1.0)` guarding against exploding gradients, which recurrent models are especially prone to over even the 20-step sequences used here. The three `*_loss` wrapper functions (`gru_loss`, `mdn_loss_fn`, `rssm_loss`) each adapt one model's own loss computation to the same `loss_fn(model, zb, ab)` signature `run_epoch` expects, so the same training loop drives all three without duplicating logic.
 
 Note that `RSSM.forward` (used by `rssm_loss`) reconstructs the *latent* `z_seq[:, t]` via `self.recon(z)`, not raw pixels. This is a simplification specific to this notebook: the lecture's RSSM reconstructs observations directly, $o_t \sim p(o_t \mid h_t, z_t)$, but since `z_seq` here is already the frozen P01 encoder's output, reconstructing it is a proxy for reconstructing pixels, one step removed. The three losses are not on a comparable numeric scale (MSE, mixture NLL, and ELBO have different units and typical magnitudes), which is exactly why the plot in the next cell normalizes each curve before comparing shapes rather than raw values.
