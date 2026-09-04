@@ -663,7 +663,7 @@ rssm.eval()
 transformer_wm.eval()
 catvae.eval()
 ```
-PSNR 工具定义好之后，在不同 rollout horizon 上评估，看看预测质量随时间怎样衰减。`psnr` 实现的是 [L04 STORM 指标页](../lectures/lecture-04-evaluation-by-model/04-storm-diffusion-drift#long-horizon-psnr)里的公式：$\text{PSNR} = 10 \log_{10}(\text{MAX}^2 / \text{MSE})$，这里 `MAX = 1.0`，因为像素被归一化到 `[0, 1]`。两个 rollout 都是从共享的起始帧 `z0` 开始完全开环的：RSSM 循环反复调用 `rssm.prior_step`（第 0 步之后不再有观测），Transformer 循环把自己预测的 token 追加进 `z_seq` 再重新喂入不断变长的序列（`z_seq = torch.cat([z_seq, next_z.unsqueeze(1)], dim=1)`），所以两者都会遇到 L04 讨论 STORM 时提到的同一个教师强制差距：每个模型的预测都会变成自己的下一步输入，早期的小误差可能在 10 步的展望里累积放大。
+PSNR 工具定义好之后，在不同 rollout horizon 上评估，看看预测质量随时间怎样衰减。`psnr` 实现的是 [L04 STORM 指标页](../lectures/lecture-04-evaluation-by-model/04-storm-diffusion-drift#长时域-psnr)里的公式：$\text{PSNR} = 10 \log_{10}(\text{MAX}^2 / \text{MSE})$，这里 `MAX = 1.0`，因为像素被归一化到 `[0, 1]`。两个 rollout 都是从共享的起始帧 `z0` 开始完全开环的：RSSM 循环反复调用 `rssm.prior_step`（第 0 步之后不再有观测），Transformer 循环把自己预测的 token 追加进 `z_seq` 再重新喂入不断变长的序列（`z_seq = torch.cat([z_seq, next_z.unsqueeze(1)], dim=1)`），所以两者都会遇到 L04 讨论 STORM 时提到的同一个教师强制差距：每个模型的预测都会变成自己的下一步输入，早期的小误差可能在 10 步的展望里累积放大。
 
 ```python
 # 计算各预测步数的 PSNR。

@@ -619,7 +619,7 @@ with torch.no_grad():
 
 print(f'Decoded rollout shape (GRU): {imgs_gru.shape}  (steps+1, H, W, 3)')
 ```
-With training complete, move to rollout evaluation and measure how errors accumulate as we predict further into the future. `ROLLOUT_STEPS = 10` open-loop steps means each model is given only the first frame `z0` and the true action sequence, then must predict every subsequent latent from its own previous predictions, with no further correction from real observations. This is precisely the **teacher forcing gap** described in [L03's STORM discussion](../lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion#storms-key-improvement-single-token-stochastic-latent-variable) and diagnosed formally in [L04](../lectures/lecture-04-evaluation-by-model/00-diagnostic-framework): training used real `z_seq` at every step, but this evaluation forces each model to compound its own errors, which is the harder and more realistic test of whether the learned dynamics are actually useful for imagination-based planning.
+With training complete, move to rollout evaluation and measure how errors accumulate as we predict further into the future. `ROLLOUT_STEPS = 10` open-loop steps means each model is given only the first frame `z0` and the true action sequence, then must predict every subsequent latent from its own previous predictions, with no further correction from real observations. This is precisely the **teacher forcing gap** described in [L03's STORM discussion](../lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion#storm-s-key-improvement-single-token-stochastic-latent-variable) and diagnosed formally in [L04](../lectures/lecture-04-evaluation-by-model/00-diagnostic-framework): training used real `z_seq` at every step, but this evaluation forces each model to compound its own errors, which is the harder and more realistic test of whether the learned dynamics are actually useful for imagination-based planning.
 
 ```python
 # Image grid: GT, GRU, MDN-RNN, RSSM.
@@ -741,7 +741,7 @@ plt.show()
 ```
 ## Save Checkpoint
 
-`rssm_model.state_dict()` is saved, not the GRU or MDN-RNN checkpoints, because RSSM is the dynamics core P03 builds on: the prior/posterior split that lets rollout run from `prior_net` alone (no real observations needed) is exactly what makes "training entirely in imagination" possible, the property the [Dreamer pipeline](../lectures/lecture-02-encode-and-dynamics/03-dynamics-dreamer-series#the-encoders-role-as-a-bridge-in-dreamer) depends on. P03 loads this checkpoint, wraps `rssm_model` with an actor and critic, and trains the policy entirely on `RSSM.rollout`-style imagined trajectories rather than on real environment interaction.
+`rssm_model.state_dict()` is saved, not the GRU or MDN-RNN checkpoints, because RSSM is the dynamics core P03 builds on: the prior/posterior split that lets rollout run from `prior_net` alone (no real observations needed) is exactly what makes "training entirely in imagination" possible, the property the [Dreamer pipeline](../lectures/lecture-02-encode-and-dynamics/03-dynamics-dreamer-series#the-encoder-s-role-as-a-bridge-in-dreamer) depends on. P03 loads this checkpoint, wraps `rssm_model` with an actor and critic, and trains the policy entirely on `RSSM.rollout`-style imagined trajectories rather than on real environment interaction.
 
 ```python
 checkpoint = {

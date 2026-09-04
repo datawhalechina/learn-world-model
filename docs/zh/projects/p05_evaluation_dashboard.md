@@ -694,7 +694,7 @@ print(f'  PSNR@5  : {dreamer_psnr_mean[5]:.2f} dB')
 print(f'  PSNR@10 : {dreamer_psnr_mean[10]:.2f} dB')
 print(f'  潜在漂移@10 : {dreamer_drift_mean[10]:.4f}')
 ```
-Dreamer 的指标记录完毕后，对 Transformer 基线跑同样的评估，把结果并排放在一起。注意这个 cell 是在**教师强制**条件下计算 `trans_tok_loss` 的（`transformer(z_seq_in, a_seq_in)` 在每个位置都拿到真实 token 序列作为上下文，与 P04 的训练方式一致），但 `trans_psnr` 和 `trans_drift` 是从**完全自回归**的 rollout 算出来的（`z_context = torch.cat([z_context, next_z.unsqueeze(0)], dim=1)` 每一步都用模型自己预测的 token 扩展上下文，第 0 步之后再没有任何真实 token）。同时报告两者是刻意的：教师强制损失和开环 PSNR/漂移数字之间的差距，正是 [L04 STORM 页面](../lectures/lecture-04-evaluation-by-model/04-storm-diffusion-drift#long-horizon-psnr)点名的**教师强制差距**，也是自回归世界模型的主要失效模式，下面第 8 节会明确回到这个差距上。
+Dreamer 的指标记录完毕后，对 Transformer 基线跑同样的评估，把结果并排放在一起。注意这个 cell 是在**教师强制**条件下计算 `trans_tok_loss` 的（`transformer(z_seq_in, a_seq_in)` 在每个位置都拿到真实 token 序列作为上下文，与 P04 的训练方式一致），但 `trans_psnr` 和 `trans_drift` 是从**完全自回归**的 rollout 算出来的（`z_context = torch.cat([z_context, next_z.unsqueeze(0)], dim=1)` 每一步都用模型自己预测的 token 扩展上下文，第 0 步之后再没有任何真实 token）。同时报告两者是刻意的：教师强制损失和开环 PSNR/漂移数字之间的差距，正是 [L04 STORM 页面](../lectures/lecture-04-evaluation-by-model/04-storm-diffusion-drift#长时域-psnr)点名的**教师强制差距**，也是自回归世界模型的主要失效模式，下面第 8 节会明确回到这个差距上。
 
 ```python
 # Transformer 指标。
