@@ -6,10 +6,11 @@
 
 # Learn World Models（⚠️ Alpha 内测版）
 
-[![在线阅读](https://img.shields.io/badge/在线阅读-blue?style=for-the-badge&logo=github)](https://datawhalechina.github.io/learn-world-model)
 [![收藏数](https://img.shields.io/github/stars/datawhalechina/learn-world-model?style=for-the-badge&logo=github&label=收藏数)](https://github.com/datawhalechina/learn-world-model/stargazers)
 [![许可证: MIT](https://img.shields.io/badge/许可证-MIT-yellow?style=for-the-badge)](https://github.com/datawhalechina/learn-world-model/blob/main/LICENSE)
 > **通过动手构建掌握世界模型：从潜在动力学的直觉，到可运行的仿真、规划与评估系统。**
+
+### 📖 [**在线阅读课程 →**](https://datawhalechina.github.io/learn-world-model)
 
 </div>
 

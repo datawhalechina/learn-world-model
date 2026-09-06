@@ -6,11 +6,12 @@
 
 # Learn World Models（⚠️ 알파 프리뷰）
 
-[![온라인으로 읽기](https://img.shields.io/badge/온라인으로_읽기-blue?style=for-the-badge&logo=github)](https://datawhalechina.github.io/learn-world-model)
 [![GitHub Stars](https://img.shields.io/github/stars/datawhalechina/learn-world-model?style=for-the-badge&logo=github)](https://github.com/datawhalechina/learn-world-model/stargazers)
 [![라이선스: MIT](https://img.shields.io/badge/라이선스-MIT-yellow?style=for-the-badge)](https://github.com/datawhalechina/learn-world-model/blob/main/LICENSE)
 
 > **잠재 동역학에 대한 직관에서 출발해 실제로 작동하는 시뮬레이션, 계획, 평가 시스템에 이르기까지, 월드모델을 직접 만들어보며 배웁니다.**
+
+### 📖 [**온라인으로 강의 읽기 →**](https://datawhalechina.github.io/learn-world-model)
 
 </div>
 
