@@ -4,7 +4,7 @@ This file guides Claude Code when working in this repository.
 
 ## Repository Purpose
 
-A bilingual VitePress curriculum teaching world models through paired lectures and hands-on projects, for readers with fundamental deep learning and RL knowledge. English and Chinese are parallel editions: keep them structurally and semantically aligned unless the user asks otherwise.
+A trilingual VitePress curriculum teaching world models through paired lectures and hands-on projects, for readers with fundamental deep learning and RL knowledge. English, Chinese, and Korean are parallel editions: keep them structurally and semantically aligned unless the user asks otherwise.
 
 ## Canonical Learning Path
 
@@ -25,18 +25,18 @@ Preserve the planning-first order in L03 and the model-independent diagnostic fr
 
 ## Repository Layout
 
-- `docs/` — VitePress site. `docs/.vitepress/config.mts` defines bilingual navigation/sidebars.
-- `docs/en/`, `docs/zh/` — parallel editions. `docs/*/lectures/`, `docs/*/projects/`.
+- `docs/` — VitePress site. `docs/.vitepress/config.mts` defines trilingual navigation/sidebars.
+- `docs/en/`, `docs/zh/`, `docs/ko/` — parallel editions. `docs/*/lectures/`, `docs/*/projects/`.
 - `external/world-model-tutorial/` — reference code and notes.
 - `scripts/build-notebook-pages.ts` — regenerates project Markdown from notebooks.
 
 ## Editing Invariants
 
 - Read the surrounding section first; match its depth, terminology, tone.
-- Mirror structural and prose changes across EN/ZH unless told otherwise.
+- Mirror structural and prose changes across EN/ZH/KO unless told otherwise.
 - Update `config.mts` whenever pages are added, removed, renamed, or reordered.
 - Explain a concept when it first becomes necessary; a name used earlier gets a short preview, not the full mechanism.
-- Split long pages at a clear conceptual boundary and update both sidebars.
+- Split long pages at a clear conceptual boundary and update all sidebars.
 - No two consecutive `> **📖` learning-note blocks; merge related definitions, or use prose if the passage is the main explanation.
 - No em dashes. No arrow-chain prose (`A -> B -> C`). No ASCII diagrams.
 - Use Mermaid only when it materially improves understanding, never for trivial linear flows.
@@ -58,7 +58,7 @@ git diff --check
 npm run docs:build
 ```
 
-Also verify: every EN lecture page has a ZH counterpart; every sidebar target resolves; relative links resolve; lecture indexes/roadmap/homepage/project prerequisites describe the same order; generated project Markdown wasn't edited directly.
+Also verify: every EN lecture page has a ZH and KO counterpart; every sidebar target resolves; relative links resolve; lecture indexes/roadmap/homepage/project prerequisites describe the same order; generated project Markdown wasn't edited directly.
 
 ## Commands
 

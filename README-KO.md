@@ -11,7 +11,7 @@
 
 > **잠재 동역학에 대한 직관에서 출발해 실제로 작동하는 시뮬레이션, 계획, 평가 시스템에 이르기까지, 월드모델을 직접 만들어보며 배웁니다.**
 
-### 📖 [**온라인으로 강의 읽기 →**](https://datawhalechina.github.io/learn-world-model)
+### 📖 [**온라인으로 강좌 읽기 →**](https://datawhalechina.github.io/learn-world-model)
 
 </div>
 
@@ -118,10 +118,10 @@ learn-world-model/
 
 ## 커뮤니티
 
-QR 코드를 스캔해 위챗 대화방(微信交流群)에 참여하세요.
+QR 코드를 스캔해 위챗 톡방(微信交流群)에 참여하세요.
 
 <div align="center">
-  <img src="./docs/public/wechat.png" width="300" alt="위챗 대화방 QR 코드">
+  <img src="./docs/public/wechat.png" width="300" alt="위챗 톡방 QR 코드">
 </div>
 
 ---
@@ -138,4 +138,5 @@ QR 코드를 스캔해 위챗 대화방(微信交流群)에 참여하세요.
 | ---- | ---- | ----------- | ------ |
 | Zhimin Zhao | 프로젝트 리드 | Queen's University | [@zhimin-z](https://github.com/zhimin-z) |
 | Qi Wang | 프로젝트 리드 | Chinese Academy of Sciences | [@qiwang067](https://github.com/qiwang067) |
+| Dongwoo Ro | 기여자 |  | [@dwro0121](https://github.com/dwro0121) |
 | Xun Wang | 기여자 |  | [@wangxunx](https://github.com/wangxunx) |
