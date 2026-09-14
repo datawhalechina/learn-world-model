@@ -2,7 +2,7 @@
   <img src="./docs/public/preface.png" width="100%" alt="Learn World Models Banner">
   <br>
 
-[English](./README.md) · [中文](./README-CN.md)
+[English](./README.md) · [中文](./README-CN.md) · [한국어](./README-KO.md)
 
 # Learn World Models（⚠️ Alpha Preview）
 
@@ -101,11 +101,13 @@ npm run screenshots:readme
 ```
 learn-world-model/
 ├── docs/                                  # VitePress documentation site
-│   ├── .vitepress/config.mts             # nav and sidebar (EN + ZH)
+│   ├── .vitepress/config.mts             # nav and sidebar (EN + ZH + KO)
 │   ├── en/lectures/                       # 5 English lecture modules
 │   ├── zh/lectures/                       # 5 Chinese lecture modules
+│   ├── ko/lectures/                       # 5 Korean lecture modules
 │   ├── en/projects/                       # 6 English project pages
-│   └── zh/projects/                       # 6 Chinese project pages
+│   ├── zh/projects/                       # 6 Chinese project pages
+│   └── ko/projects/                       # 6 Korean project pages
 ├── external/world-model-tutorial/         # PyTorch source referenced by projects
 │   └── references.md                      # four-era history and architecture survey
 ├── scripts/                               # build utilities (screenshots, PDF)

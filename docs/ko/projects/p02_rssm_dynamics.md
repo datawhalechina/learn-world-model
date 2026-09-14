@@ -468,6 +468,32 @@ class RSSM(nn.Module):
 rssm_model = RSSM(LATENT_DIM, ACTION_DIM, HIDDEN_DIM).to(DEVICE)
 print(f'RSSM params: {sum(p.numel() for p in rssm_model.parameters()):,}')
 ```
+**강의 예시 직접 확인해보기**: 강의에서는 단순화된(게이트 없는 선형) RSSM 전이 한 스텝을 손으로 계산해 $\mathbf{h}_t = [0.60, 0.20]$, $\mu_{\text{pr}} = 0.40$, $z_t = 0.50$을 얻었습니다. 아래 셀은 같은 숫자와 가중치로 같은 계산을 그대로 실행합니다. 다만 위의 `RSSM` 클래스는 의도적으로 쓰지 않는다는 점에 유의하세요(그 클래스는 내부적으로 진짜 `GRUCell`과 다층 사전 확률 네트워크를 쓰므로 수치가 이 단순화 버전과 맞지 않습니다). 오직 공식의 유도 자체가 맞는지만 검증하는 셀입니다.
+
+```python
+# 강의의 손 계산 예시와 일치하는 단순화된 단일 스텝 전이(실제 RSSM 클래스 아님).
+h_prev = torch.tensor([0.0, 0.0])
+z_prev = torch.tensor(0.50)
+a_prev = torch.tensor(1.0)
+
+w_z = torch.tensor([0.4, 0.2])
+w_a = torch.tensor([0.3, 0.1])
+b_h = torch.tensor([0.1, 0.0])
+h_t = w_z * z_prev + w_a * a_prev + b_h
+print(f'h_t = {h_t.tolist()}')
+assert torch.allclose(h_t, torch.tensor([0.60, 0.20]), atol=1e-6)
+
+w_mu = torch.tensor([0.5, 0.5])
+sigma_pr = 0.20
+mu_pr = (w_mu * h_t).sum()
+print(f'mu_pr = {mu_pr.item():.2f}')
+assert abs(mu_pr.item() - 0.40) < 1e-6
+
+eps = torch.tensor(0.50)
+z_t = mu_pr + sigma_pr * eps
+print(f'z_t = {z_t.item():.2f}')
+assert abs(z_t.item() - 0.50) < 1e-6
+```
 ## 3. 학습
 
 세 모델 모두 180개 학습 궤적에 대해 Adam(lr=1e-3)으로 20 에폭 동안 학습됩니다.
@@ -531,14 +557,6 @@ for epoch in range(1, EPOCHS + 1):
 
 print('Training complete.')
 ```
-## 3. 학습
-
-세 모델 모두 180개 학습 궤적에 대해 Adam(lr=1e-3)으로 20 에폭 동안 학습됩니다.
-손실 함수:
-- GRU: 예측된 z와 실제 z 사이의 MSE
-- MDN-RNN: 가우시안 혼합의 음의 로그가능도
-- RSSM: ELBO = z의 MSE 재구성 + KL 발산
-
 `run_epoch`는 세 모델 모두가 공유하는 학습 루프입니다. 표준적인 미니배치 SGD에 `clip_grad_norm_(model.parameters(), 1.0)`을 더해 그래디언트 폭주를 막는데, 순환 모델은 여기서 쓰는 20스텝짜리 짧은 시퀀스에서도 특히 이 문제에 취약합니다. 세 개의 `*_loss` 래퍼 함수(`gru_loss`, `mdn_loss_fn`, `rssm_loss`)는 각 모델 고유의 손실 계산을 `run_epoch`가 기대하는 동일한 `loss_fn(model, zb, ab)` 시그니처에 맞춰주므로, 같은 학습 루프가 로직을 중복하지 않고도 세 모델 모두를 구동할 수 있습니다.
 
 `RSSM.forward`(`rssm_loss`가 사용)는 원본 픽셀이 아니라 `self.recon(z)`를 통해 *잠재값* `z_seq[:, t]`를 재구성한다는 점에 유의하세요. 이는 이 노트북에 특화된 단순화입니다. 강의의 RSSM은 관측 $o_t \sim p(o_t \mid h_t, z_t)$를 직접 재구성하지만, 여기서 `z_seq`는 이미 고정된 P01 인코더의 출력이므로, 이를 재구성하는 것은 한 단계 건너뛴 픽셀 재구성의 대리 지표입니다. 세 손실은 서로 비교 가능한 수치 스케일에 있지 않습니다(MSE, 혼합 NLL, ELBO는 단위와 전형적인 크기가 다릅니다). 바로 그래서 다음 셀의 그래프는 원값이 아니라 각 곡선을 정규화한 뒤 형태를 비교합니다.

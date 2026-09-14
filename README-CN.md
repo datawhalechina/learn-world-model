@@ -2,7 +2,7 @@
   <img src="./docs/public/preface.png" width="100%" alt="Learn World Models Banner">
   <br>
 
-[English](./README.md) · [中文](./README-CN.md)
+[English](./README.md) · [中文](./README-CN.md) · [한국어](./README-KO.md)
 
 # Learn World Models（⚠️ Alpha 内测版）
 
@@ -100,11 +100,13 @@ npm run screenshots:readme
 ```
 learn-world-model/
 ├── docs/                                  # VitePress 文档站
-│   ├── .vitepress/config.mts             # 导航与侧边栏（EN + ZH）
+│   ├── .vitepress/config.mts             # 导航与侧边栏（EN + ZH + KO）
 │   ├── en/lectures/                       # 5 个英文讲义模块
 │   ├── zh/lectures/                       # 5 个中文讲义模块
+│   ├── ko/lectures/                       # 5 个韩文讲义模块
 │   ├── en/projects/                       # 6 个英文项目页
-│   └── zh/projects/                       # 6 个中文项目页
+│   ├── zh/projects/                       # 6 个中文项目页
+│   └── ko/projects/                       # 6 个韩文项目页
 ├── external/world-model-tutorial/         # 项目引用的 PyTorch 源码
 │   └── references.md                      # 四时代历史与架构综述
 ├── scripts/                               # 构建工具（截图、PDF）
@@ -135,4 +137,5 @@ learn-world-model/
 | ---- | ---- | ---- | ------ |
 | 赵志民 | 项目负责人 | 皇后大学 | [@zhimin-z](https://github.com/zhimin-z) |
 | 王琦 | 项目负责人 | 上海交通大学 | [@qiwang067](https://github.com/qiwang067) |
+| 鲁东祐 | 贡献者 |  | [@dwro0121](https://github.com/dwro0121) |
 | 王迅 | 贡献者 |  | [@wangxunx](https://github.com/wangxunx) |

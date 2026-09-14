@@ -626,8 +626,6 @@ print('behavior_update defined.')
 
 `N_ITERATIONS`번의 바깥 반복마다 네 가지 하위 단계가 실행됩니다. 현재 액터로 실제 에피소드 하나를 수집하고(`collect_episode`), 재현된 궤적 배치로 월드모델을 업데이트하고(`world_model_update`), 그 에피소드의 상태에서 상상된 롤아웃으로 크리틱을 업데이트하며(`behavior_update`), 모방을 통해 액터를 업데이트합니다(`supervised_policy_update`). 마지막 단계가 1절에서 미리 언급한 부분입니다. `expert_action_from_obs`는 이 셀에 직접 박혀 있는 손으로 짠 휴리스틱("중앙으로 이동")이며, 액터는 정책 그래디언트나 상상을 통한 역전파가 아니라 전문가의 동작 레이블에 대한 일반적인 `F.cross_entropy`, 즉 표준적인 지도학습 행동 복제로 학습됩니다. 이는 튜토리얼 규모 데모를 위한 실용적인 대체입니다. `imagined_rollout(differentiable=True)`를 통한 완전한 미분 가능 액터 학습은 구현되어 있고 사용할 수 있지만(3절), 하이퍼파라미터에 더 민감하고 `N_ITERATIONS = 30`번의 반복 안에서 안정적으로 수렴하기에는 더 느리므로, 기본 학습 루프는 더 안정적인 모방 신호를 대신 사용합니다. 강의에 충실한 손실이 실제로 동작하는 모습을 보고 싶다면, `supervised_policy_update` 호출을 `imagined_rollout(h, z, differentiable=True)`가 반환하는 `r_seq`로 계산한 액터 손실로 바꾸고, 강의가 설명하는 대로 크리틱을 통해 극대화하면 됩니다.
 
-에피소드 수집이 준비되었으니, 학습 루프가 결과를 기록하기 시작하기 전에 지표 이력을 초기화합니다.
-
 ```python
 def collect_episode(env_seed=None, deterministic=False, epsilon=0.05):
     """Collect one episode with the current actor."""
