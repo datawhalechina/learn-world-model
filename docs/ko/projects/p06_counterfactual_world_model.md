@@ -84,7 +84,7 @@ N_ACTIONS    = 2
 SEQ_LEN      = 20
 ROLLOUT_LEN  = 10
 
-PATH         = Path('.')
+PATH         = Path('../../public')
 DREAMER_CKPT = PATH / 'dreamer.pt'
 TRANS_CKPT   = PATH / 'transformer_wm.pt'
 CAUSAL_CKPT  = PATH / 'causal_wm.pt'
@@ -726,6 +726,7 @@ plt.show()
 재사용을 위해 동작 정규화 모델을 저장하고 핵심 수치를 기록합니다. 역동역학 정규화 항으로 학습된 모델인 `causal_wm`이 저장되는 모델입니다. 이 노트북이 실제로 동작-인과적이라고 보여준 모델이므로 앞으로 가져갈 가치가 있는 산출물이고, `baseline_wm`은 이 노트북 안에서 정규화 항 없이는 어떤 일이 일어나는지 보여주는 비교 대상으로만 존재하는 것과 대조됩니다.
 
 ```python
+CAUSAL_CKPT.parent.mkdir(parents=True, exist_ok=True)
 torch.save({
     'causal_wm': causal_wm.state_dict(),
     'action_influence': {

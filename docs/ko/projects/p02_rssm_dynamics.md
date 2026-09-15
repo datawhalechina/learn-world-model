@@ -168,7 +168,7 @@ def _load_vae_checkpoint(path):
         return True
     raise KeyError(f'Unrecognized checkpoint format: {list(ckpt.keys())[:10]}')
 
-ckpt_path = Path('vae_encoder.pt')
+ckpt_path = Path('../../public/vae_encoder.pt')
 try:
     _load_vae_checkpoint(ckpt_path)
     print(f'Loaded VAE weights from {ckpt_path}')
@@ -752,8 +752,9 @@ checkpoint = {
     'epochs_trained':  EPOCHS,
     'final_loss':      losses_rssm[-1],
 }
-torch.save(checkpoint, 'rssm.pt')
-print('RSSM checkpoint saved to rssm.pt')
+Path('../../public').mkdir(parents=True, exist_ok=True)
+torch.save(checkpoint, '../../public/rssm.pt')
+print('RSSM checkpoint saved to ../../public/rssm.pt')
 print(f'  hidden_dim={HIDDEN_DIM}, latent_dim={LATENT_DIM}')
 print(f'  final ELBO loss: {losses_rssm[-1]:.4f}')
 ```

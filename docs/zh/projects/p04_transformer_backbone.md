@@ -119,7 +119,7 @@ def optimizer_step(optimizer, scaler=None):
     else:
         optimizer.step()
 
-PATH = Path('.')
+PATH = Path('../../public')
 print('Device:', DEVICE)
 if USE_TPU:
     print('TPU backend    : torch_xla')
@@ -629,7 +629,7 @@ class RSSM(nn.Module):
 
 
 # --- 加载或初始化 RSSM ---
-rssm_path = next((p for p in [PATH / 'rssm.pt', PATH / 'notebooks' / 'rssm.pt'] if p.exists()), None)
+rssm_path = PATH / 'rssm.pt' if (PATH / 'rssm.pt').exists() else None
 if rssm_path is not None:
     try:
         state = torch.load(rssm_path, map_location=DEVICE)

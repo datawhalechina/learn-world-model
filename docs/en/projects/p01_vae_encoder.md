@@ -519,7 +519,8 @@ Save the checkpoint as `vae_encoder.pt` so P02 and P03 can reuse the encoder wei
 ```python
 import os
 
-checkpoint_path = 'vae_encoder.pt'
+checkpoint_path = '../../public/vae_encoder.pt'
+os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
 torch.save({
     'model_state_dict': model.state_dict(),
     'encoder':          model.encoder.state_dict(),
@@ -540,7 +541,7 @@ print(f'Final recon loss    : {history_recon[-1]:.5f}')
 print(f'Final KL divergence : {history_kl[-1]:.6f}')
 print()
 print('To load in a downstream project:')
-print("  ckpt = torch.load('vae_encoder.pt', map_location='cpu')")
+print("  ckpt = torch.load('../../public/vae_encoder.pt', map_location='cpu')")
 print("  model = VAE(latent_dim=ckpt['latent_dim'])")
 print("  model.load_state_dict(ckpt['model_state_dict'])")
 ```

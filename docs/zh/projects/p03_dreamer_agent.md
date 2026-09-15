@@ -154,9 +154,9 @@ LR_WM   = 3e-4
 LR_AC   = 3e-4
 
 # 权重文件路径（来自前序项目）
-ENCODER_PATH = 'vae_encoder.pt'
-RSSM_PATH    = 'rssm.pt'
-SAVE_PATH    = 'dreamer.pt'
+ENCODER_PATH = '../../public/vae_encoder.pt'
+RSSM_PATH    = '../../public/rssm.pt'
+SAVE_PATH    = '../../public/dreamer.pt'
 ```
 ### 1.2 VAE 编码器
 
@@ -438,7 +438,7 @@ def _load_encoder_decoder_from_vae_checkpoint(path):
     encoder.load_state_dict(enc_state, strict=True)
     return '仅编码器来自 model_state_dict（解码器在 P03 中有意重新初始化）'
 
-vae_ckpt_candidates = [Path(ENCODER_PATH), Path('notebooks') / ENCODER_PATH]
+vae_ckpt_candidates = [Path(ENCODER_PATH)]
 vae_ckpt_path = next((p for p in vae_ckpt_candidates if p.exists()), None)
 if vae_ckpt_path is not None:
     try:
@@ -449,7 +449,7 @@ if vae_ckpt_path is not None:
 else:
     print('未找到 vae_encoder.pt，使用随机初始化编码器')
 
-rssm_path = next((p for p in [Path(RSSM_PATH), Path('notebooks') / RSSM_PATH] if p.exists()), None)
+rssm_path = Path(RSSM_PATH) if Path(RSSM_PATH).exists() else None
 if rssm_path is not None:
     try:
         state = torch.load(rssm_path, map_location=DEVICE)
@@ -998,6 +998,7 @@ checkpoint = {
         'mean_pred_reward': float(np.mean(imag_reward_sums)),
     },
 }
+Path(SAVE_PATH).parent.mkdir(parents=True, exist_ok=True)
 torch.save(checkpoint, SAVE_PATH)
 print(f'权重文件已保存至 {SAVE_PATH}')
 

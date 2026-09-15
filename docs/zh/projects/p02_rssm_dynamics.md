@@ -215,7 +215,7 @@ def _load_vae_checkpoint(path):
         return True
     raise KeyError(f'未识别的权重文件格式: {list(ckpt.keys())[:10]}')
 
-ckpt_path = Path('vae_encoder.pt')
+ckpt_path = Path('../../public/vae_encoder.pt')
 try:
     _load_vae_checkpoint(ckpt_path)
     print(f'已从 {ckpt_path} 加载 VAE 权重')
@@ -798,8 +798,9 @@ checkpoint = {
     'epochs_trained':  EPOCHS,
     'final_loss':      losses_rssm[-1],
 }
-torch.save(checkpoint, 'rssm.pt')
-print('RSSM 权重文件已保存至 rssm.pt')
+Path('../../public').mkdir(parents=True, exist_ok=True)
+torch.save(checkpoint, '../../public/rssm.pt')
+print('RSSM 权重文件已保存至 ../../public/rssm.pt')
 print(f'  hidden_dim={HIDDEN_DIM}, latent_dim={LATENT_DIM}')
 print(f'  最终 ELBO 损失: {losses_rssm[-1]:.4f}')
 ```

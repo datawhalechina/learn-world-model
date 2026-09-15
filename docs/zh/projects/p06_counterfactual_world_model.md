@@ -132,7 +132,7 @@ N_ACTIONS    = 2
 SEQ_LEN      = 20
 ROLLOUT_LEN  = 10
 
-PATH         = Path('.')
+PATH         = Path('../../public')
 DREAMER_CKPT = PATH / 'dreamer.pt'
 TRANS_CKPT   = PATH / 'transformer_wm.pt'
 CAUSAL_CKPT  = PATH / 'causal_wm.pt'
@@ -779,6 +779,7 @@ plt.show()
 保存的是 `causal_wm`，也就是带逆动力学正则项训练出来的模型：它是这个 notebook 演示为真正具有动作因果性的模型，所以是值得留下来复用的产物，不像 `baseline_wm`，它在这个 notebook 里只是一个对照点，用来展示没有正则项时会发生什么。
 
 ```python
+CAUSAL_CKPT.parent.mkdir(parents=True, exist_ok=True)
 torch.save({
     'causal_wm': causal_wm.state_dict(),
     'action_influence': {

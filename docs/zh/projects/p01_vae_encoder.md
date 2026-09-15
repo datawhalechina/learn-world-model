@@ -570,7 +570,8 @@ plt.show()
 ```python
 import os
 
-checkpoint_path = 'vae_encoder.pt'
+checkpoint_path = '../../public/vae_encoder.pt'
+os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
 torch.save({
     'model_state_dict': model.state_dict(),
     'encoder':          model.encoder.state_dict(),
@@ -591,7 +592,7 @@ print(f'最终重建损失    : {history_recon[-1]:.5f}')
 print(f'最终 KL 散度    : {history_kl[-1]:.6f}')
 print()
 print('在下游项目中加载的方法：')
-print("  ckpt = torch.load('vae_encoder.pt', map_location='cpu')")
+print("  ckpt = torch.load('../../public/vae_encoder.pt', map_location='cpu')")
 print("  model = VAE(latent_dim=ckpt['latent_dim'])")
 print("  model.load_state_dict(ckpt['model_state_dict'])")
 ```

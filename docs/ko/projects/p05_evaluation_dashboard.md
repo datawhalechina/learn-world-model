@@ -81,7 +81,7 @@ SEQ_LEN      = 20    # trajectory horizon
 N_EVAL_TRAJ  = 20    # held-out episodes
 ROLLOUT_LEN  = 10    # steps used for horizon metrics
 
-NOTEBOOKS_DIR = Path('.')
+NOTEBOOKS_DIR = Path('../../public')
 DREAMER_CKPT  = NOTEBOOKS_DIR / 'dreamer.pt'
 TRANS_CKPT    = NOTEBOOKS_DIR / 'transformer_wm.pt'
 

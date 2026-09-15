@@ -84,7 +84,7 @@ N_ACTIONS    = 2
 SEQ_LEN      = 20
 ROLLOUT_LEN  = 10
 
-PATH         = Path('.')
+PATH         = Path('../../public')
 DREAMER_CKPT = PATH / 'dreamer.pt'
 TRANS_CKPT   = PATH / 'transformer_wm.pt'
 CAUSAL_CKPT  = PATH / 'causal_wm.pt'
@@ -726,6 +726,7 @@ plt.show()
 Save the action-regularized model for reuse and record the headline numbers. `causal_wm`, the model trained with the inverse-dynamics regularizer, is the one saved: it is the model this notebook demonstrates as actually action-causal, so it is the useful artifact to carry forward, unlike `baseline_wm`, which exists in this notebook only as a comparison point showing what happens without the regularizer.
 
 ```python
+CAUSAL_CKPT.parent.mkdir(parents=True, exist_ok=True)
 torch.save({
     'causal_wm': causal_wm.state_dict(),
     'action_influence': {

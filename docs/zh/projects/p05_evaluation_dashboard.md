@@ -129,7 +129,7 @@ SEQ_LEN      = 20    # 轨迹时域长度
 N_EVAL_TRAJ  = 20    # 留出 episode 数量
 ROLLOUT_LEN  = 10    # 用于时域指标的步数
 
-NOTEBOOKS_DIR = Path('.')
+NOTEBOOKS_DIR = Path('../../public')
 DREAMER_CKPT  = NOTEBOOKS_DIR / 'dreamer.pt'
 TRANS_CKPT    = NOTEBOOKS_DIR / 'transformer_wm.pt'
 
