@@ -12,6 +12,10 @@ lecture: 3
 
 JEPA changed *what* is predicted, from pixels to semantic representations. Spatial 3D/4D models change *where* prediction happens: instead of a flat latent vector or a 2D pixel grid, the state is an explicit representation of 3D scene geometry, and prediction operates over that geometry directly.
 
+### A Common Misconception: Photorealistic Reconstruction Is Already a World Model
+
+L01 distinguished the renderer from the simulator: the renderer answers what the world looks like, the simulator answers what state the world is in and how it evolves. A static NeRF or 3D Gaussian Splatting scene, however geometrically precise its novel views, only answers the renderer's question: what does this scene look like from an angle it was not directly trained on. It becomes useful for the simulator's job only once a 4D extension lets that geometry deform under an observed trajectory or an agent's action. Geometric precision and dynamics capability are different axes, the same renderer-to-simulator gap this course opened with, now showing up inside a single representation choice rather than between separate systems.
+
 ### Why a Flat Latent Vector Can Lose the Wrong Things
 
 RSSM, Transformer, and diffusion backbones covered so far all treat the observation as a 2D image (or a sequence of them) and compress it into a vector or a token grid. This works well for control tasks defined by 2D visual patterns, such as Atari or DMControl. It works less well for a specific failure mode: **object permanence** (an object should still be understood to exist and hold its position when temporarily occluded, out of frame, or viewed from a new angle) and **multi-view consistency** (the same physical scene, observed from different camera positions, should decode to geometrically consistent structure). A 2D latent vector has no explicit notion of "where things are in 3D space," so nothing forces the model's predictions to respect the physical constraint that an occluded object has not vanished.

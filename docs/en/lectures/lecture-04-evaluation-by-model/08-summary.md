@@ -38,14 +38,14 @@ The world model enters the MPC rollout or imagined rollout, used directly for on
 
 Across four lectures, each one addressed a concrete problem:
 
-**L01: Internal Simulation and Historical Context**
-Starting from Craik's "mental models" (1943), tracing through the 1950s RNN origins, Ha and Schmidhuber's 2018 World Models paper, the end-to-end maturation of Dreamer in 2019, and finally LeCun's JEPA paradigm in 2023, this lecture built a historical intuition for how world models have evolved.
+**L01: World Model Definition and Origins**
+This lecture established a working contract through state estimation, transition, emission, and prediction queries, distinguished rendering, simulation, and planning, then traced the idea from Craik's "mental models" (1943) to modern learned systems.
 
-**L02: Observation Encoding and Latent Dynamics**
-The Observation Encoding module implemented a VAE encoder: a CNN compresses 64x64 images into a latent vector `z`, with the ELBO loss (reconstruction term + KL term) regularizing the latent space. The Latent Dynamics module started from the GRU, progressed through the MDN-RNN, and arrived at the RSSM, where the dual-track architecture of deterministic state `h_t` and stochastic state `z_t` forms the foundation of Dreamer.
+**L02: State Estimation, Observation Encoding, and Latent Dynamics**
+This lecture first used belief states to explain how hidden state is estimated from partial observations, then implemented a VAE encoder and RSSM dynamics. It closed by contrasting teacher forcing with free rollouts to show why one-step accuracy cannot guarantee long-horizon stability.
 
 **L03: Architecture Patterns, Learning Paradigms, and Planning Methods**
-Using the RSSM implemented in P02 as the RNN baseline, this lecture compared eight architecture families side by side (RNN/RSSM, Transformer, Diffusion, JEPA, RWM, Genie, LoopWM, WAM), clarified four learning paradigms, and traced the planning progression from CEM-MPC through latent actor-critic to TD-MPC.
+Using the RSSM implemented in P02 as the RNN baseline, this lecture compared nine architecture families (RNN/RSSM, Transformer, diffusion, JEPA, RWM, spatial 3D/4D, Genie, LoopWM, and WAM) and traced the planning mechanisms from CEM-MPC through latent actor-critic to TD-MPC.
 
 **L04: Diagnosing World Models (this lecture)**
 Evaluation is not "scoring" but "diagnosis." Each architecture has its own characteristic failure modes, and only targeted metrics can surface problems. Horizon drift is the long-horizon challenge shared by all world models. Mitigating it requires short-horizon training, target networks, and continuous supplementation with real data.

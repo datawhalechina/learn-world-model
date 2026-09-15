@@ -13,8 +13,8 @@ Learn World Models 是一门以项目为驱动的世界模型课程，从 VAE �
 
 | 讲义 | 主题 |
 |------|------|
-| [第一讲](./lectures/lecture-01-internal-simulation/) | 内部仿真与历史脉络 |
-| [第二讲](./lectures/lecture-02-encode-and-dynamics/) | 观测编码与潜在动力学 |
+| [第一讲](./lectures/lecture-01-internal-simulation/) | 世界模型的定义与来路 |
+| [第二讲](./lectures/lecture-02-encode-and-dynamics/) | 状态估计、观测编码与潜在动力学 |
 | [第三讲](./lectures/lecture-03-architecture-patterns/) | 架构模式、学习范式与规划 |
 | [第四讲](./lectures/lecture-04-evaluation-by-model/) | 诊断世界模型 |
 | [第五讲](./lectures/lecture-05-frontier-debates/) | 前沿思辨 |
@@ -27,8 +27,8 @@ Learn World Models 是一门以项目为驱动的世界模型课程，从 VAE �
 
 <ul class="index-list">
   <li><strong>为什么需要世界模型</strong>：从 Craik（1943）到 JEPA 的历史脉络。</li>
-  <li><strong>观测编码</strong>：VAE、CNN 编码器、ELBO，以及通往 Dreamer 的桥梁。</li>
-  <li><strong>潜在动力学</strong>：GRU、MDN-RNN 与 RSSM（确定性 + 随机性）。</li>
+  <li><strong>状态估计与观测编码</strong>：部分可观测、信念状态、VAE、ELBO，以及表示应当保留什么。</li>
+  <li><strong>潜在动力学</strong>：GRU、MDN-RNN、RSSM，以及训练分布与自由 rollout 的差距。</li>
   <li><strong>架构族</strong>：九个架构族，RNN/RSSM、Transformer、扩散模型、JEPA、RWM、空间 3D/4D 模型、Genie、LoopWM 与 WAM。</li>
   <li><strong>规划机制</strong>：CEM-MPC、潜在 Actor-Critic 与 TD-MPC。</li>
   <li><strong>评估指标</strong>：FID、奖励相关性、一致性损失、PSNR 与视野漂移。</li>

@@ -38,14 +38,14 @@ World model 进入 MPC 的 rollout 或 imagined rollout，直接用于在线规�
 
 四讲走下来，每讲解决了一个具体问题：
 
-**L01: 内部仿真与历史脉络**
-从 Craik 的"心理模型"（1943）出发，历经 1950s RNN 萌芽、2018 Ha&Schmidhuber 的 World Models 论文、2019 Dreamer 的端到端成熟，到 2023 JEPA 的现代范式，建立了世界模型演化的历史直觉。
+**L01：世界模型的定义与来路**
+先用状态估计、转移、发射和预测查询建立工作接口，再区分渲染、模拟与规划，最后从 Craik 的"心理模型"（1943）追溯到现代学习系统。
 
-**L02: 观测编码与潜在动力学**
-“观测编码”模块实现了 VAE 编码器：CNN 将 64×64 图像压缩为潜在向量 `z`，ELBO 损失（重建项 + KL 项）约束潜在空间。“潜在动力学”模块从 GRU 出发，逐步演进到 MDN-RNN，最终到达 RSSM，确定性状态 `h_t` + 随机状态 `z_t` 的双轨架构成为 Dreamer 的基石。
+**L02：状态估计、观测编码与潜在动力学**
+本讲先用信念状态解释怎样从部分观察估计隐藏世界，再实现 VAE 编码器与 RSSM 动力学。最后，对照 teacher forcing 与自由 rollout，说明单步准确为什么不能保证长时程稳定。
 
 **L03: 架构模式、学习范式与规划方法**
-以你在 P02 实现的 RSSM 作为 RNN 基线，横向对比了八个架构族（RNN/RSSM、Transformer、Diffusion、JEPA、RWM、Genie、LoopWM、WAM），厘清了四种学习范式，并梳理了从 CEM-MPC、潜在 Actor-Critic 到 TD-MPC 的规划演进。
+以你在 P02 实现的 RSSM 作为 RNN 基线，横向对比了九个架构族（RNN/RSSM、Transformer、Diffusion、JEPA、RWM、空间 3D/4D、Genie、LoopWM、WAM），并梳理了从 CEM-MPC、潜在 Actor-Critic 到 TD-MPC 的规划机制。
 
 **L04：诊断世界模型（本讲）**
 评估不是"打分"而是"诊断"。每种架构有其专属的失效模式，需要对症的指标才能发现问题。潜在漂移是所有世界模型共同面临的长时域挑战，缓解它需要短时域训练、目标网络和持续的真实数据补充。

@@ -114,4 +114,4 @@ The previous wave of world model interest (2018 to 2020) was largely academic: r
 
 ## Next Lecture
 
-Having established why world models are needed, the next question is how to build one. Lecture 2 starts from two foundational engineering problems: how to compress high-dimensional pixels into a tractable latent vector (the VAE encoder), and how to predict future states in that low-dimensional space (GRU to MDN-RNN to RSSM). Getting these two components right yields the core skeleton of Dreamer.
+Having established why world models are needed, the next question is how to build one. L02 first distinguishes observations, hidden states, and belief states. It then asks how to compress high-dimensional pixels into an actionable representation and predict futures in that space. Finally, it compares one-step training with free rollout during use. Connecting these three layers produces the core skeleton needed for Dreamer planning.

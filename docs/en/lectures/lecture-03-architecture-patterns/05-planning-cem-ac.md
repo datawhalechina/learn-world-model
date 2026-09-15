@@ -6,9 +6,21 @@ lecture: 3
 
 # Planning and Control: CEM-MPC and Latent Actor-Critic
 
-Given a world model, how does an agent use it to select actions? This section is the direct prerequisite for P03 and provides the planning context used later to compare architectures. It introduces three planning mechanisms: from the most intuitive random search, to Dreamer's imagination-based training, to TD-MPC's hybrid approach.
+Given a world model, how does an agent use it to select actions? L02 left the pushing task at the point where the RSSM could predict what would happen to the ball under a candidate action. This section asks how that prediction turns into the push itself. It is the direct prerequisite for P03 and provides the planning context used later to compare architectures, introducing three planning mechanisms: from the most intuitive random search, to Dreamer's imagination-based training, to TD-MPC's hybrid approach.
 
 Before the three planning mechanisms, one more world-model architecture needs to be on the table: MuZero. It is introduced beside planning because its defining feature is inseparable from tree search. Its world model is deliberately shaped to support search, so understanding the representation without its consumer would leave the system incomplete.
+
+## Common Misconceptions
+
+Three assumptions about what "planning with a world model" requires are worth correcting before the mechanisms themselves.
+
+**"Planning means tree search, the way MuZero does it."** MCTS is one specific way to use predicted values, tied to MuZero's discrete, tree-shaped search over actions. CEM-MPC never builds a tree: it samples whole action sequences in parallel and refits a distribution around the best ones. Dreamer's Actor-Critic performs no search at decision time at all; the policy network was already trained by backpropagating through imagined rollouts, so at each real step it simply outputs an action. Tree search is a property of MuZero's design, not a requirement for consuming a world model's predictions.
+
+**"The world model has to be differentiable to plan with it."** CEM-MPC treats the model as a black box that only needs to roll forward; it never takes a gradient through it. Differentiability is specifically what Dreamer's Actor-Critic exploits for sample efficiency, not a precondition planning imposes in general. TD-MPC makes the separation explicit: it trains its latent dynamics with a differentiable consistency loss, then still searches with gradient-free CEM at decision time.
+
+**"An optimizer that pushes harder against the world model's reward prediction always finds a better action."** This ignores the model-exploitation problem: an aggressive optimizer is just as likely to find actions that score well because the model is wrong there, not because the actions are good. This is why CEM-MPC re-plans every step instead of committing to one search result, why Dreamer limits its imagination horizon and periodically retrains on real data, and why TD-MPC's TD bootstrapping suppresses compounding model error. All three mechanisms spend real effort staying honest about the model's blind spots rather than trusting it further.
+
+The three misconceptions share a root: each treats one system's specific engineering choice, MCTS, differentiable backpropagation, or unconstrained optimization, as if it were a universal property of planning with a world model. What actually varies between mechanisms is narrower: whether the optimizer needs gradients, whether it needs a search tree, and how it guards against exploiting the model's own errors.
 
 ## MuZero and the Counterfactual Paradigm
 

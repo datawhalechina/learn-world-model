@@ -12,8 +12,8 @@ The lectures and projects are one curriculum, not two separate tracks. Stop and 
 
 | Stage | Read | Then practice | What you should be able to explain afterward |
 | --- | --- | --- | --- |
-| Foundations | L01, then L02 Observation Encoding | [P01: Train a VAE Encoder](../../projects/p01_vae_encoder) | What information an observation encoder keeps and discards |
-| Dynamics | L02 Latent Dynamics and the Dreamer series | [P02: Build an RSSM](../../projects/p02_rssm_dynamics) | Why a useful latent state needs both memory and uncertainty |
+| State estimation and representation | L01, then L02 Observation, State, and Belief plus Observation Encoding | [P01: Train a VAE Encoder](../../projects/p01_vae_encoder) | Why an observation is not a state, and what information an encoder keeps and discards |
+| Dynamics and rollout | L02 Latent Dynamics, Training Distributions and Free Rollouts, and the Dreamer series | [P02: Build an RSSM](../../projects/p02_rssm_dynamics) | Why a useful latent state needs memory and uncertainty, and why one-step accuracy does not guarantee long-horizon stability |
 | Control | L03 Planning and Control | [P03: Train a Dreamer Agent](../../projects/p03_dreamer_agent) | How imagined trajectories train an actor and critic |
 | Alternatives | L03 Backbone Selection | [P04: Swap the Dynamics Backbone](../../projects/p04_transformer_backbone) | Which bottleneck justifies replacing RSSM with another backbone |
 | Evaluation | L04 | [P05: Build an Evaluation Dashboard](../../projects/p05_evaluation_dashboard) | Which metric diagnoses each representation, rollout, or planning failure |
@@ -23,9 +23,9 @@ The lectures and projects are one curriculum, not two separate tracks. Stop and 
 
 ## Next Lecture
 
-L02 starts from a concrete problem: **how do you compress a 64×64 pixel image into a compact latent vector z?** This is the task of the Variational Autoencoder (VAE), and it is the first building block of the entire Dreamer pipeline.
+L02 starts with a question that comes before compression: **when a 64×64 image omits velocity and occluded information, how does a model estimate the current state?** After distinguishing observations, states, and beliefs, we use a Variational Autoencoder (VAE) to learn a compact representation.
 
-Complete P01 after the encoding section rather than waiting until the end of L02. Then return to the dynamics sections, connect the learned representation to an RSSM, and complete P02. By that point you will have written the two most important predictive components of the course and inspected how their errors change over a rollout.
+Complete P01 after state estimation and encoding rather than waiting until the end of L02. Then return to latent dynamics and free rollouts, connect the learned representation to an RSSM, and complete P02. By that point you will have built the course's two central predictive components and observed how one-step errors change over time under the model's own input distribution.
 
 
 *L01 requires no coding and treats its mathematical callouts as optional. L02 assumes fundamental deep learning knowledge and introduces the additional machinery when it is first needed.*

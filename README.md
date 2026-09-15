@@ -45,8 +45,8 @@ Five lectures and six projects that take you from the intuition behind world mod
 
 | # | Type | Title | Core Topics |
 |---|------|-------|-------------|
-| L01 | Lecture | Internal Simulation & Historical Context | Craik's mental models, predictive coding, four eras of world model evolution |
-| L02 | Lecture | Observation Encoding & Latent Dynamics | VAE, CNN encoder, ELBO, GRU → MDN-RNN → RSSM |
+| L01 | Lecture | World Model Definition & Origins | Working interfaces, rendering/simulation/planning, Craik, predictive coding, capability taxonomy |
+| L02 | Lecture | State Estimation, Encoding & Dynamics | Partial observability, belief state, VAE, GRU → MDN-RNN → RSSM, free rollout |
 | L03 | Lecture | Architecture Patterns, Learning Paradigms & Planning | Planning and control, backbone selection, nine architecture families, optional frontier survey |
 | L04 | Lecture | Diagnosing World Models | Representation, dynamics, rollout, task-signal, planning, and deployment diagnostics |
 | L05 | Lecture | Frontier Debates | Language vs physical grounding, Bitter Lesson, AGI as a research target |
@@ -63,16 +63,17 @@ Five lectures and six projects that take you from the intuition behind world mod
 
 | Stage | Read | Then practice |
 | --- | --- | --- |
-| Foundations | L01 | Build the shared vocabulary and capability ladder |
+| Foundations | L01 | Build the shared interface vocabulary before history and taxonomy |
+| State estimation | L02: Observation, State, and Belief | Connect partial observations and history to latent state |
 | Representation | L02: Observation Encoding | P01: Train a VAE Encoder |
-| Dynamics | L02: Latent Dynamics | P02: Build an RSSM Dynamics Model |
+| Dynamics and rollout reliability | L02: Latent Dynamics, then Training Distributions and Free Rollouts | P02: Build and diagnose an RSSM Dynamics Model |
 | Control | L03: Planning and Control | P03: Train a Dreamer Agent |
 | Backbone choice | L03: Backbone Selection | P04: Swap the Dynamics Backbone |
 | Research orientation | L03: Optional Frontier Survey | Optional reading, no project prerequisite |
 | Diagnosis | L04: Diagnosing World Models | P05: Evaluation Dashboard and P06: Counterfactual Fidelity |
 | Open questions | L05 | Synthesize the unresolved debates |
 
-Suggested path: L01, L02 Observation Encoding, P01, L02 Latent Dynamics, P02, L03 Planning and Control, P03, L03 Backbone Selection, P04, optional L03 frontier survey, L04, P05, P06, L05.
+Suggested path: L01, L02 Observation/State/Belief, L02 Observation Encoding, P01, L02 Latent Dynamics, L02 Training Distributions and Free Rollouts, P02, L03 Planning and Control, P03, L03 Backbone Selection, P04, optional L03 frontier survey, L04, P05, P06, L05.
 
 You do not need to finish all theory before starting a project. Build, then come back with questions.
 

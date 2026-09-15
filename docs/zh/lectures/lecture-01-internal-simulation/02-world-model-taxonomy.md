@@ -1,8 +1,8 @@
 ---
-title: 世界模型的严格分类
+title: 世界模型的能力分类
 ---
 
-# 世界模型的严格分类：从技术枚举到认知功能
+# 世界模型的能力分类：从技术枚举到认知功能
 
 ## 最关键的区分：历史脉络不是分类体系
 
@@ -34,7 +34,7 @@ L1-L5 属于第二个问题。它按照模型的操作能力分类：模型只�
 
 **时代二：Ha 与 Schmidhuber 的"梦中学习"（2018）**。Ha 与 Schmidhuber 的《[World Models](https://arxiv.org/abs/1803.10122)》用一个三模块框架统一了这些散落的思想：**V**（视觉模块）把每帧画面压缩成一个低维向量。**M**（记忆模块，MDN-RNN）以历史向量和动作为输入，预测这个向量如何演化。**C**（控制器）直接以当前向量和 M 的隐状态输出动作。把控制器完全放进记忆模块幻想出的虚拟环境里训练，再把策略迁移到真实游戏，这一思路让世界模型第一次进入主流视野。
 
-**时代三：Dreamer 与潜在空间（2019）**。Hafner 等人的 [Dreamer V1](https://arxiv.org/abs/1912.01603) 引入了 RSSM（Recurrent State Space Model，完整机制见第二讲），把状态拆成确定性历史路径和随机不确定性路径两条并行分支。与 Ha & Schmidhuber 的方法不同，Dreamer 完全不在像素空间重建图像：预测、规划、奖励学习全部直接在潜在空间完成，在 Atari 和连续控制任务上大幅超越了此前的无模型方法。
+**时代三：RSSM 与潜在想象（2019）**。[PlaNet](https://arxiv.org/abs/1811.04551) 引入 RSSM（Recurrent State Space Model，完整机制见第二讲），把状态拆成确定性记忆和随机潜变量。随后的 [Dreamer V1](https://arxiv.org/abs/1912.01603) 沿用 RSSM，并让 actor 与 critic 直接从潜在想象轨迹学习。Dreamer 的世界模型训练仍包含观察重建，但策略优化不需要把每个想象状态先解码回像素。
 
 **时代四：视频即世界（2023 至今）**。JEPA（Joint Embedding Predictive Architecture，LeCun 团队，[2022](https://openreview.net/forum?id=BZ5a1r-kVsf)）彻底放弃像素重建，只在语义嵌入空间里做预测："我不需要画出你的脸，我只需要知道你是谁。"
 

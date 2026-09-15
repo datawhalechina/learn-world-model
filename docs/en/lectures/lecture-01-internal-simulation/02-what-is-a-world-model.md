@@ -1,21 +1,45 @@
 ---
-title: "What Is a World Model: Rendering, Simulation, and Planning"
-description: "Fei-Fei Li and the World Labs team systematically clarify the conceptual confusion around \"world model\": three functional definitions (renderer, simulator, planner) and why the simulator is the missing link between the other two."
+title: "What Is a World Model: Interfaces, Rendering, Simulation, and Planning"
+description: "Establish a working definition through state estimation, transition, emission, and prediction queries, then distinguish the functions of renderers, simulators, and planners."
 lecture: 1
 ---
 
-# What Is a World Model: Rendering, Simulation, and Planning
+# What Is a World Model: Interfaces, Rendering, Simulation, and Planning
 
-"World models are the destination everyone will reach. I've gone all-in on this path. Are you with me?"
+If a model generates realistic video, is it a world model? If a robot policy outputs actions without predicting their consequences, does it contain a world model? Where does a physics engine belong if it was never trained from data but simulates collisions accurately?
 
-Saining Xie's statement carries an implicit premise: the "world model" he is talking about is not necessarily the same thing most people mean when they use the term. This is not a terminological quibble. It is a real conceptual fracture. In 2025, Fei-Fei Li and the World Labs team published an article that systematically clarified this confusion.
+Model names cannot answer these questions. We need to inspect what a system represents, what it predicts, whether actions condition those predictions, and how a decision-maker consumes them. The renderer-simulator-planner distinction from World Labs provides one functional view. This page adds an interface view that can be traced into code throughout the course.
 
+## A Working Contract for the Course
+
+The POMDP framework from reinforcement learning provides the basic loop: an agent acts, the action changes a hidden world state, the state produces an observation, and the observation informs the next action. A **state** contains environment variables that determine future evolution. An **observation** is incomplete evidence supplied to the agent by its sensors. L02 develops this distinction in detail.
+
+This course treats a world model as a set of interfaces that can be inspected and replaced:
+
+| Interface | Input and output | Question answered |
+| --- | --- | --- |
+| State estimation or encoding | Observation and history → latent state | What state might the world be in now? |
+| Transition model | Latent state and action → next-state distribution | What happens if this action is taken? |
+| Emission or decoding | Latent state → observable quantity | What would this state look like? |
+| Prediction query | History and candidate actions → future trajectory or task signal | Which possible futures matter for this decision? |
+
+Not every system implements all four interfaces explicitly. A JEPA need not reconstruct pixels, MuZero predicts only quantities needed for planning, and a physics simulator obtains its transition from equations rather than a neural network. The contract is not meant to exclude such systems. It makes comparison concrete: what did the system omit or replace, and how does the downstream component use its predictions?
+
+## Common Misconceptions
+
+Three misreadings of the contract above show up often enough to name directly.
+
+**"A world model is just a video predictor."** Video prediction is one possible emission interface, not the whole system. A model that only predicts pixels, without ever conditioning on actions or supporting a transition model that lets you ask "what if," has built a renderer but not the transition and query interfaces this course cares about. The root cause is treating the most visible output, a video, as the definition, when the definition concerns which interfaces exist and what predictions they support.
+
+**"If a system does not reconstruct observations, it has no world model."** The interface table's second column already answers this: a JEPA that never decodes back to pixels can still hold a state estimator and a transition model, and MuZero predicts only the value and reward signals a planner needs, never an image. Reconstruction is one possible emission interface among several, not a requirement.
+
+**"A policy that outputs actions without an explicit prediction step cannot contain a world model."** This confuses architecture with function. Whether the transition model is a labeled module, a hidden layer inside an end-to-end policy, or a term implicit in a loss function, the question is whether the system predicts consequences and conditions its action on that prediction. LeCun's critique of VLA architectures targets exactly this gap: they have plenty of parameters but no internal transition model to reason about a genuinely novel situation, so they fall back on memorized pattern matching.
+
+All three myths share a root: mistaking a visible implementation detail, pixels in, pixels out, a module with a specific name, for the functional contract itself. The rest of this page traces that contract through three concrete functional types.
 
 ## Three Functional Types of World Models
 
 Computer vision, robotics, reinforcement learning, and generative AI all claim to be developing "world models," but each field is pointing at something different. The root cause is ambiguity about what "world" means.
-
-The reinforcement learning framework of partially observable Markov decision processes (POMDPs) offers a useful baseline: the agent takes an action, the action changes the world state, an observation is produced, and that observation drives the next action. A key distinction runs through this loop. **State** refers to the complete description of the world at a given moment: all objects, positions, velocities, and properties. **Observation** is what the agent actually perceives: an incomplete projection of the state, typically images or video frames.
 
 Every system currently called a "world model" is, at bottom, producing a different output from this loop. Based on this, the World Labs article distinguishes three functional types.
 

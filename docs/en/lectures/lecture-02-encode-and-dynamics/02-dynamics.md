@@ -8,7 +8,7 @@ lecture: 2
 
 ## The Encoder Is Not Enough: We Need to Predict the Future
 
-With a VAE encoder, we can compress the current frame $\mathbf{o}_t$ into $\mathbf{z}_t$. But the central task of a world model is **predicting the future**:
+The ball-on-table example has run through both previous pages: a single frame under-determines velocity, and an encoder compressing that frame is not guaranteed to keep the velocity it needs. A VAE can compress $\mathbf{o}_t$ into $\mathbf{z}_t$, but a world model must also use history to recover hidden variables and **predict the future**:
 
 > In latent space, given the current state $\mathbf{z}_t$ and action $\mathbf{a}_t$, predict the next state $\mathbf{z}_{t+1}$.
 
@@ -25,7 +25,7 @@ $$
 
 > **📖 GRU internals (brief)**: A GRU controls information flow through two gates: the **reset gate** decides "how much of the past to forget", and the **update gate** decides "how much of the old state to retain vs. how much new information to write in". Gate values lie between 0 and 1, determined jointly by the current input and the previous hidden state. This allows the GRU to selectively retain long-term dependencies while discarding irrelevant information, making it better at handling longer sequences than a plain RNN. Compared to an LSTM, the GRU has one fewer gate (no separate memory cell), fewer parameters, and trains faster.
 
-The GRU's strengths are simplicity and stable training. Its limitation is that it produces deterministic predictions and cannot express **uncertainty**. In real environments, the same action can lead to multiple different outcomes (for example, pushing a box might succeed or might get stuck).
+The GRU's strengths are simplicity and stable training. Its limitation is that it produces deterministic predictions and cannot express **uncertainty**. In real environments, the same action can lead to multiple different outcomes: pushing the ball from the earlier pages might send it rolling cleanly, or it might strike something just outside the frame and stop short, and a single deterministic prediction cannot represent both.
 
 
 ## MDN-RNN: Modeling Uncertainty
@@ -49,7 +49,7 @@ MDN-RNN can capture **multimodal distributions**: the environment may transition
 
 ## RSSM: Separating Deterministic and Stochastic Components
 
-The **RSSM (Recurrent State Space Model)** is the core innovation of the Dreamer series. It splits the state into two parts:
+The **RSSM (Recurrent State Space Model)** was introduced in PlaNet and later became the core state model of the Dreamer series. It splits the state into two parts:
 
 - **Deterministic hidden state** $\mathbf{h}_t$: maintained by an RNN, aggregating information from the historical trajectory, with no stochasticity
 - **Stochastic latent state** $\mathbf{z}_t$: sampled from a distribution conditioned on $\mathbf{h}_t$, expressing current uncertainty
@@ -116,3 +116,5 @@ This chain shows the complete data flow of one RSSM transition step: $(\mathbf{h
 | **RSSM** | Separated prior/posterior (Gaussian) | Dual-track: deterministic $h_t$ + stochastic $z_t$ | Core of Dreamer, supports pure-imagination planning |
 
 The three form a progression: GRU establishes the foundation for sequence modeling, MDN-RNN introduces uncertainty, and RSSM further decouples "memory" from "perceptual uncertainty", enabling the model to roll forward and plan without real observations.
+
+Next, read [Training Distributions and Free Rollouts](./03-training-and-rollout) to examine what happens when these models repeatedly consume their own predictions. Doing so before P02 makes the distinction between one-step error and horizon drift concrete.

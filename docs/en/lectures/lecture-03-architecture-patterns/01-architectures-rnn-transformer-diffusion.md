@@ -19,6 +19,16 @@ This design, validated in Dreamer V1/V2, achieves solid policy performance on co
 
 The five architecture families that follow each address this limitation, but take different directions.
 
+## Common Misconceptions
+
+**"A newer architecture is strictly better, so pick the most recent one."** Transformer and diffusion backbones score higher on some benchmarks, but each pays for it: Transformers scale quadratically with sequence length and need more data to converge, while diffusion sampling takes 10-100 denoising passes per frame and is not differentiable end-to-end. RSSM remains the right choice whenever online latency or gradient access through the dynamics model matters more than raw sequence length or visual fidelity, which is exactly the case for Dreamer's Actor-Critic in L03's planning section.
+
+**"A longer context window is a free upgrade over RSSM's limited memory."** Self-attention does remove the GRU's hidden-state bottleneck, letting every position see any earlier timestep directly. What it does not remove is cost: attention is $O(T^2)$ in sequence length, and STORM's own improvement over IRIS, compressing each frame to a single token instead of sixteen, exists precisely because that cost is real and worth cutting. A bigger context window is a trade against compute and data, not a strictly dominant substitute.
+
+**"The best-looking generated frames make the best world model."** Diamond's frames beat every prior world model on visual fidelity, but visual quality and usable state are different axes. Diffusion models denoise each frame close to independently, with no explicit object memory, so identity, position, and occlusion can drift across a long rollout even while each individual frame looks convincing. This is the object persistence problem, and it is a state-tracking failure that better image quality does not fix.
+
+All three misconceptions treat one benchmark axis, recency, context length, or visual fidelity, as if it settled the architecture choice by itself. What actually decides the choice is which constraint binds in your deployment loop: latency, differentiability, compute budget, or long-horizon identity tracking.
+
 
 ## Architecture 1: RNN / RSSM (Your Baseline)
 

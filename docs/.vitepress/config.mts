@@ -9,24 +9,26 @@ const githubRepoTreeLink = "https://github.com/datawhalechina/learn-world-model"
 const zhWorldModelItems = [
   { text: "欢迎", link: "/zh/" },
   {
-    text: "第一讲：内部仿真与历史脉络",
+    text: "第一讲：世界模型的定义与来路",
     collapsed: false,
     items: [
       { text: "导读", link: "/zh/lectures/lecture-01-internal-simulation/" },
-      { text: "思想基石", link: "/zh/lectures/lecture-01-internal-simulation/01-foundations" },
       { text: "世界模型是什么：渲染、模拟与规划", link: "/zh/lectures/lecture-01-internal-simulation/02-what-is-a-world-model" },
-      { text: "世界模型的严格分类与四个时代", link: "/zh/lectures/lecture-01-internal-simulation/02-world-model-taxonomy" },
+      { text: "思想基石", link: "/zh/lectures/lecture-01-internal-simulation/01-foundations" },
       { text: "世界模型的价值与时代背景", link: "/zh/lectures/lecture-01-internal-simulation/03-why-now" },
+      { text: "能力分类与四个时代", link: "/zh/lectures/lecture-01-internal-simulation/02-world-model-taxonomy" },
       { text: "课程路线图", link: "/zh/lectures/lecture-01-internal-simulation/04-roadmap" },
     ]
   },
   {
-    text: "第二讲：观测编码与潜在动力学",
+    text: "第二讲：状态估计、编码与动力学",
     collapsed: false,
     items: [
       { text: "导读", link: "/zh/lectures/lecture-02-encode-and-dynamics/" },
+      { text: "观察、状态与信念", link: "/zh/lectures/lecture-02-encode-and-dynamics/00-observation-state-belief" },
       { text: "观测编码", link: "/zh/lectures/lecture-02-encode-and-dynamics/01-encoding" },
       { text: "潜在动力学：GRU、MDN-RNN、RSSM", link: "/zh/lectures/lecture-02-encode-and-dynamics/02-dynamics" },
+      { text: "训练分布与自由 Rollout", link: "/zh/lectures/lecture-02-encode-and-dynamics/03-training-and-rollout" },
       { text: "Dreamer 系列迭代", link: "/zh/lectures/lecture-02-encode-and-dynamics/03-dynamics-dreamer-series" },
     ]
   },
@@ -89,24 +91,26 @@ const zhProjectItems = [
 const enWorldModelItems = [
   { text: "Welcome", link: "/en/" },
   {
-    text: "Lecture 01: Internal Simulation",
+    text: "Lecture 01: Definition and Origins",
     collapsed: false,
     items: [
       { text: "Overview", link: "/en/lectures/lecture-01-internal-simulation/" },
-      { text: "Foundations", link: "/en/lectures/lecture-01-internal-simulation/01-foundations" },
       { text: "What Is a World Model", link: "/en/lectures/lecture-01-internal-simulation/02-what-is-a-world-model" },
-      { text: "World Model Taxonomy & Four Eras", link: "/en/lectures/lecture-01-internal-simulation/02-world-model-taxonomy" },
+      { text: "Foundations", link: "/en/lectures/lecture-01-internal-simulation/01-foundations" },
       { text: "Why Now", link: "/en/lectures/lecture-01-internal-simulation/03-why-now" },
+      { text: "Capability Taxonomy and Four Eras", link: "/en/lectures/lecture-01-internal-simulation/02-world-model-taxonomy" },
       { text: "Course Roadmap", link: "/en/lectures/lecture-01-internal-simulation/04-roadmap" },
     ]
   },
   {
-    text: "Lecture 02: Encoding & Latent Dynamics",
+    text: "Lecture 02: State Estimation & Dynamics",
     collapsed: false,
     items: [
       { text: "Overview", link: "/en/lectures/lecture-02-encode-and-dynamics/" },
+      { text: "Observation, State and Belief", link: "/en/lectures/lecture-02-encode-and-dynamics/00-observation-state-belief" },
       { text: "Observation Encoding", link: "/en/lectures/lecture-02-encode-and-dynamics/01-encoding" },
       { text: "Latent Dynamics: GRU, MDN-RNN & RSSM", link: "/en/lectures/lecture-02-encode-and-dynamics/02-dynamics" },
+      { text: "Training Distributions and Free Rollouts", link: "/en/lectures/lecture-02-encode-and-dynamics/03-training-and-rollout" },
       { text: "Dreamer Series Evolution", link: "/en/lectures/lecture-02-encode-and-dynamics/03-dynamics-dreamer-series" },
     ]
   },
@@ -159,25 +163,27 @@ const enWorldModelItems = [
 const koWorldModelItems = [
   { text: "환영합니다", link: "/ko/" },
   {
-    text: "제1강: 내부 시뮬레이션과 역사적 맥락",
+    text: "제1강: 월드모델의 정의와 기원",
     collapsed: false,
     items: [
       { text: "개요", link: "/ko/lectures/lecture-01-internal-simulation/" },
-      { text: "이론적 초석", link: "/ko/lectures/lecture-01-internal-simulation/01-foundations" },
       { text: "월드모델이란 무엇인가: 렌더링, 시뮬레이션, 계획", link: "/ko/lectures/lecture-01-internal-simulation/02-what-is-a-world-model" },
-      { text: "월드모델의 엄격한 분류와 네 시대", link: "/ko/lectures/lecture-01-internal-simulation/02-world-model-taxonomy" },
+      { text: "이론적 초석", link: "/ko/lectures/lecture-01-internal-simulation/01-foundations" },
       { text: "월드모델은 무엇을 해결하는가, 그리고 왜 지금인가", link: "/ko/lectures/lecture-01-internal-simulation/03-why-now" },
+      { text: "역량 분류와 네 시대", link: "/ko/lectures/lecture-01-internal-simulation/02-world-model-taxonomy" },
       { text: "강좌 로드맵", link: "/ko/lectures/lecture-01-internal-simulation/04-roadmap" },
     ]
   },
   {
-    text: "제2강: 관측 인코딩과 잠재 동역학",
+    text: "제2강: 상태 추정, 인코딩과 동역학",
     collapsed: false,
     items: [
       { text: "개요", link: "/ko/lectures/lecture-02-encode-and-dynamics/" },
-      { text: "Part A: 관측 인코딩", link: "/ko/lectures/lecture-02-encode-and-dynamics/01-encoding" },
-      { text: "Part B: GRU, MDN-RNN, RSSM", link: "/ko/lectures/lecture-02-encode-and-dynamics/02-dynamics" },
-      { text: "Part B(계속): Dreamer 시리즈", link: "/ko/lectures/lecture-02-encode-and-dynamics/03-dynamics-dreamer-series" },
+      { text: "관측, 상태, 믿음 상태", link: "/ko/lectures/lecture-02-encode-and-dynamics/00-observation-state-belief" },
+      { text: "관측 인코딩", link: "/ko/lectures/lecture-02-encode-and-dynamics/01-encoding" },
+      { text: "잠재 동역학: GRU, MDN-RNN, RSSM", link: "/ko/lectures/lecture-02-encode-and-dynamics/02-dynamics" },
+      { text: "학습 분포와 자유 롤아웃", link: "/ko/lectures/lecture-02-encode-and-dynamics/03-training-and-rollout" },
+      { text: "Dreamer 시리즈의 진화", link: "/ko/lectures/lecture-02-encode-and-dynamics/03-dynamics-dreamer-series" },
     ]
   },
   {

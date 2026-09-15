@@ -13,8 +13,8 @@ Learn World Models is a project-driven world models curriculum covering VAE enco
 
 | Lecture | Topic |
 |---------|-------|
-| [Lecture 1](./lectures/lecture-01-internal-simulation/) | Internal Simulation and Historical Context |
-| [Lecture 2](./lectures/lecture-02-encode-and-dynamics/) | Observation Encoding and Latent Dynamics |
+| [Lecture 1](./lectures/lecture-01-internal-simulation/) | World Model Definition and Origins |
+| [Lecture 2](./lectures/lecture-02-encode-and-dynamics/) | State Estimation, Observation Encoding, and Latent Dynamics |
 | [Lecture 3](./lectures/lecture-03-architecture-patterns/) | Architecture Patterns, Learning Paradigms, and Planning |
 | [Lecture 4](./lectures/lecture-04-evaluation-by-model/) | Diagnosing World Models |
 | [Lecture 5](./lectures/lecture-05-frontier-debates/) | Frontier Debates |
@@ -27,8 +27,8 @@ Learn World Models is a project-driven world models curriculum covering VAE enco
 
 <ul class="index-list">
   <li><strong>Why world models are needed</strong>: historical context from Craik (1943) to JEPA.</li>
-  <li><strong>Observation encoding</strong>: VAE, CNN encoder, ELBO, and the bridge to Dreamer.</li>
-  <li><strong>Latent dynamics</strong>: GRU, MDN-RNN, and RSSM (deterministic + stochastic).</li>
+  <li><strong>State estimation and observation encoding</strong>: partial observability, belief states, VAE, ELBO, and what a representation should preserve.</li>
+  <li><strong>Latent dynamics</strong>: GRU, MDN-RNN, RSSM, and the gap between training distributions and free rollouts.</li>
   <li><strong>Architecture families</strong>: nine architecture families, RNN/RSSM, Transformer, diffusion models, JEPA, RWM, spatial 3D/4D models, Genie, LoopWM, and WAM.</li>
   <li><strong>Planning mechanisms</strong>: CEM-MPC, latent actor-critic, and TD-MPC.</li>
   <li><strong>Evaluation metrics</strong>: FID, reward correlation, consistency loss, PSNR, and horizon drift.</li>

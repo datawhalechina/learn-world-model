@@ -6,6 +6,12 @@ lecture: 3
 
 # Optional Frontier Survey: LoopWM, WAM, and Architecture Selection
 
+## Common Misconceptions
+
+**"A more capable dynamics model needs more parameters."** LoopWM's entire premise is that depth and parameter count are separable: the same parameter-shared Recurrent Block can loop more times on a hard transition and fewer on an easy one, buying prediction accuracy from additional computation rather than additional weights. Iterative latent depth is a third scaling axis alongside model size and data volume, not a restatement of either.
+
+**"A world model and a policy are necessarily two separate modules, that is what makes something a world model architecturally."** L01's contract defined a world model by its interfaces, state estimation, transition, emission, prediction, not by which modules implement them or how many modules there are. WAM is the sharpest demonstration of that point: the same forward pass that predicts future frames also outputs motor commands, with no separate policy network at all. Whether the interfaces live in one module or several is an engineering choice, not part of the definition.
+
 ## Architecture Eight: Looped Dynamics Models (LoopWM)
 
 **Representative systems**: LoopWM (Looped World Models, [Lu et al., 2026](https://www.emergentmind.com/papers/2606.18208))

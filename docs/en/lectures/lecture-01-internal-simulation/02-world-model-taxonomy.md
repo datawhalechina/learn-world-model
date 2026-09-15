@@ -1,8 +1,8 @@
 ---
-title: A Rigorous Taxonomy of World Models
+title: A Capability Taxonomy of World Models
 ---
 
-# A Rigorous Taxonomy of World Models: From Technical Labels to Cognitive Function
+# A Capability Taxonomy of World Models: From Technical Labels to Cognitive Function
 
 ## The clean separation: history is not taxonomy
 
@@ -34,7 +34,7 @@ This avoids a common mistake: treating every famous technique as a separate kind
 
 **Era Two: Ha and Schmidhuber's "Learning in Dreams" (2018)**. Ha and Schmidhuber's [World Models](https://arxiv.org/abs/1803.10122) unified these scattered ideas with a three-module framework: a **V**ision encoder compresses each frame into a latent vector, an **M**emory module (MDN-RNN) predicts how that vector evolves given past latents and actions, and a **C**ontroller maps the current latent and the memory module's hidden state directly to an action. Training the controller entirely inside a hallucinated environment produced by the memory module, then transferring the policy to the real game, brought the world-model idea into mainstream awareness for the first time.
 
-**Era Three: Dreamer and Latent Space (2019)**. Hafner et al.'s [Dreamer V1](https://arxiv.org/abs/1912.01603) introduced RSSM (Recurrent State Space Model, full mechanism in Lecture 2), splitting state into a deterministic history path and a stochastic uncertainty path. Unlike Ha and Schmidhuber's approach, Dreamer never reconstructs images in pixel space: prediction, planning, and reward learning all happen directly in latent space, substantially outperforming prior model-free methods on Atari and continuous control.
+**Era Three: RSSM and Latent Imagination (2019)**. [PlaNet](https://arxiv.org/abs/1811.04551) introduced the RSSM (Recurrent State Space Model, covered fully in Lecture 2), splitting state into deterministic memory and stochastic latent variables. [Dreamer V1](https://arxiv.org/abs/1912.01603) then reused the RSSM and trained its actor and critic directly from latent imagined trajectories. Dreamer's world-model objective still includes observation reconstruction, but policy optimization does not decode every imagined state back to pixels.
 
 **Era Four: Video as World (2023+)**. JEPA (Joint Embedding Predictive Architecture, LeCun's team, [2022](https://openreview.net/forum?id=BZ5a1r-kVsf)) abandons pixel reconstruction entirely and predicts purely in a semantic embedding space: "I don't need to draw your face. I just need to know who you are."
 

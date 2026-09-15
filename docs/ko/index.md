@@ -13,8 +13,8 @@ Learn World Models는 프로젝트 기반의 월드모델 강좌로, VAE 인코�
 
 | 강의 | 주제 |
 |------|------|
-| [제1강](./lectures/lecture-01-internal-simulation/) | 내부 시뮬레이션과 역사적 맥락 |
-| [제2강](./lectures/lecture-02-encode-and-dynamics/) | 관측 인코딩과 잠재 동역학 |
+| [제1강](./lectures/lecture-01-internal-simulation/) | 월드모델의 정의와 기원 |
+| [제2강](./lectures/lecture-02-encode-and-dynamics/) | 상태 추정, 관측 인코딩과 잠재 동역학 |
 | [제3강](./lectures/lecture-03-architecture-patterns/) | 아키텍처 패턴, 학습 패러다임과 계획 |
 | [제4강](./lectures/lecture-04-evaluation-by-model/) | 월드모델 진단하기 |
 | [제5강](./lectures/lecture-05-frontier-debates/) | 최전선 논쟁 |
@@ -27,8 +27,8 @@ Learn World Models는 프로젝트 기반의 월드모델 강좌로, VAE 인코�
 
 <ul class="index-list">
   <li><strong>왜 월드모델이 필요한가</strong>: Craik(1943)에서 JEPA까지의 역사적 맥락.</li>
-  <li><strong>관측 인코딩</strong>: VAE, CNN 인코더, ELBO, 그리고 Dreamer로 가는 다리.</li>
-  <li><strong>잠재 동역학</strong>: GRU, MDN-RNN과 RSSM(결정론적 + 확률적).</li>
+  <li><strong>상태 추정과 관측 인코딩</strong>: 부분 관측성, 믿음 상태, VAE, ELBO, 표현이 보존해야 할 정보.</li>
+  <li><strong>잠재 동역학</strong>: GRU, MDN-RNN, RSSM, 그리고 학습 분포와 자유 롤아웃의 간극.</li>
   <li><strong>아키텍처 계열</strong>: 9대 아키텍처 계열, RNN/RSSM, Transformer, 확산 모델, JEPA, RWM, 공간 3D/4D 모델, Genie, LoopWM, WAM.</li>
   <li><strong>계획 메커니즘</strong>: CEM-MPC, 잠재 Actor-Critic과 TD-MPC.</li>
   <li><strong>평가 지표</strong>: FID, 보상 상관성, 일관성 손실, PSNR과 호라이즌 드리프트.</li>

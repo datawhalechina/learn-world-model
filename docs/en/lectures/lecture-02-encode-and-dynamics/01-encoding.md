@@ -8,7 +8,7 @@ lecture: 2
 
 ## Why Compress?
 
-Consider a 64×64 RGB game screenshot containing 64 × 64 × 3 = **12,288 pixel values**. Training a policy network or dynamics model directly on these pixels introduces three problems:
+Return to the ball on the table from the previous page. Rendered as a 64×64 RGB screenshot, that single frame is 64 × 64 × 3 = **12,288 pixel values**. Training a policy network or dynamics model directly on these pixels introduces three problems:
 
 1. **Curse of dimensionality**: High-dimensional inputs make learning extremely inefficient, requiring massive numbers of samples.
 2. **Redundant information**: Most pixels (background, texture details) are irrelevant to decision-making.
@@ -17,6 +17,20 @@ Consider a 64×64 RGB game screenshot containing 64 × 64 × 3 = **12,288 pixel 
 The solution is to compress the raw observation $\mathbf{o}_t$ (pixel image) into a **low-dimensional latent vector** $\mathbf{z}_t$ (e.g., 32 or 64 dimensions). This latent vector should retain semantic information useful for decision-making while discarding irrelevant details.
 
 The encoder compresses the redundant high-dimensional pixel space (12,288 dimensions) into a compact, actionable latent space (32 dimensions), so that the downstream dynamics model only needs to process semantic information.
+
+## Compression Is Not the Final Objective
+
+Lower dimensionality does not automatically produce a better representation. A world model does not need the smallest file. It needs a state representation that makes the future predictable and task variables accessible. An encoder may preserve the table's texture precisely while discarding the ball's velocity: exactly the hidden variable the previous page's photograph could not resolve, and exactly the quantity that determines whether the next frame shows the ball rolling left or right.
+
+Three kinds of evidence can probe a representation:
+
+| Evidence | Question | Limitation |
+| --- | --- | --- |
+| Reconstruction | Can the representation recover the current observation? | May favor pixel details irrelevant to decisions |
+| Probe | Can position, velocity, or contact be read from the representation? | Probe failure does not prove that information is absent |
+| Downstream prediction | Does the representation make action-conditioned futures easier to predict? | Also depends on the capacity of the dynamics model |
+
+P01 uses a VAE because it provides a clear, trainable, and visualizable starting point for representation learning, not because reconstruction is optimal for every world model. Later approaches such as JEPA and task-oriented representations retain information according to different objectives.
 
 
 ## VAE Intuition: Learning to Compress and Reconstruct
@@ -79,6 +93,10 @@ In practice, the encoder uses a **Convolutional Neural Network (CNN)** to proces
 Typical structure: 64×64×3 → Conv(4×4, s=2) → Conv(4×4, s=2) → Conv(4×4, s=2) → Flatten → Linear → ($\mu$, $\sigma$)
 
 
+## What Encoding Alone Cannot Settle
+
+Compression can pass every check on this page, low reconstruction error, probes that recover position and even velocity, and still leave open whether the ball's velocity survives contact with an obstacle outside the frame. That question needs history and a model of how the state changes, not a better encoder. The next page turns to exactly that.
+
 ## Try It Yourself: VAE Visualization
 
 Open `demos/vae-visualizer.html` in the project. You can:
@@ -87,4 +105,4 @@ Open `demos/vae-visualizer.html` in the project. You can:
 2. Adjust individual dimensions of the latent vector $\mathbf{z}$ with sliders
 3. Observe in real time how the decoder's output image changes
 
-**What to look for**: some dimensions control color, some control position, some control shape. This is the **disentanglement** that the latent space has learned (disentanglement means that different dimensions of the latent vector each independently control one interpretable semantic factor: adjusting one dimension affects only the corresponding attribute, not the others).
+**What to look for**: record which dimensions mainly affect color, position, or shape, and whether other attributes change with them. A standard VAE does not guarantee a fully disentangled representation. Latent traversal tests what the representation learned rather than assuming in advance that every dimension has an independent meaning.

@@ -31,8 +31,8 @@ Open any notebook in Jupyter or Colab and run it top to bottom. If an upstream c
 
 | # | Project | Prerequisite | Saves | Deliverable |
 |---|---------|--------------|-------|-------------|
-| P01 | [Train a VAE Encoder](./p01_vae_encoder) | L02: Observation Encoding | `vae_encoder.pt` | CNN VAE on 64×64 frames. ELBO loss curve. Latent traversals showing disentangled dimensions |
-| P02 | [Build an RSSM Dynamics Model](./p02_rssm_dynamics) | P01, L02: Latent Dynamics | `rssm.pt` | GRU, MDN-RNN, and RSSM compared. Rollout plots. 1-step to 5-step prediction error curves |
+| P01 | [Train a VAE Encoder](./p01_vae_encoder) | L02: Observation, State, and Belief; Observation Encoding | `vae_encoder.pt` | CNN VAE on 64×64 frames. ELBO loss curve. Latent traversals that inspect factors learned by each dimension |
+| P02 | [Build an RSSM Dynamics Model](./p02_rssm_dynamics) | P01, L02: Latent Dynamics; Training Distributions and Free Rollouts | `rssm.pt` | GRU, MDN-RNN, and RSSM compared. Teacher-forced and free rollouts. 1-step to 5-step prediction error curves |
 | P03 | [Train a Dreamer Agent](./p03_dreamer_agent) | P02, L03: Planning and Control | `dreamer.pt` | Encoder + RSSM + latent Actor-Critic training loop. Reward curve. FID and reward-correlation self-evaluation |
 | P04 | [Swap the Dynamics Backbone](./p04_transformer_backbone) | P03, L03: Backbone Selection | `transformer_wm.pt` | RSSM replaced by a STORM-style categorical VAE plus causal Transformer. Architecture comparison report |
 | P05 | [World Model Evaluation Dashboard](./p05_evaluation_dashboard) | P03, P04, L04 | -- | Both trained models loaded and scored side by side: PSNR, reward correlation, token loss, and latent drift |

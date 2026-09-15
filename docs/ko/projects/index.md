@@ -31,8 +31,8 @@ Jupyter나 Colab에서 아무 노트북이나 열어 처음부터 끝까지 실�
 
 | # | 프로젝트 | 선행 조건 | 체크포인트 | 결과물 |
 |---|---------|--------------|-------|-------------|
-| P01 | [VAE 인코더 학습](./p01_vae_encoder) | L02: 관측 인코딩 | `vae_encoder.pt` | 64×64 프레임에 대한 CNN VAE, ELBO 손실 곡선, 분리된 차원을 보여주는 잠재 순회 |
-| P02 | [RSSM 동역학 모델 구축](./p02_rssm_dynamics) | P01, L02: 잠재 동역학 | `rssm.pt` | GRU, MDN-RNN, RSSM 비교, 롤아웃 그래프, 1스텝~5스텝 예측 오차 곡선 |
+| P01 | [VAE 인코더 학습](./p01_vae_encoder) | L02: 관측/상태/믿음 상태, 관측 인코딩 | `vae_encoder.pt` | 64×64 프레임에 대한 CNN VAE, ELBO 손실 곡선, 각 차원이 학습한 요인을 점검하는 잠재 순회 |
+| P02 | [RSSM 동역학 모델 구축](./p02_rssm_dynamics) | P01, L02: 잠재 동역학, 학습 분포와 자유 롤아웃 | `rssm.pt` | GRU, MDN-RNN, RSSM 비교, teacher-forced 롤아웃과 자유 롤아웃, 1스텝~5스텝 예측 오차 곡선 |
 | P03 | [Dreamer 에이전트 학습](./p03_dreamer_agent) | P02, L03: 계획과 제어 | `dreamer.pt` | 인코더 + RSSM + 잠재 Actor-Critic 학습 루프, 보상 곡선, FID와 보상 상관관계 자체 평가 |
 | P04 | [동역학 백본 교체](./p04_transformer_backbone) | P03, L03: 백본 선택 | `transformer_wm.pt` | RSSM을 STORM 방식의 범주형 VAE와 인과적 Transformer로 교체, 아키텍처 비교 리포트 |
 | P05 | [월드모델 평가 대시보드](./p05_evaluation_dashboard) | P03, P04, L04 | -- | 학습된 두 모델을 함께 불러와 채점: PSNR, 보상 상관관계, 토큰 손실, 잠재 드리프트 |

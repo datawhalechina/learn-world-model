@@ -12,16 +12,18 @@ Lectures and projects are one interleaved path, not independent tracks. Readers 
 
 | Stage | Reading | Practice | Notes |
 | --- | --- | --- | --- |
-| Foundations: world models, scope, L1-L5 capability ladder | L01 | None | Accessible without prior model-based RL |
-| Representation: compress observations into latent states | L02: Observation Encoding | P01, VAE encoder | |
-| Dynamics: predict latent transitions with memory and uncertainty | L02: Latent Dynamics (GRU, MDN-RNN, RSSM, Dreamer series) | P02, RSSM dynamics | Builds on P01's checkpoint |
+| Foundations: working interfaces, scope, history, and capability ladder | L01: Operational Contract, Foundations, Why Now, Taxonomy | None | Present the working definition before history and taxonomy; accessible without prior model-based RL |
+| State estimation: infer hidden state from partial observations | L02: Observation, State, and Belief | None | Establishes history, belief state, prediction, and correction before neural architectures |
+| Representation: compress observations without confusing reconstruction with state sufficiency | L02: Observation Encoding | P01, VAE encoder | Inspect reconstruction, probes, and task-relevant information |
+| Dynamics: predict latent transitions with memory and uncertainty | L02: Latent Dynamics (GRU, MDN-RNN, RSSM) | P02, RSSM dynamics | Builds on P01's checkpoint |
+| Rollout reliability: account for the gap between training inputs and model-generated inputs | L02: Training Distributions and Free Rollouts, then Dreamer Series Evolution | P02 rollout diagnostics | Covers teacher forcing, prior imagination, horizon drift, and uncertainty before planning |
 | Control: use predicted futures to select actions | L03: Planning and Control (CEM-MPC, latent Actor-Critic, TD-MPC) | P03, Dreamer agent | Prerequisite for P03 |
 | Backbone choice: RSSM vs. Transformer vs. diffusion | L03: Backbone Selection | P04, Transformer backbone (STORM-style) | P04 does not implement TD-MPC |
 | Frontier survey: research orientation beyond the build path | L03: Optional Frontier Survey (JEPA, RWM, Spatial 3D/4D, Genie, LoopWM, WAM, system-integration patterns, LS-Imagine) | None | Nine architecture families total (RNN/RSSM, Transformer, Diffusion, JEPA, RWM, Spatial 3D/4D, Genie, LoopWM, WAM); the seven integration patterns describe where prediction enters an agent, not additional families; CWM is a domain extension, not a tenth family |
 | Diagnosis: evaluate representations, dynamics, planning, rollouts, deployment | L04, organized by diagnostic interface not by model (representation quality, one-step dynamics, long-horizon rollout, task signals, planner/policy behavior, deployment-loop reliability) | P05, evaluation dashboard (applies L04, not a prerequisite for reading it); P06, counterfactual fidelity | Worked examples: Dreamer, TD-MPC, MuZero, STORM, Diamond |
 | Open questions: unresolved technical and philosophical debates | L05 | None | Extensions or open questions only, not silent additions to the core taxonomy |
 
-Preserve the planning-first order in L03 and the model-independent diagnostic framework at the start of L04. Keep prerequisites truthful: a page must not claim a project implements a model or metric it doesn't contain, and core prerequisites must stay separate from optional frontier material.
+Preserve the working-definition-first order in L01, the state-estimation-before-encoding and rollout-reliability-before-planning order in L02, the planning-first order in L03, and the model-independent diagnostic framework at the start of L04. Keep prerequisites truthful: a page must not claim a project implements a model or metric it doesn't contain, and core prerequisites must stay separate from optional frontier material.
 
 ## Repository Layout
 

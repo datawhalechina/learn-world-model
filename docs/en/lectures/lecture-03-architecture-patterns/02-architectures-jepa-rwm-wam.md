@@ -8,6 +8,12 @@ lecture: 3
 
 This page is optional for the build path. It broadens the comparison beyond the backbones implemented in P03 and P04: JEPA asks what should be predicted, while RWM asks how prediction can remain dependable during robot deployment.
 
+## Common Misconceptions
+
+**"If a representation cannot be visualized or decoded back to pixels, there is no way to know whether it is any good."** L02 laid out three kinds of evidence for a representation: reconstruction, probes, and downstream prediction. JEPA gives up the first by design, but the other two still apply directly: a probe can check whether object position or contact state is linearly recoverable from $s_x$, and downstream task performance measures whether the representation actually helps. Non-generative does not mean unevaluable, it means the reconstruction column of that evidence table is unavailable and the other two have to carry the weight.
+
+**"Long-horizon rollout divergence is a data problem, so training on more real interaction makes it go away."** The gap Self-Forcing targets is not a shortage of data. It is a mismatch between what the model sees during training, true states under teacher forcing, and what it must consume during inference, its own predictions. Feeding more of the same kind of data through the same training procedure only widens exposure to true states, without ever exposing the model to its own compounding errors. Self-Forcing closes the gap by changing what the model trains on, occasionally its own prior predictions, not by adding more of the same.
+
 ## Architecture Four: JEPA (2023, Non-Generative)
 
 **Representative systems**: I-JEPA (2023), V-JEPA (2024), V-JEPA 2 (2025), led by Yann LeCun ([LeCun, 2022](https://openreview.net/forum?id=BZ5a1r-kVsf))
