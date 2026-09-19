@@ -150,9 +150,10 @@ print(f'PyTorch 版本   : {torch.__version__}')
 运行环境已经准备好，先生成一个合成形状数据集，让 VAE 在没有外部下载的情况下完成训练。
 
 ```python
-def make_shape_image(img_size=64):
+def make_shape_image(img_size=64, rng=None):
     """生成一张包含随机彩色形状的 64x64 RGB 图像。"""
-    rng = np.random.default_rng()
+    if rng is None:
+        rng = np.random.default_rng()
     img = np.zeros((img_size, img_size, 3), dtype=np.float32)
 
     shape_type = rng.integers(0, 3)
@@ -184,9 +185,9 @@ def make_shape_image(img_size=64):
 class ShapeDataset(Dataset):
     def __init__(self, n_samples=1000, img_size=64, seed=42):
         torch.manual_seed(seed)
-        np.random.seed(seed)
+        rng = np.random.default_rng(seed)
         # 将数据集存储为一个张量，以便高效索引。
-        self.images = torch.stack([make_shape_image(img_size) for _ in range(n_samples)])
+        self.images = torch.stack([make_shape_image(img_size, rng) for _ in range(n_samples)])
 
     def __len__(self):
         return len(self.images)
