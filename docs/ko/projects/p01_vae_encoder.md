@@ -101,9 +101,10 @@ print(f'PyTorch version: {torch.__version__}')
 런타임이 준비되었으니, 외부 다운로드 없이 VAE가 학습할 수 있는 합성 도형 데이터셋을 생성합니다.
 
 ```python
-def make_shape_image(img_size=64):
+def make_shape_image(img_size=64, rng=None):
     """Generate a single 64x64 RGB image containing a random colored shape."""
-    rng = np.random.default_rng()
+    if rng is None:
+        rng = np.random.default_rng()
     img = np.zeros((img_size, img_size, 3), dtype=np.float32)
 
     shape_type = rng.integers(0, 3)
@@ -135,9 +136,9 @@ def make_shape_image(img_size=64):
 class ShapeDataset(Dataset):
     def __init__(self, n_samples=1000, img_size=64, seed=42):
         torch.manual_seed(seed)
-        np.random.seed(seed)
+        rng = np.random.default_rng(seed)
         # Store the dataset as one tensor for cheap indexing.
-        self.images = torch.stack([make_shape_image(img_size) for _ in range(n_samples)])
+        self.images = torch.stack([make_shape_image(img_size, rng) for _ in range(n_samples)])
 
     def __len__(self):
         return len(self.images)

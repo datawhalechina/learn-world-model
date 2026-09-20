@@ -101,9 +101,10 @@ print(f'PyTorch version: {torch.__version__}')
 With the runtime ready, generate a synthetic-shape dataset that the VAE can learn from without external downloads.
 
 ```python
-def make_shape_image(img_size=64):
+def make_shape_image(img_size=64, rng=None):
     """Generate a single 64x64 RGB image containing a random colored shape."""
-    rng = np.random.default_rng()
+    if rng is None:
+        rng = np.random.default_rng()
     img = np.zeros((img_size, img_size, 3), dtype=np.float32)
 
     shape_type = rng.integers(0, 3)
@@ -135,9 +136,9 @@ def make_shape_image(img_size=64):
 class ShapeDataset(Dataset):
     def __init__(self, n_samples=1000, img_size=64, seed=42):
         torch.manual_seed(seed)
-        np.random.seed(seed)
+        rng = np.random.default_rng(seed)
         # Store the dataset as one tensor for cheap indexing.
-        self.images = torch.stack([make_shape_image(img_size) for _ in range(n_samples)])
+        self.images = torch.stack([make_shape_image(img_size, rng) for _ in range(n_samples)])
 
     def __len__(self):
         return len(self.images)
