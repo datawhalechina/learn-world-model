@@ -121,7 +121,7 @@ learn-world-model/
 扫描二维码加入微信交流群：
 
 <div align="center">
-  <img src="./docs/public/wechat-group-qr-code.png" width="300" alt="微信交流群二维码">
+  <img src="./docs/public/wechat.jpg" width="300" alt="微信交流群二维码">
 </div>
 
 ---

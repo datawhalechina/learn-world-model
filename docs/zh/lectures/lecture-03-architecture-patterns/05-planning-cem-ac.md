@@ -117,4 +117,31 @@ Dreamer 的核心洞察：与其在真实环境里收集大量数据训练策略
 
 **模型漏洞（Model Exploitation）问题**：Policy 可能找到模型里高奖励但真实世界不成立的动作，用高频抖动动作在世界模型里获得高分，但这个动作在真机上只会损坏电机。Dreamer 系列的解决思路是定期用真实环境数据更新世界模型，同时限制想象展开的步数，但这个问题并没有被根本解决。
 
+## 扩展：决策时的基于梯度的规划
+
+上面两种机制处在“梯度问题”的两端。CEM-MPC 完全不对模型求梯度；Dreamer 只在训练时对模型求梯度，用来拟合一个策略。第三种做法在决策时对模型求梯度：把动作序列当作连续变量，向前滚动模型，再对预测回报或到目标的距离做梯度下降。
+
+它的吸引力在于效率。在高维动作空间中，梯度直接指向改进的方向，而 CEM 只能靠采样去寻找这个方向。代价是梯度必须穿过长 rollout 的每一步，当模型从像素出发时还要穿过编码器。一长串 Jacobian 会让优化地形变得脆弱，穿过视觉模型的梯度也可能具有误导性而非信息性。这又是模型漏洞问题，只不过换成了梯度的形式。[Dream-MPC](https://arxiv.org/pdf/2605.04568) 在相关工作中指出，早期基于梯度的规划器表现不如对应的无梯度方法。
+
+近期工作从几个方向攻克这一失败模式：
+
+- **[GRASP](https://arxiv.org/html/2602.00475v1)** 把中间的潜在状态当作优化变量，用软动力学约束把它们连接起来，因此优化可以沿时间并行展开，而不必在一条很长的顺序链上反向传播。它还对状态迭代加入噪声以促进探索，并重塑梯度，避免穿过视觉模型的脆弱的状态-输入 Jacobian。作者报告在较长视野下优于 CEM 和朴素梯度下降。
+- **[Dream-MPC](https://arxiv.org/pdf/2605.04568)** 在潜在想象上运行基于梯度的模型预测控制。
+- **[MPC with Differentiable World Models](https://arxiv.org/html/2603.22430v1)** 在离线 RL 中，沿想象 rollout 计算端到端梯度，在推理时优化策略。
+- **[Reinforced Planning with Latent World Models](https://arxiv.org/abs/2608.18669)** 学习规划更新规则本身，使用沿可微世界模型传播的梯度。
+
+<figure>
+<img src="/grasp/grasp-serial-vs-parallel.png" alt="GRASP：串行规划与并行化规划" style="width:85%;display:block;margin:0 auto">
+<figcaption>GRASP（Psenka 等，2026，<a href="https://arxiv.org/abs/2602.00475">arXiv:2602.00475</a>）。(a) 串行规划通过一条很长的模型调用链来优化动作。(b) 并行化规划同时把中间状态也作为优化变量，并用软动力学约束把它们连起来，因此各次模型调用可以并行计算，同时对状态迭代值加入噪声以促进探索。</figcaption>
+</figure>
+
+<figure>
+<img src="/dreammpc/dream-mpc-overview.png" alt="Dream-MPC 概览" style="width:90%;display:block;margin:0 auto">
+<figcaption>Dream-MPC（2026，<a href="https://arxiv.org/abs/2605.04568">arXiv:2605.04568</a>）。策略在潜在想象中提出动作，由预测奖励与 Q 值构成的 MPC 目标 J 通过对动作做梯度下降来优化。实线为前向传播，虚线为穿过世界模型的反向传播。</figcaption>
+</figure>
+
+这些工作并没有推翻前面的纠正：可微分仍然不是规划的前提。它是一个选项，在模型足够平滑、可以对其求导时换取样本效率，而且同样的保险措施依然适用：短视野、频繁重规划，以及用真实反馈核对计划。
+
+## 为什么 TD-MPC 要把两种做法结合起来
+
 CEM 在高维动作空间效率低，Actor-Critic 有模型漏洞风险。TD-MPC 的核心价值，正是把两者结合起来同时缓解这两个问题。

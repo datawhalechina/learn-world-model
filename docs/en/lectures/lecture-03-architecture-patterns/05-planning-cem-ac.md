@@ -117,4 +117,31 @@ Dreamer's core insight: rather than collecting large amounts of data in the real
 
 **Model exploitation problem**: the policy may discover actions that yield high rewards inside the model but are invalid in the real world, such as high-frequency jitter actions that score highly in the world model but would only damage motors on a real robot. The Dreamer series addresses this by periodically updating the world model with real environment data and limiting the number of imagination rollout steps, but the problem has not been fundamentally solved.
 
+## Extension: Gradient-Based Planning at Decision Time
+
+The two mechanisms above sit at opposite ends of a gradient question. CEM-MPC takes no gradient through the model. Dreamer takes gradients through it only at training time, to fit a policy. A third option takes gradients through the model at decision time: treat the action sequence as a continuous variable, roll the model forward, and run gradient descent on the predicted return or the distance to a goal.
+
+The appeal is efficiency. In a high-dimensional action space a gradient points toward improvement, while CEM has to find that direction by sampling. The cost is that the gradient must pass through every step of a long rollout, and through the encoder when the model works from pixels. A long chain of Jacobians makes the optimization landscape brittle, and the gradient through a vision model can be misleading rather than informative. This is the model-exploitation problem again, now in gradient form. [Dream-MPC](https://arxiv.org/pdf/2605.04568) notes in its related work that earlier gradient-based planners performed worse than their gradient-free counterparts.
+
+Recent work attacks this failure from several directions:
+
+- **[GRASP](https://arxiv.org/html/2602.00475v1)** treats the intermediate latent states as optimization variables tied together by soft dynamics constraints, so the optimization runs in parallel across time instead of backpropagating through one long sequential chain. It also adds noise to the state iterates for exploration and reshapes the gradients to avoid brittle state-input Jacobians through the vision model. The authors report gains over both CEM and vanilla gradient descent at longer horizons.
+- **[Dream-MPC](https://arxiv.org/pdf/2605.04568)** runs gradient-based model predictive control on latent imagination.
+- **[MPC with Differentiable World Models](https://arxiv.org/html/2603.22430v1)** computes end-to-end gradients through imagined rollouts for policy optimization at inference time in offline RL.
+- **[Reinforced Planning with Latent World Models](https://arxiv.org/abs/2608.18669)** learns the plan-update rule itself, using gradients propagated through the differentiable world model.
+
+<figure>
+<img src="/grasp/grasp-serial-vs-parallel.png" alt="GRASP: serial versus parallelized planning" style="width:85%;display:block;margin:0 auto">
+<figcaption>GRASP (Psenka et al., 2026, <a href="https://arxiv.org/abs/2602.00475">arXiv:2602.00475</a>). (a) Serial planning optimizes the actions through one long chain of model calls. (b) Parallelized planning also treats the intermediate states as optimization variables tied together by soft dynamics constraints, so each model call can be evaluated in parallel, and adds noise to the state iterates for exploration.</figcaption>
+</figure>
+
+<figure>
+<img src="/dreammpc/dream-mpc-overview.png" alt="Dream-MPC overview" style="width:90%;display:block;margin:0 auto">
+<figcaption>Dream-MPC (2026, <a href="https://arxiv.org/abs/2605.04568">arXiv:2605.04568</a>). A policy proposes actions inside latent imagination, and the MPC objective J, built from predicted rewards and Q-values, is optimized by gradient descent on the actions. Solid arrows are forward propagation and dotted arrows are backward propagation through the world model.</figcaption>
+</figure>
+
+None of this reverses the earlier correction: differentiability is still not a prerequisite for planning. It is an option that buys sample efficiency when the model is smooth enough to differentiate through, and the same safeguards apply, namely short horizons, frequent re-planning, and checking the plan against real feedback.
+
+## Why TD-MPC Combines Both Approaches
+
 CEM is inefficient in high-dimensional action spaces, and Actor-Critic carries model exploitation risk. TD-MPC's core value is combining both approaches to mitigate these two problems at the same time.

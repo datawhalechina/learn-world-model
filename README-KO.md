@@ -122,7 +122,7 @@ learn-world-model/
 QR 코드를 스캔해 위챗 톡방(微信交流群)에 참여하세요.
 
 <div align="center">
-  <img src="./docs/public/wechat.png" width="300" alt="위챗 톡방 QR 코드">
+  <img src="./docs/public/wechat.jpg" width="300" alt="위챗 톡방 QR 코드">
 </div>
 
 ---

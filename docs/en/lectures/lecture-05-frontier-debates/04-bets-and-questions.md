@@ -49,6 +49,12 @@ This design maps almost one-to-one onto the RSSM framework from physical-world m
 **Why is this a boundary question?** The existence of CWM blurs the boundary between the language camp and the world model camp. It uses a Transformer architecture (the language camp's primary tool), trains on natural language text plus code (the language camp's data), yet the training objective is to predict the dynamic changes in program execution state (the world model camp's core claim). If CWM ultimately demonstrates that "understanding code = being able to make predictions inside an interpreter," the next question becomes: does understanding physics also mean "being able to make predictions inside a physics engine"? The answer to that question bears on the future of both camps.
 
 
+## Language-Agent World Models: Simulating Tools and Digital Environments
+
+CWM is not the only place where the modeled "world" is digital. A 2026 cluster of papers builds world models for LLM agents acting in software, web, and game environments. [Agent World Model](https://arxiv.org/pdf/2602.10090) generates synthetic environments for agentic reinforcement learning. [Qwen-AgentWorld](https://arxiv.org/pdf/2606.24597) proposes language world models for general agents. [Agentic Game Development](https://arxiv.org/pdf/2608.25518) embeds a world model (AWoMo) in an agent workflow where a game engine verifies the edits the model proposes. [Dual-Frontier](https://arxiv.org/pdf/2609.26293) asks when an agent can trust its world model.
+
+Like CWM, this is a domain extension for comparison, not a tenth backbone family. The open question is whether the course's capability criteria transfer. A physical-world model is checked against sensor data it did not generate. A language-agent world model is often checked against another model or a verifier, so the questions from Lecture 4 return in a new form: is the predicted next state grounded in real feedback, does the planner exploit the model's errors, and who detects when the simulation has drifted?
+
 ## The Bet of the Unpopular Side
 
 Xie Saining knows that what he is doing is not mainstream:
