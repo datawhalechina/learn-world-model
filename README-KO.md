@@ -4,7 +4,7 @@
 
 [English](./README.md) · [中文](./README-CN.md) · [한국어](./README-KO.md)
 
-# Learn World Models（⚠️ 알파 프리뷰）
+# Learn World Models
 
 [![GitHub Stars](https://img.shields.io/github/stars/datawhalechina/learn-world-model?style=for-the-badge&logo=github)](https://github.com/datawhalechina/learn-world-model/stargazers)
 [![라이선스: MIT](https://img.shields.io/badge/라이선스-MIT-yellow?style=for-the-badge)](https://github.com/datawhalechina/learn-world-model/blob/main/LICENSE)
@@ -14,9 +14,6 @@
 ### 📖 [**온라인으로 강좌 읽기 →**](https://datawhalechina.github.io/learn-world-model)
 
 </div>
-
-> [!CAUTION]
-> ⚠️ **알파 프리뷰**입니다. 아직 초기 빌드 단계라 콘텐츠가 계속 보완되고 수정되는 중이며, 섹션, 예시, 문구가 앞으로도 바뀔 수 있습니다. Issue를 통한 피드백을 환영합니다.
 
 ---
 
