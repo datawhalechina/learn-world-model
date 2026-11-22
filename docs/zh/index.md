@@ -1,13 +1,13 @@
 ---
 title: 世界模型课程
-description: 五讲系统讲授世界模型理论，从历史脉络到前沿思辨。
+description: 六讲系统讲授世界模型理论，从历史脉络到机器人控制。
 ---
 
 # 欢迎来到 Learn World Models
 
 Learn World Models 是一门以项目为驱动的世界模型课程，从 VAE 编码器与潜在动力学，到 Dreamer、TD-MPC、STORM，再到语言与物理世界的前沿争论。
 
-**建议学习顺序：** 按交错路线先学习 L01、L02 并完成 P01、P02，再学习 L03 并完成 P03、P04，随后在 P05、P06 中使用 L04，最后进入 L05。
+**建议学习顺序：** 按交错路线先学习 L01、L02 并完成 P01、P02，再学习 L03 并完成 P03、P04，随后在 P05、P06 中使用 L04，最后读 L05 的前沿讨论和 L06 的机器人控制案例。
 
 ## 讲义
 
@@ -17,7 +17,8 @@ Learn World Models 是一门以项目为驱动的世界模型课程，从 VAE �
 | [第二讲](./lectures/lecture-02-encode-and-dynamics/) | 状态估计、观测编码与潜在动力学 |
 | [第三讲](./lectures/lecture-03-architecture-patterns/) | 架构模式、学习范式与规划 |
 | [第四讲](./lectures/lecture-04-evaluation-by-model/) | 诊断世界模型 |
-| [第五讲](./lectures/lecture-05-frontier-debates/) | 前沿思辨 |
+| [第六讲](./lectures/lecture-05-frontier-debates/) | 前沿思辨 |
+| [第六讲](./lectures/lecture-06-world-action-models/) | 世界动作模型与机器人控制 |
 
 ## 项目
 

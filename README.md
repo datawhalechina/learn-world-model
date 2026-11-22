@@ -19,7 +19,7 @@
 
 ## What this course covers
 
-Five lectures and six projects that take you from the intuition behind world models to training, evaluating, and causally probing modern world-model systems.
+Six lectures and six projects that take you from the intuition behind world models to training, evaluating, and causally probing modern world-model systems.
 
 | # | Type | Title | Core Topics |
 |---|------|-------|-------------|
@@ -28,6 +28,7 @@ Five lectures and six projects that take you from the intuition behind world mod
 | L03 | Lecture | Architecture Patterns, Learning Paradigms & Planning | Planning and control, backbone selection, nine architecture families, optional frontier survey |
 | L04 | Lecture | Diagnosing World Models | Representation, dynamics, rollout, task-signal, planning, and deployment diagnostics |
 | L05 | Lecture | Frontier Debates | Language vs physical grounding, Bitter Lesson, AGI as a research target |
+| [L06](docs/en/lectures/lecture-06-world-action-models/index.md) | Lecture | World Action Models for Robot Control | Video supervision, action generation, feedback and planning |
 | P01 | Project | Train a VAE Encoder | Small CNN VAE on 64×64 pixels. ELBO loss curve. Latent slider visualization |
 | P02 | Project | Build an RSSM Dynamics Model | GRU, MDN-RNN, and RSSM compared. Prior vs posterior rollout plots |
 | P03 | Project | Train a Dreamer Agent | Full training loop: encoder + RSSM + latent Actor-Critic on a small pixel env |
@@ -50,8 +51,9 @@ Five lectures and six projects that take you from the intuition behind world mod
 | Research orientation | L03: Optional Frontier Survey | Optional reading, no project prerequisite |
 | Diagnosis | L04: Diagnosing World Models | P05: Evaluation Dashboard and P06: Counterfactual Fidelity |
 | Open questions | L05 | Synthesize the unresolved debates |
+| Robot control | L06 | Trace how future prediction enters a control loop |
 
-Suggested path: L01, L02 Observation/State/Belief, L02 Observation Encoding, P01, L02 Latent Dynamics, L02 Training Distributions and Free Rollouts, P02, L03 Planning and Control, P03, L03 Backbone Selection, P04, optional L03 frontier survey, L04, P05, P06, L05.
+Suggested path: L01, L02 Observation/State/Belief, L02 Observation Encoding, P01, L02 Latent Dynamics, L02 Training Distributions and Free Rollouts, P02, L03 Planning and Control, P03, L03 Backbone Selection, P04, optional L03 frontier survey, L04, P05, P06, L05, L06.
 
 You do not need to finish all theory before starting a project. Build, then come back with questions.
 
@@ -81,9 +83,9 @@ npm run screenshots:readme
 learn-world-model/
 ├── docs/                                  # VitePress documentation site
 │   ├── .vitepress/config.mts             # nav and sidebar (EN + ZH + KO)
-│   ├── en/lectures/                       # 5 English lecture modules
-│   ├── zh/lectures/                       # 5 Chinese lecture modules
-│   ├── ko/lectures/                       # 5 Korean lecture modules
+│   ├── en/lectures/                       # 6 English lecture modules
+│   ├── zh/lectures/                       # 6 Chinese lecture modules
+│   ├── ko/lectures/                       # 6 Korean lecture modules
 │   ├── en/projects/                       # 6 English project pages
 │   ├── zh/projects/                       # 6 Chinese project pages
 │   └── ko/projects/                       # 6 Korean project pages

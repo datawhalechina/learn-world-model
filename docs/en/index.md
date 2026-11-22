@@ -1,13 +1,13 @@
 ---
 title: World Models Curriculum
-description: Five lectures covering world model theory systematically, from historical context to frontier debates.
+description: Six lectures covering world model theory systematically, from historical context to robot control.
 ---
 
 # Welcome to Learn World Models
 
 Learn World Models is a project-driven world models curriculum covering VAE encoders and latent dynamics, Dreamer, TD-MPC, STORM, and frontier debates on language versus the physical world.
 
-**Suggested learning order:** Follow the interleaved roadmap from L01 and L02 through P01 and P02, continue with L03 and P03/P04, then use L04 during P05 and P06 before finishing with L05.
+**Suggested learning order:** Follow the interleaved roadmap from L01 and L02 through P01 and P02, continue with L03 and P03/P04, then use L04 during P05 and P06 before reading L05 and the robot control case studies in L06.
 
 ## Lectures
 
@@ -18,6 +18,7 @@ Learn World Models is a project-driven world models curriculum covering VAE enco
 | [Lecture 3](./lectures/lecture-03-architecture-patterns/) | Architecture Patterns, Learning Paradigms, and Planning |
 | [Lecture 4](./lectures/lecture-04-evaluation-by-model/) | Diagnosing World Models |
 | [Lecture 5](./lectures/lecture-05-frontier-debates/) | Frontier Debates |
+| [Lecture 6](./lectures/lecture-06-world-action-models/) | World Action Models for Robot Control |
 
 ## Projects
 

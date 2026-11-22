@@ -76,6 +76,19 @@ const zhWorldModelItems = [
       { text: "哲学后记：生成认知", link: "/zh/lectures/lecture-05-frontier-debates/05-enactive-cognition" },
     ]
   },
+  {
+    text: "第六讲：世界动作模型与机器人控制",
+    collapsed: true,
+    items: [
+      { text: "导读", link: "/zh/lectures/lecture-06-world-action-models/" },
+      { text: "Fast-WAM", link: "/zh/lectures/lecture-06-world-action-models/01-fast-wam" },
+      { text: "Motus", link: "/zh/lectures/lecture-06-world-action-models/02-motus" },
+      { text: "LingBot-VA", link: "/zh/lectures/lecture-06-world-action-models/03-lingbot-va" },
+      { text: "DreamZero", link: "/zh/lectures/lecture-06-world-action-models/04-dreamzero" },
+      { text: "Cosmos Policy", link: "/zh/lectures/lecture-06-world-action-models/05-cosmos-policy" },
+      { text: "两两对读与原论文", link: "/zh/lectures/lecture-06-world-action-models/06-comparison" },
+    ]
+  },
 ];
 
 const zhProjectItems = [
@@ -158,6 +171,19 @@ const enWorldModelItems = [
       { text: "Philosophical Coda: Enactive Cognition", link: "/en/lectures/lecture-05-frontier-debates/05-enactive-cognition" },
     ]
   },
+  {
+    text: "Lecture 06: World Action Models for Robot Control",
+    collapsed: true,
+    items: [
+      { text: "Overview", link: "/en/lectures/lecture-06-world-action-models/" },
+      { text: "Fast-WAM", link: "/en/lectures/lecture-06-world-action-models/01-fast-wam" },
+      { text: "Motus", link: "/en/lectures/lecture-06-world-action-models/02-motus" },
+      { text: "LingBot-VA", link: "/en/lectures/lecture-06-world-action-models/03-lingbot-va" },
+      { text: "DreamZero", link: "/en/lectures/lecture-06-world-action-models/04-dreamzero" },
+      { text: "Cosmos Policy", link: "/en/lectures/lecture-06-world-action-models/05-cosmos-policy" },
+      { text: "Compare the papers", link: "/en/lectures/lecture-06-world-action-models/06-comparison" },
+    ]
+  },
 ];
 
 const koWorldModelItems = [
@@ -228,6 +254,19 @@ const koWorldModelItems = [
       { text: "데이터는 어디서 오는가", link: "/ko/lectures/lecture-05-frontier-debates/03-data-and-future" },
       { text: "각 노선의 핵심 베팅과 마무리 질문", link: "/ko/lectures/lecture-05-frontier-debates/04-bets-and-questions" },
       { text: "철학적 후기: 행화 인지", link: "/ko/lectures/lecture-05-frontier-debates/05-enactive-cognition" },
+    ]
+  },
+  {
+    text: "제6강: 로봇 제어를 위한 세계 행동 모델",
+    collapsed: true,
+    items: [
+      { text: "개요", link: "/ko/lectures/lecture-06-world-action-models/" },
+      { text: "Fast-WAM", link: "/ko/lectures/lecture-06-world-action-models/01-fast-wam" },
+      { text: "Motus", link: "/ko/lectures/lecture-06-world-action-models/02-motus" },
+      { text: "LingBot-VA", link: "/ko/lectures/lecture-06-world-action-models/03-lingbot-va" },
+      { text: "DreamZero", link: "/ko/lectures/lecture-06-world-action-models/04-dreamzero" },
+      { text: "Cosmos Policy", link: "/ko/lectures/lecture-06-world-action-models/05-cosmos-policy" },
+      { text: "논문 비교와 원문", link: "/ko/lectures/lecture-06-world-action-models/06-comparison" },
     ]
   },
 ];
@@ -313,6 +352,7 @@ export default withMermaid(
             '/zh/lectures/lecture-03-architecture-patterns/': [{ text: "世界模型", items: zhWorldModelItems }],
             '/zh/lectures/lecture-04-evaluation-by-model/': [{ text: "世界模型", items: zhWorldModelItems }],
             '/zh/lectures/lecture-05-frontier-debates/': [{ text: "世界模型", items: zhWorldModelItems }],
+            '/zh/lectures/lecture-06-world-action-models/': [{ text: "世界模型", items: zhWorldModelItems }],
           },
           outline: {
             level: [2, 3]
@@ -349,6 +389,7 @@ export default withMermaid(
             '/en/lectures/lecture-03-architecture-patterns/': [{ text: "World Models", items: enWorldModelItems }],
             '/en/lectures/lecture-04-evaluation-by-model/': [{ text: "World Models", items: enWorldModelItems }],
             '/en/lectures/lecture-05-frontier-debates/': [{ text: "World Models", items: enWorldModelItems }],
+            '/en/lectures/lecture-06-world-action-models/': [{ text: "World Models", items: enWorldModelItems }],
           },
           socialLinks: [{ icon: "github", link: githubRepoTreeLink }]
         }
@@ -370,6 +411,7 @@ export default withMermaid(
             '/ko/lectures/lecture-03-architecture-patterns/': [{ text: "월드모델", items: koWorldModelItems }],
             '/ko/lectures/lecture-04-evaluation-by-model/': [{ text: "월드모델", items: koWorldModelItems }],
             '/ko/lectures/lecture-05-frontier-debates/': [{ text: "월드모델", items: koWorldModelItems }],
+            '/ko/lectures/lecture-06-world-action-models/': [{ text: "월드모델", items: koWorldModelItems }],
           },
           outline: {
             level: [2, 3]

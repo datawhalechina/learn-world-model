@@ -1,13 +1,13 @@
 ---
 title: 월드모델 강좌
-description: 다섯 개의 강의를 통해 월드모델 이론을 역사적 맥락에서 최전선 논쟁까지 체계적으로 다룹니다.
+description: 여섯 개의 강의를 통해 월드모델 이론을 역사적 맥락에서 로봇 제어까지 체계적으로 다룹니다.
 ---
 
 # Learn World Models에 오신 것을 환영합니다
 
 Learn World Models는 프로젝트 기반의 월드모델 강좌로, VAE 인코더와 잠재 동역학(Latent Dynamics)에서 시작해 Dreamer, TD-MPC, STORM을 거쳐, 언어와 물리 세계에 관한 최전선 논쟁까지 다룹니다.
 
-**권장 학습 순서:** 먼저 L01과 L02를 P01, P02와 번갈아 학습하고, 이어서 L03을 P03, P04와 함께 익힙니다. 그다음 P05와 P06을 진행하며 L04를 활용하고, 마지막으로 L05로 마무리합니다.
+**권장 학습 순서:** 먼저 L01과 L02를 P01, P02와 번갈아 학습하고, 이어서 L03을 P03, P04와 함께 익힙니다. 그다음 P05와 P06을 진행하며 L04를 활용하고, 마지막으로 L05의 논쟁과 L06의 로봇 제어 사례를 읽습니다.
 
 ## 강의
 
@@ -18,6 +18,7 @@ Learn World Models는 프로젝트 기반의 월드모델 강좌로, VAE 인코�
 | [제3강](./lectures/lecture-03-architecture-patterns/) | 아키텍처 패턴, 학습 패러다임과 계획 |
 | [제4강](./lectures/lecture-04-evaluation-by-model/) | 월드모델 진단하기 |
 | [제5강](./lectures/lecture-05-frontier-debates/) | 최전선 논쟁 |
+| [제6강](./lectures/lecture-06-world-action-models/) | 로봇 제어를 위한 세계 행동 모델 |
 
 ## 프로젝트
 
