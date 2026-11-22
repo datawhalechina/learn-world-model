@@ -19,11 +19,6 @@
 
 ## ✨ Preview
 
-### 🏠 Course Home
-> Structured learning path with lecture and project cards.
-
-![Course home](./docs/public/screenshots/readme/en-home.png)
-
 ### 📖 Lecture Pages
 > Concept-first explanations with mermaid diagrams and background callouts for deep-learning readers.
 
@@ -133,8 +128,8 @@ Contributions are welcome. Before submitting a pull request, read [CLAUDE.md](./
 ## Contributors
 
 | Name | Role | Affiliation | GitHub |
-| ---- | ---- | ----------- | ------ |
-| Zhimin Zhao | Project Lead | Queen's University | [@zhimin-z](https://github.com/zhimin-z) |
-| Qi Wang | Project Lead | Chinese Academy of Sciences | [@qiwang067](https://github.com/qiwang067) |
-| Dongwoo Ro | Contributor |  | [@dwro0121](https://github.com/dwro0121) |
-| Xun Wang | Contributor |  | [@wangxunx](https://github.com/wangxunx) |
+| :--: | ---- | ----------- | ------ |
+| <img src="https://avatars.githubusercontent.com/u/8592144?s=96" width="48" height="48" alt="GitHub avatar of Zhimin Zhao"><br>Zhimin Zhao | Project Lead | Queen's University | [@zhimin-z](https://github.com/zhimin-z) |
+| <img src="https://avatars.githubusercontent.com/u/22296010?s=96" width="48" height="48" alt="GitHub avatar of Qi Wang"><br>Qi Wang | Project Lead | Chinese Academy of Sciences | [@qiwang067](https://github.com/qiwang067) |
+| <img src="https://avatars.githubusercontent.com/u/55121694?s=96" width="48" height="48" alt="GitHub avatar of Dongwoo Ro"><br>Dongwoo Ro | Contributor |  | [@dwro0121](https://github.com/dwro0121) |
+| <img src="https://avatars.githubusercontent.com/u/104552583?s=96" width="48" height="48" alt="GitHub avatar of Xun Wang"><br>Xun Wang | Contributor |  | [@wangxunx](https://github.com/wangxunx) |

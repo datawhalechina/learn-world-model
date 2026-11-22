@@ -18,11 +18,6 @@
 
 ## ✨ 界面速览
 
-### 🏠 课程主页
-> 清晰的学习路径，讲义与项目分区导航。
-
-![课程主页](./docs/public/screenshots/readme/en-home.png)
-
 ### 📖 讲义页面
 > 概念优先的讲解风格，配合 mermaid 流程图与面向深度学习读者的背景知识框。
 
@@ -132,8 +127,8 @@ learn-world-model/
 ## 贡献者名单（教程部分）
 
 | 姓名 | 职责 | 简介 | GitHub |
-| ---- | ---- | ---- | ------ |
-| 赵志民 | 项目负责人 | 皇后大学 | [@zhimin-z](https://github.com/zhimin-z) |
-| 王琦 | 项目负责人 | 上海交通大学 | [@qiwang067](https://github.com/qiwang067) |
-| 鲁东祐 | 贡献者 |  | [@dwro0121](https://github.com/dwro0121) |
-| 王迅 | 贡献者 |  | [@wangxunx](https://github.com/wangxunx) |
+| :--: | ---- | ---- | ------ |
+| <img src="https://avatars.githubusercontent.com/u/8592144?s=96" width="48" height="48" alt="赵志民的 GitHub 头像"><br>赵志民 | 项目负责人 | 皇后大学 | [@zhimin-z](https://github.com/zhimin-z) |
+| <img src="https://avatars.githubusercontent.com/u/22296010?s=96" width="48" height="48" alt="王琦的 GitHub 头像"><br>王琦 | 项目负责人 | 上海交通大学 | [@qiwang067](https://github.com/qiwang067) |
+| <img src="https://avatars.githubusercontent.com/u/55121694?s=96" width="48" height="48" alt="鲁东祐的 GitHub 头像"><br>鲁东祐 | 贡献者 |  | [@dwro0121](https://github.com/dwro0121) |
+| <img src="https://avatars.githubusercontent.com/u/104552583?s=96" width="48" height="48" alt="王迅的 GitHub 头像"><br>王迅 | 贡献者 |  | [@wangxunx](https://github.com/wangxunx) |
