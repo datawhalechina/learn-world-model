@@ -1,6 +1,6 @@
 ---
 title: Curriculum Roadmap
-description: "The interleaved learning path through five lectures and six projects, from intuition and latent dynamics to planning, evaluation, and frontier debates."
+description: "The interleaved learning path through six lectures and six projects, from intuition and latent dynamics to planning, evaluation, and frontier debates."
 lecture: 1
 ---
 
@@ -19,6 +19,7 @@ The lectures and projects are one curriculum, not two separate tracks. Stop and 
 | Evaluation | L04 | [P05: Build an Evaluation Dashboard](../../projects/p05_evaluation_dashboard) | Which metric diagnoses each representation, rollout, or planning failure |
 | Causality | Revisit the L1-L5 ladder after L04 | [P06: Test Counterfactual Fidelity](../../projects/p06_counterfactual_world_model) | Whether actions causally change predicted futures rather than merely correlate with them |
 | Frontier | L05 | No required project | Which open questions are empirical, architectural, or philosophical |
+| Robot control | [L06](../lecture-06-world-action-models/) | No required project | Where visual prediction enters training, control and planning |
 
 
 ## Next Lecture
