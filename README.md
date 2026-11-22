@@ -17,20 +17,6 @@
 
 ---
 
-## ✨ Preview
-
-### 📖 Lecture Pages
-> Concept-first explanations with mermaid diagrams and background callouts for deep-learning readers.
-
-![Lecture page](./docs/public/screenshots/readme/en-lecture-01.png)
-
-### 🗂️ Architecture Deep Dive
-> Nine architecture families, three planning mechanisms, and side-by-side comparison tables.
-
-![Architecture lecture](./docs/public/screenshots/readme/en-lecture-03.png)
-
----
-
 ## What this course covers
 
 Five lectures and six projects that take you from the intuition behind world models to training, evaluating, and causally probing modern world-model systems.
