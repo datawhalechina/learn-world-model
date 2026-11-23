@@ -22,7 +22,7 @@ A gripper touches the slider on a resealable bag. Pulling along the top might op
 
 Let $K$ count denoising iterations, $H$ the number of generated control steps and $h$ the number executed before the policy updates. Thirty commands at 30 Hz cover one second. If the controller executes six before reading a new image, feedback can influence control after 0.2 seconds, provided the model can finish its next prediction in time.
 
-Write $C$ for the information available now, $Z$ for future visual latents and $A$ for an action chunk. The factorization $p(A,Z\mid C)=p(Z\mid C)\,p(A\mid C,Z)$ admits both joint sampling and a visual prediction followed by inverse dynamics. To understand deployment cost and feedback, inspect which inputs attention can read, how many denoising iterations each modality needs and when real observations re-enter the model. [Fast-WAM §3.1](https://arxiv.org/html/2603.16666v2#S3.SS1)
+Write $C$ for the information available now, $Z$ for future visual latents and $A$ for an action chunk. The factorization $p(A,Z\mid C)=p(Z\mid C)\,p(A\mid C,Z)$ admits both joint sampling and a visual prediction followed by inverse dynamics. To understand deployment cost and feedback, inspect which inputs attention can read, how many denoising iterations each modality needs and when real observations re-enter the model.
 
 ## Return to the moment the gripper touches the slider
 
