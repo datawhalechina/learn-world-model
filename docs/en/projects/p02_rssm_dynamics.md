@@ -73,7 +73,7 @@ def optimizer_step(optimizer, scaler=None):
         scaler.step(optimizer)
         scaler.update()
     else:
-        optimizer_step(optimizer)
+        optimizer.step()
 
 LATENT_DIM = 32
 HIDDEN_DIM = 128
@@ -185,16 +185,16 @@ for p in list(encoder.parameters()) + list(decoder.parameters()):
 print(f'Encoder params: {sum(p.numel() for p in encoder.parameters()):,}')
 print(f'Decoder params: {sum(p.numel() for p in decoder.parameters()):,}')
 ```
-Next, generate synthetic trajectories. These rollouts become the supervision signal for the sequence models. Each trajectory is a colored rectangle drifting across the frame with a fixed velocity `(vx, vy)` plus small per-step noise, and a binary `action` at every step (currently decorative: it is recorded and fed to every model below, but the box's motion does not depend on it). This keeps the focus of the comparison on how GRU, MDN-RNN, and RSSM differ in modeling *uncertainty* over an otherwise simple, near-deterministic dynamic, rather than on whether they can discover a complex action-conditioned rule.
+Next, generate synthetic trajectories. These rollouts become the supervision signal for the sequence models. Each trajectory is a colored rectangle drifting across the frame with a fixed velocity `(vx, vy)` plus small per-step noise, and a binary `action` at every step (currently decorative: it is recorded and fed to every model below, but the box's motion does not depend on it). This keeps the focus of the comparison on how GRU, MDN-RNN, and RSSM differ in modeling *uncertainty* over an otherwise simple, near-deterministic dynamic, rather than on whether they can discover a complex action-conditioned rule. The rectangle's color range (0.3 to 1) and size (16 to 32 pixels) match the shapes P01's VAE was trained on. With darker or smaller boxes the frozen encoder would map most frames to near-empty latents, and every model below would be judged on frames the VAE itself cannot reconstruct.
 
 ```python
 # Generate synthetic trajectory data.
 
 def make_trajectory(T=20, img_size=64, seed=None):
     rng = np.random.RandomState(seed)
-    color = rng.rand(3).astype(np.float32)
-    w  = rng.randint(10, 20)
-    h  = rng.randint(10, 20)
+    color = rng.uniform(0.3, 1.0, size=3).astype(np.float32)
+    w  = rng.randint(16, 33)
+    h  = rng.randint(16, 33)
     x  = float(rng.randint(0, img_size - w))
     y  = float(rng.randint(0, img_size - h))
     vx = float(rng.randint(-3, 4))
@@ -219,7 +219,7 @@ trajectories = [make_trajectory(T=T_STEPS, img_size=IMG_SIZE, seed=i) for i in r
 print(f"obs shape per trajectory:     {trajectories[0]['obs'].shape}")
 print(f"actions shape per trajectory: {trajectories[0]['actions'].shape}")
 ```
-Once the trajectories exist, encode each observation into z so the rest of the notebook can learn dynamics over latent sequences, not raw pixels. `encoder.encode(obs)` calls the *sampling* path (`mu + std * epsilon`) from P01's `reparameterize`, not just the mean, so each `z_t` here already carries the small amount of stochasticity the VAE's posterior assigns to that frame. This matters for interpreting the RSSM section below: `z_seq` supplies the *posterior target* the RSSM's own posterior network learns to reproduce.
+Once the trajectories exist, encode each observation into z so the rest of the notebook can learn dynamics over latent sequences, not raw pixels. `encoder(obs)` returns the posterior mean and log-variance, and this cell keeps only the mean `mu` instead of the *sampling* path `encoder.encode(obs)` (`mu + std * epsilon`) from P01's `reparameterize`. On these frames many latent dimensions are inactive, so their posterior is close to N(0, 1); sampling would add independent noise at every step that no dynamics model can predict, and that noise would dominate every error number below. The mean gives a clean, deterministic target, the usual choice when a frozen VAE serves as the observation encoder. `z_seq` is still the observation the RSSM's own posterior network absorbs, as the RSSM section below describes.
 
 ```python
 # Encode observations into latent sequences z [N, T, 32]
@@ -229,7 +229,8 @@ latent_list = []
 with torch.no_grad():
     for traj in trajectories:
         obs = traj['obs'].to(DEVICE)      # [T,3,H,W]
-        z   = encoder.encode(obs)         # [T, latent_dim]
+        mu, _ = encoder(obs)              # [T, latent_dim], posterior mean
+        z   = mu                          # mean, not encode(): sampling noise would swamp the dynamics
         latent_list.append(z.cpu())
 
 Z_all = torch.stack(latent_list, dim=0)                                     # [N,T,32]
@@ -269,14 +270,20 @@ class GRUDynamics(nn.Module):
             preds.append(self.output(h))
         return torch.stack(preds, dim=1)  # [B, T-1, D]
 
-    def rollout(self, z0, a_seq):
-        """Open-loop rollout from z0 [1,D] for len(a_seq) steps.
-        Returns [1, steps+1, D] (includes z0).
+    def rollout(self, z_ctx, a_seq):
+        """Warm up the hidden state on observed latents, then roll out open-loop.
+        z_ctx [1, C, D]: observed z_0..z_{C-1} (pass [1, D] for C=1).
+        a_seq: actions starting at a_0; the last len(a_seq) - C + 1 drive the open-loop steps.
+        Returns [1, steps+1, D]: the last observed latent, then the predictions.
         """
-        z = z0
-        h = torch.zeros(1, self.hidden_dim, device=z0.device)
+        z_ctx = z_ctx.reshape(1, -1, z_ctx.shape[-1])
+        C = z_ctx.shape[1]
+        h = torch.zeros(1, self.hidden_dim, device=z_ctx.device)
+        for t in range(C - 1):  # teacher forcing on the context
+            h = self.gru(torch.cat([z_ctx[:, t], a_seq[t].view(1, 1)], dim=-1), h)
+        z  = z_ctx[:, -1]
         zs = [z]
-        for a in a_seq:
+        for a in a_seq[C - 1:]:
             inp = torch.cat([z, a.view(1, 1)], dim=-1)
             h   = self.gru(inp, h)
             z   = self.output(h)
@@ -345,14 +352,21 @@ class MDNRNN(nn.Module):
         log_pi = F.log_softmax(logits, dim=-1)          # [B,T,K]
         return -torch.logsumexp(log_pi + log_p, dim=-1).mean()
 
-    def rollout(self, z0, a_seq):
-        """Open-loop rollout using the most likely mixture component.
-        Returns [1, steps+1, D].
+    def rollout(self, z_ctx, a_seq):
+        """Warm up the hidden state on observed latents, then roll out open-loop
+        with the most likely mixture component.
+        z_ctx [1, C, D]: observed z_0..z_{C-1} (pass [1, D] for C=1).
+        a_seq: actions starting at a_0; the last len(a_seq) - C + 1 drive the open-loop steps.
+        Returns [1, steps+1, D]: the last observed latent, then the predictions.
         """
-        z  = z0
-        h  = torch.zeros(1, self.hidden_dim, device=z0.device)
+        z_ctx = z_ctx.reshape(1, -1, z_ctx.shape[-1])
+        C = z_ctx.shape[1]
+        h = torch.zeros(1, self.hidden_dim, device=z_ctx.device)
+        for t in range(C - 1):  # teacher forcing on the context
+            h = self.gru(torch.cat([z_ctx[:, t], a_seq[t].view(1, 1)], dim=-1), h)
+        z  = z_ctx[:, -1]
         zs = [z]
-        for a in a_seq:
+        for a in a_seq[C - 1:]:
             inp = torch.cat([z, a.view(1, 1)], dim=-1)
             h   = self.gru(inp, h)
             lg, mu, _ = self._split(self.mdn_head(h))
@@ -373,7 +387,9 @@ After the two baselines are defined, introduce RSSM as the structured latent-sta
 
 The KL term in `forward`, `kl = 0.5 * (lv_pr - lv_po + (lv_po.exp() + (mu_po - mu_pr)**2) / lv_pr.exp().clamp(min=1e-4) - 1)`, is the closed-form KL divergence between two general (not necessarily standard-normal) diagonal Gaussians, $D_{KL}(q_\phi(\mathbf{z}_t \mid \mathbf{h}_t, \mathbf{o}_t) \,\|\, p_\phi(\mathbf{z}_t \mid \mathbf{h}_t))$: this is a more general form of the same Gaussian KL formula used in P01, generalized from "posterior vs. standard normal prior" to "posterior vs. a *learned* prior network," which is precisely what separates RSSM's KL term from a plain VAE's. Minimizing this KL pulls the prior (which has no access to `o_t`) toward matching the posterior (which does), so that at rollout time, when only the prior is available, it has learned to approximate what the posterior would have said.
 
-`RSSM.rollout` uses only `prior_net`, never `post_net`, and takes the prior's mean (`mu`) rather than sampling, exactly matching the lecture's description of imagination as prior-only rollout with no real observations involved.
+`forward` multiplies this KL by `kl_weight=0.1` before adding it to the reconstruction loss. With a weight of 1 on this near-deterministic data, the cheapest way to lower the loss is to let the posterior almost ignore `z_seq[:, t]` and copy the prior, which is posterior collapse; the model then predicts little more than an average latent. A smaller weight keeps the observation information in `z`. Dreamer uses related tools (KL balancing and free bits) for the same reason. `kl_weight` is a plain attribute, not a parameter, so the saved state dict stays compatible with P03 and P04.
+
+`RSSM.rollout` first runs the same filtering loop as `forward` over the observed context frames `z_ctx`: starting from a zero state and zero action, it updates `h` and takes the posterior mean from `post_net` at each observed step, so the starting state already encodes position and velocity. After the context it uses only `prior_net`, never `post_net`, and takes the prior's mean (`mu`) rather than sampling, exactly matching the lecture's description of imagination as prior-only rollout with no real observations involved. One detail matters for the comparison below: the `z` inside RSSM is the model's own stochastic state, not the VAE latent space, and the only thing training ties back to the observation latent is `self.recon(z)`. So `rollout` returns `self.recon(z)` at every step, which puts its output in the same space as GRU and MDN-RNN predictions and lets it be decoded and compared against the real `z_seq`. Feeding an observed latent straight into the GRU as if it were the RSSM state, or returning the raw state `z`, would both treat two different coordinate systems as one, and RSSM would look far worse than it is.
 
 ```python
 class RSSM(nn.Module):
@@ -381,11 +397,12 @@ class RSSM(nn.Module):
     Deterministic path: h_t = GRU(h_{t-1}, z_{t-1}, a_{t-1})
     Stochastic prior:   z_t ~ N(mu_prior(h_t), sigma_prior(h_t))
     Stochastic posterior: z_t ~ N(mu_post(h_t, o_t), sigma_post(h_t, o_t))
-    Training: ELBO = reconstruction + KL(posterior || prior)
+    Training: ELBO = reconstruction + kl_weight * KL(posterior || prior)
     hidden_dim=128, latent_dim=32
     """
-    def __init__(self, latent_dim=32, action_dim=1, hidden_dim=128):
+    def __init__(self, latent_dim=32, action_dim=1, hidden_dim=128, kl_weight=0.1):
         super().__init__()
+        self.kl_weight  = kl_weight  # < 1 keeps the posterior from collapsing onto the prior
         self.hidden_dim = hidden_dim
         self.latent_dim = latent_dim
 
@@ -422,7 +439,9 @@ class RSSM(nn.Module):
         recon_loss = z_seq.new_zeros(())
         kl_loss    = z_seq.new_zeros(())
         for t in range(T):
-            inp = torch.cat([z, a_seq[:, t].unsqueeze(-1)], dim=-1)
+            # a_{t-1}: zero action at t=0, matching the docstring and rollout
+            a_prev = a_seq[:, t - 1] if t > 0 else torch.zeros_like(a_seq[:, 0])
+            inp = torch.cat([z, a_prev.unsqueeze(-1)], dim=-1)
             h   = self.gru(inp, h)
 
             # Prior
@@ -446,22 +465,31 @@ class RSSM(nn.Module):
             )
             kl_loss = kl_loss + kl.mean()
 
-        return (recon_loss + kl_loss) / T
+        return (recon_loss + self.kl_weight * kl_loss) / T
 
-    def rollout(self, z0, a_seq):
-        """Open-loop rollout using the prior only (no observations).
-        Returns [1, steps+1, D].
+    def rollout(self, z_ctx, a_seq):
+        """Filter the observed context with the posterior, then use the prior only (no observations).
+        z_ctx [1, C, D] and a_seq as in GRUDynamics.rollout.
+        Returns predicted observation latents self.recon(z), [1, steps+1, D],
+        in the same space as z_seq (z is the RSSM's own state, not the VAE latent).
         """
-        z  = z0
-        h  = torch.zeros(1, self.hidden_dim, device=z0.device)
-        zs = [z]
-        for a in a_seq:
+        z_ctx = z_ctx.reshape(1, -1, z_ctx.shape[-1])
+        C = z_ctx.shape[1]
+        h = torch.zeros(1, self.hidden_dim, device=z_ctx.device)
+        z = torch.zeros_like(z_ctx[:, 0])
+        a = torch.zeros(1, 1, device=z_ctx.device)  # same zero start as forward
+        for t in range(C):  # filter the context with the posterior mean
+            h = self.gru(torch.cat([z, a], dim=-1), h)
+            z, _ = self.post_net(torch.cat([h, z_ctx[:, t]], dim=-1)).chunk(2, dim=-1)
+            a = a_seq[t].view(1, 1)
+        zs = [self.recon(z)]
+        for a in a_seq[C - 1:]:
             inp = torch.cat([z, a.view(1, 1)], dim=-1)
             h   = self.gru(inp, h)
             pr  = self.prior_net(h)
             mu, _ = pr.chunk(2, dim=-1)
             z  = mu  # use prior mean for deterministic rollout
-            zs.append(z)
+            zs.append(self.recon(z))
         return torch.stack(zs, dim=1)
 
 
@@ -496,14 +524,14 @@ assert abs(z_t.item() - 0.50) < 1e-6
 ```
 ## 3. Training
 
-All three models are trained for 20 epochs on the 180 training trajectories using Adam (lr=1e-3).
+All three models are trained for 50 epochs on the 180 training trajectories using Adam (lr=1e-3).
 Loss functions:
 - GRU: MSE between predicted z and actual z
 - MDN-RNN: negative log-likelihood of the Gaussian mixture
-- RSSM: ELBO = MSE reconstruction of z + KL divergence
+- RSSM: ELBO = MSE reconstruction of z + 0.1 × KL divergence
 
 ```python
-EPOCHS = 20
+EPOCHS = 50
 BATCH  = 32
 LR     = 1e-3
 
@@ -586,26 +614,29 @@ plt.show()
 ```
 ## 4. Rollout Comparison
 
-Starting from the first frame of a test trajectory, each model rolls forward 10 steps without seeing future observations.
-The predicted latents are decoded back to pixel space and displayed in a grid (3 rows x 10 columns).
+Each model first sees the first `CONTEXT = 5` frames of a test trajectory, then rolls forward 10 steps without seeing future observations.
+The predicted latents are decoded back to pixel space and displayed in a grid (4 rows x 11 columns, step 0 is the last observed frame).
 
 ```python
 ROLLOUT_STEPS = 10
 
-# Use the first test trajectory.
-z_traj = Z_test[0]           # [T, D]
-a_traj = A_test[0]           # [T]
-z0     = z_traj[0].unsqueeze(0)        # [1, D]
-a_seq  = a_traj[:ROLLOUT_STEPS]        # [10]
+CONTEXT       = 5   # real frames each model sees before it starts imagining
+
+# Use the test trajectory that moves the most, so rollout differences are visible.
+traj_idx = int((Z_test[:, 1:] - Z_test[:, :-1]).pow(2).sum(dim=(1, 2)).argmax())
+z_traj = Z_test[traj_idx]    # [T, D]
+a_traj = A_test[traj_idx]    # [T]
+z_ctx  = z_traj[:CONTEXT].unsqueeze(0)              # [1, C, D]
+a_seq  = a_traj[:CONTEXT - 1 + ROLLOUT_STEPS]       # [C-1+10]
 
 gru_model.eval()
 mdn_model.eval()
 rssm_model.eval()
 
 with torch.no_grad():
-    zs_gru  = gru_model.rollout(z0, a_seq).squeeze(0)    # [11, D]
-    zs_mdn  = mdn_model.rollout(z0, a_seq).squeeze(0)
-    zs_rssm = rssm_model.rollout(z0, a_seq).squeeze(0)
+    zs_gru  = gru_model.rollout(z_ctx, a_seq).squeeze(0)    # [11, D]
+    zs_mdn  = mdn_model.rollout(z_ctx, a_seq).squeeze(0)
+    zs_rssm = rssm_model.rollout(z_ctx, a_seq).squeeze(0)
 
     def decode_seq(zs):
         """zs [S, D] -> numpy [S, H, W, 3] in [0,1]."""
@@ -615,11 +646,11 @@ with torch.no_grad():
     imgs_gru  = decode_seq(zs_gru)
     imgs_mdn  = decode_seq(zs_mdn)
     imgs_rssm = decode_seq(zs_rssm)
-    imgs_gt   = decode_seq(z_traj[:ROLLOUT_STEPS + 1])   # ground truth
+    imgs_gt   = decode_seq(z_traj[CONTEXT - 1:CONTEXT + ROLLOUT_STEPS])   # ground truth
 
 print(f'Decoded rollout shape (GRU): {imgs_gru.shape}  (steps+1, H, W, 3)')
 ```
-With training complete, move to rollout evaluation and measure how errors accumulate as we predict further into the future. `ROLLOUT_STEPS = 10` open-loop steps means each model is given only the first frame `z0` and the true action sequence, then must predict every subsequent latent from its own previous predictions, with no further correction from real observations. This is precisely the **teacher forcing gap** described in [L03's STORM discussion](../lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion#storm-s-key-improvement-single-token-stochastic-latent-variable) and diagnosed formally in [L04](../lectures/lecture-04-evaluation-by-model/00-diagnostic-framework): training used real `z_seq` at every step, but this evaluation forces each model to compound its own errors, which is the harder and more realistic test of whether the learned dynamics are actually useful for imagination-based planning.
+With training complete, move to rollout evaluation and measure how errors accumulate as we predict further into the future. `ROLLOUT_STEPS = 10` open-loop steps means each model is given the first `CONTEXT` real frames and the true action sequence, then must predict every later latent from its own previous predictions, with no further correction from real observations. The context matters: a single frame shows where the box is but not how fast it moves, so a model started from one frame and an empty hidden state can only guess the velocity, and that guess, not the learned dynamics, would dominate the comparison. The demo uses the test trajectory with the largest latent motion, since a box resting against a wall looks the same under every model. This is precisely the **teacher forcing gap** described in [L03's STORM discussion](../lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion#storm-s-key-improvement-single-token-stochastic-latent-variable) and diagnosed formally in [L04](../lectures/lecture-04-evaluation-by-model/00-diagnostic-framework): training used real `z_seq` at every step, but this evaluation forces each model to compound its own errors, which is the harder and more realistic test of whether the learned dynamics are actually useful for imagination-based planning.
 
 ```python
 # Image grid: GT, GRU, MDN-RNN, RSSM.
@@ -658,7 +689,7 @@ fig.suptitle('10-step Imagined Rollouts vs Ground Truth', fontsize=12, y=1.05)
 display(fig)
 plt.close(fig)
 ```
-The image grid gives the visual story. The next block turns that into a per-step pixel MSE curve for a quantitative view. Expect GRU to drift first and hardest (no mechanism for expressing or correcting uncertainty), MDN-RNN to do somewhat better by modeling multiple possible outcomes during training even though its rollout picks only one, and RSSM to hold up best on this near-deterministic synthetic data because its explicit prior network was trained specifically to match what the posterior would have inferred from a real observation.
+The image grid gives the visual story. The next block turns that into a per-step pixel MSE curve for a quantitative view. Do not expect RSSM to win everywhere here. This data is near-deterministic: the box moves at a constant velocity with small noise, and the action has no effect, so there is little randomness for a stochastic latent to model, and a deterministic GRU is a strong fit. What RSSM brings is a prior trained to stay close to what the posterior would infer, so its errors tend to grow more slowly over long rollouts. In a reference run, the RSSM row kept the box's shape and direction for all 10 steps, the GRU row drifted and blurred after about 5 steps, and MDN-RNN, which follows only its most likely mixture component, shrank the box into the background. This is one trajectory; the next section checks the pattern on the whole test set.
 
 ```python
 # Per-step pixel MSE vs ground truth.
@@ -683,31 +714,44 @@ ax.grid(True, alpha=0.3)
 plt.tight_layout()
 plt.show()
 ```
-## 5. 1-step vs 5-step Prediction Error
+## 5. Prediction Error by Horizon (1 to 10 Steps)
 
-On the held-out test trajectories, we compute average latent-space MSE at horizons 1 to 5 for all three models. `horizon_mse` slides a window across every test trajectory (`for t0 in range(T - max_h)`), rolls each model forward `max_h` steps from that window's start, and accumulates the squared error against the true latent at each horizon separately. This produces the **error-versus-horizon curve** that L04's diagnostic framework calls out as standard evidence for the long-horizon rollout layer: a curve that stays low and flat means a model's errors are not compounding, while a curve that rises steeply with horizon means small per-step mistakes are snowballing, the same **horizon drift** failure mode documented for every architecture in [L04](../lectures/lecture-04-evaluation-by-model/05-diffusion-drift#horizon-drift-the-universal-failure-mode-across-all-world-models).
+On the held-out test trajectories, we compute average latent-space MSE at horizons 1 to 10 for all three models. `horizon_mse` slides a window across every test trajectory (`for t0 in range(context - 1, T - max_h)`), gives each model the `context` real frames ending at `t0`, rolls it forward `max_h` steps from there, and accumulates the squared error against the true latent at each horizon separately. Two trivial baselines anchor the numbers: `copy_rollout` repeats the last observed latent, and `mean_rollout` always predicts the training-set mean. A learned model that cannot beat copying the last frame has not learned any motion. This produces the **error-versus-horizon curve** that L04's diagnostic framework calls out as standard evidence for the long-horizon rollout layer: a curve that stays low and flat means a model's errors are not compounding, while a curve that rises steeply with horizon means small per-step mistakes are snowballing, the same **horizon drift** failure mode documented for every architecture in [L04](../lectures/lecture-04-evaluation-by-model/05-diffusion-drift#horizon-drift-the-universal-failure-mode-across-all-world-models).
 
 ```python
-MAX_H = 5
+MAX_H = 10
 
 
-def horizon_mse(model_rollout_fn, Z, A, max_h=5):
+def horizon_mse(model_rollout_fn, Z, A, max_h=5, context=CONTEXT):
     """Average latent MSE at horizons 1..max_h on test set.
-    model_rollout_fn(z0, a_seq) -> [1, steps+1, D]
+    Each window gives the model `context` real frames, then predicts open-loop from the last one.
+    model_rollout_fn(z_ctx, a_seq) -> [1, steps+1, D]
     """
     N, T, D = Z.shape
     errs   = np.zeros(max_h)
     counts = np.zeros(max_h)
     with torch.no_grad():
         for i in range(N):
-            for t0 in range(T - max_h):
-                z0   = Z[i, t0].unsqueeze(0)          # [1, D]
-                a_s  = A[i, t0:t0 + max_h]            # [max_h]
-                zs   = model_rollout_fn(z0, a_s).squeeze(0)  # [max_h+1, D]
+            for t0 in range(context - 1, T - max_h):
+                z_ctx = Z[i, t0 - context + 1:t0 + 1].unsqueeze(0)   # [1, C, D]
+                a_s   = A[i, t0 - context + 1:t0 + max_h]            # [C-1+max_h]
+                zs    = model_rollout_fn(z_ctx, a_s).squeeze(0)      # [max_h+1, D]
                 for h in range(1, max_h + 1):
                     errs[h - 1]   += F.mse_loss(zs[h], Z[i, t0 + h]).item()
                     counts[h - 1] += 1
     return errs / counts
+
+
+# Trivial baselines: copy the last latent, or always predict the training mean.
+Z_MEAN = Z_train.reshape(-1, LATENT_DIM).mean(0, keepdim=True)  # [1, D]
+
+def copy_rollout(z_ctx, a_seq):
+    steps = len(a_seq) - z_ctx.shape[1] + 1
+    return z_ctx[:, -1:].expand(1, steps + 1, -1)
+
+def mean_rollout(z_ctx, a_seq):
+    steps = len(a_seq) - z_ctx.shape[1] + 1
+    return torch.cat([z_ctx[:, -1], Z_MEAN.expand(steps, -1)], dim=0).unsqueeze(0)
 
 
 print('Computing horizon errors on test set...')
@@ -716,23 +760,26 @@ gru_model.eval(); mdn_model.eval(); rssm_model.eval()
 err_gru  = horizon_mse(gru_model.rollout,  Z_test, A_test, MAX_H)
 err_mdn  = horizon_mse(mdn_model.rollout,  Z_test, A_test, MAX_H)
 err_rssm = horizon_mse(rssm_model.rollout, Z_test, A_test, MAX_H)
+err_copy = horizon_mse(copy_rollout,      Z_test, A_test, MAX_H)
+err_mean = horizon_mse(mean_rollout,      Z_test, A_test, MAX_H)
 
 horizons = list(range(1, MAX_H + 1))
 print('\nLatent MSE by horizon:')
-print(f'{"Horizon":>8}  {"GRU":>10}  {"MDN-RNN":>10}  {"RSSM":>10}')
-for h, (eg, em, er) in enumerate(zip(err_gru, err_mdn, err_rssm), start=1):
-    print(f'{h:>8}  {eg:>10.4f}  {em:>10.4f}  {er:>10.4f}')
+print(f'{"Horizon":>8}  {"GRU":>10}  {"MDN-RNN":>10}  {"RSSM":>10}  {"Copy last":>10}  {"Train mean":>10}')
+for h, (eg, em, er, ec, eb) in enumerate(zip(err_gru, err_mdn, err_rssm, err_copy, err_mean), start=1):
+    print(f'{h:>8}  {eg:>10.4f}  {em:>10.4f}  {er:>10.4f}  {ec:>10.4f}  {eb:>10.4f}')
 ```
-With the horizon range fixed, plot step-wise prediction error so short-horizon and long-horizon behavior can be compared directly. Reading this plot alongside the qualitative rollout grid above is deliberate: a model can have a low horizon-1 error (accurate immediate predictions) while still drifting badly by horizon 5, and only the multi-horizon curve, not a single aggregate number, reveals that.
+With the horizon range fixed, plot step-wise prediction error so short-horizon and long-horizon behavior can be compared directly. The train-mean baseline is printed above but left out of the plot, since its error is several times larger and would flatten the other curves. Reading this plot alongside the qualitative rollout grid above is deliberate: a model can have the lowest horizon-1 error and still be overtaken later, and only the multi-horizon curve, not a single aggregate number, reveals that. In a reference run, GRU beat the copy-last baseline at every horizon, RSSM from horizon 2 on, and MDN-RNN only from horizon 4 on. GRU had the lowest error up to horizon 4, the two were level at horizon 5, and RSSM was lower from horizon 6 to 10 because its error grew more slowly. MDN-RNN stayed highest of the three, since its rollout commits to one mixture component at every step.
 
 ```python
 fig, ax = plt.subplots(figsize=(6, 4))
 ax.plot(horizons, err_gru,  marker='o', label='GRU',     color='tab:blue')
 ax.plot(horizons, err_mdn,  marker='s', label='MDN-RNN', color='tab:orange')
 ax.plot(horizons, err_rssm, marker='^', label='RSSM',    color='tab:green')
+ax.plot(horizons, err_copy, linestyle='--', label='Copy last', color='gray')
 ax.set_xlabel('Prediction Horizon (steps)')
 ax.set_ylabel('Average Latent MSE')
-ax.set_title('1-step to 5-step Prediction Error (held-out test set)')
+ax.set_title('1-step to 10-step Prediction Error (held-out test set)')
 ax.set_xticks(horizons)
 ax.legend()
 ax.grid(True, alpha=0.3)

@@ -120,7 +120,7 @@ def optimizer_step(optimizer, scaler=None):
         scaler.step(optimizer)
         scaler.update()
     else:
-        optimizer_step(optimizer)
+        optimizer.step()
 
 LATENT_DIM = 32
 HIDDEN_DIM = 128
@@ -232,16 +232,16 @@ for p in list(encoder.parameters()) + list(decoder.parameters()):
 print(f'编码器参数量: {sum(p.numel() for p in encoder.parameters()):,}')
 print(f'解码器参数量: {sum(p.numel() for p in decoder.parameters()):,}')
 ```
-接下来生成合成轨迹，这些 rollouts 将成为序列模型的监督信号。每条轨迹是一个彩色矩形以固定速度 `(vx, vy)` 在画面中漂移，每步再叠加一点噪声，同时每一步都带一个二元 `action`（目前只是装饰性的：它被记录下来并喂给下面每个模型，但矩形的运动并不依赖它）。这样设计是为了让对比聚焦在 GRU、MDN-RNN、RSSM 三者对一个本身简单、近乎确定性的动力学如何建模*不确定性*上，而不是聚焦在它们能否学出一条复杂的、以动作为条件的规律。
+接下来生成合成轨迹，这些 rollouts 将成为序列模型的监督信号。每条轨迹是一个彩色矩形以固定速度 `(vx, vy)` 在画面中漂移，每步再叠加一点噪声，同时每一步都带一个二元 `action`（目前只是装饰性的：它被记录下来并喂给下面每个模型，但矩形的运动并不依赖它）。这样设计是为了让对比聚焦在 GRU、MDN-RNN、RSSM 三者对一个本身简单、近乎确定性的动力学如何建模*不确定性*上，而不是聚焦在它们能否学出一条复杂的、以动作为条件的规律。矩形的颜色范围（0.3 到 1）和尺寸（16 到 32 像素）与 P01 训练 VAE 时用的图形保持一致。如果方块更暗或更小，冻结的编码器会把大部分帧编码成接近空白的潜在向量，下面每个模型都会在 VAE 自己都还原不出来的帧上被评判。
 
 ```python
 # 生成合成轨迹数据。
 
 def make_trajectory(T=20, img_size=64, seed=None):
     rng = np.random.RandomState(seed)
-    color = rng.rand(3).astype(np.float32)
-    w  = rng.randint(10, 20)
-    h  = rng.randint(10, 20)
+    color = rng.uniform(0.3, 1.0, size=3).astype(np.float32)
+    w  = rng.randint(16, 33)
+    h  = rng.randint(16, 33)
     x  = float(rng.randint(0, img_size - w))
     y  = float(rng.randint(0, img_size - h))
     vx = float(rng.randint(-3, 4))
@@ -266,7 +266,7 @@ trajectories = [make_trajectory(T=T_STEPS, img_size=IMG_SIZE, seed=i) for i in r
 print(f"每条轨迹的观测形状:     {trajectories[0]['obs'].shape}")
 print(f"每条轨迹的动作形状: {trajectories[0]['actions'].shape}")
 ```
-轨迹数据构建好后，把每个观测编码成 z，这样 notebook 剩余部分就能在潜在序列上学习动力学，而不是在原始像素上。`encoder.encode(obs)` 调用的是 P01 `reparameterize` 里的*采样*路径（`mu + std * epsilon`），而不只是均值，所以这里的每个 `z_t` 都已经带上了 VAE 后验赋予该帧的一点随机性。这一点对理解下面的 RSSM 部分很重要：`z_seq` 提供的正是 RSSM 自己的后验网络要学着复现的*后验目标*。
+轨迹数据构建好后，把每个观测编码成 z，这样 notebook 剩余部分就能在潜在序列上学习动力学，而不是在原始像素上。`encoder(obs)` 返回后验的均值和对数方差，这里只保留均值 `mu`，而不使用 P01 `reparameterize` 里的*采样*路径 `encoder.encode(obs)`（`mu + std * epsilon`）。在这些帧上有不少潜在维度并不活跃，它们的后验接近 N(0, 1)；如果采样，每一步都会叠加一份任何动力学模型都预测不了的独立噪声，下面所有的误差数字都会被这份噪声主导。用均值可以得到干净、确定的目标，这也是把冻结的 VAE 当作观测编码器时的常见做法。`z_seq` 仍然是 RSSM 自己的后验网络要吸收的观测，下面 RSSM 一节会讲到。
 
 ```python
 # 将观测编码为潜在序列 z [N, T, 32]
@@ -276,7 +276,8 @@ latent_list = []
 with torch.no_grad():
     for traj in trajectories:
         obs = traj['obs'].to(DEVICE)      # [T,3,H,W]
-        z   = encoder.encode(obs)         # [T, latent_dim]
+        mu, _ = encoder(obs)              # [T, latent_dim]，后验均值
+        z   = mu                          # 用均值而不是 encode()：采样噪声会淹没动力学信号
         latent_list.append(z.cpu())
 
 Z_all = torch.stack(latent_list, dim=0)                                     # [N,T,32]
@@ -316,14 +317,20 @@ class GRUDynamics(nn.Module):
             preds.append(self.output(h))
         return torch.stack(preds, dim=1)  # [B, T-1, D]
 
-    def rollout(self, z0, a_seq):
-        """从 z0 [1,D] 开始，按 a_seq 进行开环 rollout。
-        返回 [1, steps+1, D]（包含 z0）。
+    def rollout(self, z_ctx, a_seq):
+        """先用观测到的潜在向量预热隐藏状态，再开环 rollout。
+        z_ctx [1, C, D]：观测 z_0..z_{C-1}（传 [1, D] 即 C=1）。
+        a_seq：从 a_0 开始的动作；最后 len(a_seq) - C + 1 个驱动开环步。
+        返回 [1, steps+1, D]：最后一个观测，接着是预测。
         """
-        z = z0
-        h = torch.zeros(1, self.hidden_dim, device=z0.device)
+        z_ctx = z_ctx.reshape(1, -1, z_ctx.shape[-1])
+        C = z_ctx.shape[1]
+        h = torch.zeros(1, self.hidden_dim, device=z_ctx.device)
+        for t in range(C - 1):  # 在上下文上 teacher forcing
+            h = self.gru(torch.cat([z_ctx[:, t], a_seq[t].view(1, 1)], dim=-1), h)
+        z  = z_ctx[:, -1]
         zs = [z]
-        for a in a_seq:
+        for a in a_seq[C - 1:]:
             inp = torch.cat([z, a.view(1, 1)], dim=-1)
             h   = self.gru(inp, h)
             z   = self.output(h)
@@ -392,14 +399,20 @@ class MDNRNN(nn.Module):
         log_pi = F.log_softmax(logits, dim=-1)          # [B,T,K]
         return -torch.logsumexp(log_pi + log_p, dim=-1).mean()
 
-    def rollout(self, z0, a_seq):
-        """使用概率最高的混合分量进行开环 rollout。
-        返回 [1, steps+1, D]。
+    def rollout(self, z_ctx, a_seq):
+        """先用观测到的潜在向量预热隐藏状态，再用概率最高的混合分量开环 rollout。
+        z_ctx [1, C, D]：观测 z_0..z_{C-1}（传 [1, D] 即 C=1）。
+        a_seq：从 a_0 开始的动作；最后 len(a_seq) - C + 1 个驱动开环步。
+        返回 [1, steps+1, D]：最后一个观测，接着是预测。
         """
-        z  = z0
-        h  = torch.zeros(1, self.hidden_dim, device=z0.device)
+        z_ctx = z_ctx.reshape(1, -1, z_ctx.shape[-1])
+        C = z_ctx.shape[1]
+        h = torch.zeros(1, self.hidden_dim, device=z_ctx.device)
+        for t in range(C - 1):  # 在上下文上 teacher forcing
+            h = self.gru(torch.cat([z_ctx[:, t], a_seq[t].view(1, 1)], dim=-1), h)
+        z  = z_ctx[:, -1]
         zs = [z]
-        for a in a_seq:
+        for a in a_seq[C - 1:]:
             inp = torch.cat([z, a.view(1, 1)], dim=-1)
             h   = self.gru(inp, h)
             lg, mu, _ = self._split(self.mdn_head(h))
@@ -420,7 +433,9 @@ print(f'MDNRNN 参数量: {sum(p.numel() for p in mdn_model.parameters()):,}')
 
 `forward` 里的 KL 项，`kl = 0.5 * (lv_pr - lv_po + (lv_po.exp() + (mu_po - mu_pr)**2) / lv_pr.exp().clamp(min=1e-4) - 1)`，是两个一般（不一定是标准正态）对角高斯分布之间的解析 KL 散度 $D_{KL}(q_\phi(\mathbf{z}_t \mid \mathbf{h}_t, \mathbf{o}_t) \,\|\, p_\phi(\mathbf{z}_t \mid \mathbf{h}_t))$：这是 P01 里那个高斯 KL 公式的更一般形式，从「后验 vs. 标准正态先验」推广到「后验 vs. 一个*可学习的*先验网络」，这正是 RSSM 的 KL 项与朴素 VAE 的区别所在。最小化这个 KL，会把先验（它接触不到 $o_t$）拉向匹配后验（它能接触到），这样在 rollout 阶段只有先验可用时，它已经学会了逼近后验原本会给出的答案。
 
-`RSSM.rollout` 只使用 `prior_net`，从不使用 `post_net`，并且取先验的均值（`mu`）而不是采样，这与讲义里「想象就是只用先验、不涉及真实观测的 rollout」这一描述完全一致。
+`forward` 在把这个 KL 加到重建损失之前，先乘上 `kl_weight=0.1`。在这种近乎确定性的数据上，如果权重是 1，降低损失最省事的办法是让后验几乎忽略 `z_seq[:, t]`、直接照抄先验，也就是后验塌缩（posterior collapse）；这时模型预测出来的差不多只是一个平均潜在向量。权重小一些，观测信息就能留在 `z` 里。Dreamer 出于同样的原因使用了 KL balancing 和 free bits 这类相关技巧。`kl_weight` 只是普通属性，不是参数，所以保存的 state dict 仍与 P03、P04 兼容。
+
+`RSSM.rollout` 先在观测到的上下文帧 `z_ctx` 上跑一遍与 `forward` 相同的过滤循环：从零状态、零动作出发，每个观测步都更新 `h` 并取 `post_net` 的后验均值，因此起始状态已经包含了位置和速度信息。上下文结束后只使用 `prior_net`，不再使用 `post_net`，并且取先验的均值（`mu`）而不是采样，这与讲义里「想象就是只用先验、不涉及真实观测的 rollout」这一描述完全一致。有一个细节对下面的比较很关键：RSSM 内部的 `z` 是模型自己的随机状态，并不在 VAE 的潜在空间里，训练时唯一和观测潜在向量对齐的是 `self.recon(z)`。所以 `rollout` 每一步返回的都是 `self.recon(z)`，这样它的输出才和 GRU、MDN-RNN 的预测处在同一空间，可以被解码，也可以和真实的 `z_seq` 比较。如果把观测到的潜在向量当成 RSSM 状态直接喂进 GRU，或者直接返回状态 `z`，都等于把两套不同的坐标系当成一套，RSSM 的结果就会显得远比实际更差。
 
 ```python
 class RSSM(nn.Module):
@@ -428,11 +443,12 @@ class RSSM(nn.Module):
     确定性路径：h_t = GRU(h_{t-1}, z_{t-1}, a_{t-1})
     随机先验：   z_t ~ N(mu_prior(h_t), sigma_prior(h_t))
     随机后验：   z_t ~ N(mu_post(h_t, o_t), sigma_post(h_t, o_t))
-    训练目标：   ELBO = 重建损失 + KL(后验 || 先验)
+    训练目标：   ELBO = 重建损失 + kl_weight * KL(后验 || 先验)
     hidden_dim=128, latent_dim=32
     """
-    def __init__(self, latent_dim=32, action_dim=1, hidden_dim=128):
+    def __init__(self, latent_dim=32, action_dim=1, hidden_dim=128, kl_weight=0.1):
         super().__init__()
+        self.kl_weight  = kl_weight  # 小于 1，防止后验塌缩到先验
         self.hidden_dim = hidden_dim
         self.latent_dim = latent_dim
 
@@ -469,7 +485,9 @@ class RSSM(nn.Module):
         recon_loss = z_seq.new_zeros(())
         kl_loss    = z_seq.new_zeros(())
         for t in range(T):
-            inp = torch.cat([z, a_seq[:, t].unsqueeze(-1)], dim=-1)
+            # a_{t-1}：t=0 时用零动作，与类注释及 rollout 保持一致
+            a_prev = a_seq[:, t - 1] if t > 0 else torch.zeros_like(a_seq[:, 0])
+            inp = torch.cat([z, a_prev.unsqueeze(-1)], dim=-1)
             h   = self.gru(inp, h)
 
             # 先验
@@ -493,22 +511,31 @@ class RSSM(nn.Module):
             )
             kl_loss = kl_loss + kl.mean()
 
-        return (recon_loss + kl_loss) / T
+        return (recon_loss + self.kl_weight * kl_loss) / T
 
-    def rollout(self, z0, a_seq):
-        """仅使用先验（不观测）进行开环 rollout。
-        返回 [1, steps+1, D]。
+    def rollout(self, z_ctx, a_seq):
+        """先用后验过滤观测到的上下文，之后每一步只用先验（不观测）。
+        z_ctx [1, C, D]、a_seq 与 GRUDynamics.rollout 相同。
+        返回预测的观测潜在向量 self.recon(z)，形状 [1, steps+1, D]，
+        与 z_seq 同一空间（z 是 RSSM 自己的状态，不是 VAE 潜在向量）。
         """
-        z  = z0
-        h  = torch.zeros(1, self.hidden_dim, device=z0.device)
-        zs = [z]
-        for a in a_seq:
+        z_ctx = z_ctx.reshape(1, -1, z_ctx.shape[-1])
+        C = z_ctx.shape[1]
+        h = torch.zeros(1, self.hidden_dim, device=z_ctx.device)
+        z = torch.zeros_like(z_ctx[:, 0])
+        a = torch.zeros(1, 1, device=z_ctx.device)  # 与 forward 相同，从零状态、零动作出发
+        for t in range(C):  # 用后验均值过滤上下文
+            h = self.gru(torch.cat([z, a], dim=-1), h)
+            z, _ = self.post_net(torch.cat([h, z_ctx[:, t]], dim=-1)).chunk(2, dim=-1)
+            a = a_seq[t].view(1, 1)
+        zs = [self.recon(z)]
+        for a in a_seq[C - 1:]:
             inp = torch.cat([z, a.view(1, 1)], dim=-1)
             h   = self.gru(inp, h)
             pr  = self.prior_net(h)
             mu, _ = pr.chunk(2, dim=-1)
             z  = mu  # 确定性 rollout 使用先验均值
-            zs.append(z)
+            zs.append(self.recon(z))
         return torch.stack(zs, dim=1)
 
 
@@ -543,14 +570,14 @@ assert abs(z_t.item() - 0.50) < 1e-6
 ```
 ## 3. 训练
 
-三个模型均在 180 条训练轨迹上使用 Adam（lr=1e-3）训练 20 轮。
+三个模型均在 180 条训练轨迹上使用 Adam（lr=1e-3）训练 50 轮。
 各模型的损失函数如下：
 - GRU：预测 z 与真实 z 之间的 MSE
 - MDN-RNN：高斯混合分布的负对数似然
-- RSSM：ELBO = z 的 MSE 重建损失 + KL 散度
+- RSSM：ELBO = z 的 MSE 重建损失 + 0.1 × KL 散度
 
 ```python
-EPOCHS = 20
+EPOCHS = 50
 BATCH  = 32
 LR     = 1e-3
 
@@ -633,25 +660,28 @@ plt.show()
 ```
 ## 4. Rollout 对比
 
-从测试轨迹的第一帧出发，三个模型各自向前推演 10 步，期间不观测未来帧。预测得到的潜在向量被解码回像素空间，以网格形式展示（3 行 x 10 列）。
+每个模型先看测试轨迹的前 `CONTEXT = 5` 帧，然后在不观测未来帧的情况下向前推演 10 步。预测得到的潜在向量被解码回像素空间，以网格形式展示（4 行 x 11 列，第 0 步是最后一个观测帧）。
 
 ```python
 ROLLOUT_STEPS = 10
 
-# 使用第一条测试轨迹。
-z_traj = Z_test[0]           # [T, D]
-a_traj = A_test[0]           # [T]
-z0     = z_traj[0].unsqueeze(0)        # [1, D]
-a_seq  = a_traj[:ROLLOUT_STEPS]        # [10]
+CONTEXT       = 5   # 每个模型先看 5 帧真实观测，再开始想象
+
+# 选运动幅度最大的测试轨迹，让 rollout 的差异看得出来。
+traj_idx = int((Z_test[:, 1:] - Z_test[:, :-1]).pow(2).sum(dim=(1, 2)).argmax())
+z_traj = Z_test[traj_idx]    # [T, D]
+a_traj = A_test[traj_idx]    # [T]
+z_ctx  = z_traj[:CONTEXT].unsqueeze(0)              # [1, C, D]
+a_seq  = a_traj[:CONTEXT - 1 + ROLLOUT_STEPS]       # [C-1+10]
 
 gru_model.eval()
 mdn_model.eval()
 rssm_model.eval()
 
 with torch.no_grad():
-    zs_gru  = gru_model.rollout(z0, a_seq).squeeze(0)    # [11, D]
-    zs_mdn  = mdn_model.rollout(z0, a_seq).squeeze(0)
-    zs_rssm = rssm_model.rollout(z0, a_seq).squeeze(0)
+    zs_gru  = gru_model.rollout(z_ctx, a_seq).squeeze(0)    # [11, D]
+    zs_mdn  = mdn_model.rollout(z_ctx, a_seq).squeeze(0)
+    zs_rssm = rssm_model.rollout(z_ctx, a_seq).squeeze(0)
 
     def decode_seq(zs):
         """zs [S, D] -> numpy [S, H, W, 3]，值域 [0,1]。"""
@@ -661,11 +691,11 @@ with torch.no_grad():
     imgs_gru  = decode_seq(zs_gru)
     imgs_mdn  = decode_seq(zs_mdn)
     imgs_rssm = decode_seq(zs_rssm)
-    imgs_gt   = decode_seq(z_traj[:ROLLOUT_STEPS + 1])   # 真实帧
+    imgs_gt   = decode_seq(z_traj[CONTEXT - 1:CONTEXT + ROLLOUT_STEPS])   # 真实帧
 
 print(f'解码后的 rollout 形状（GRU）: {imgs_gru.shape}  (steps+1, H, W, 3)')
 ```
-训练完成后，进入 rollout 评估，衡量预测越往未来走误差是如何累积的。`ROLLOUT_STEPS = 10` 步开环预测意味着每个模型只拿到第一帧 `z0` 和真实的动作序列，之后每一步都必须基于自己前面的预测继续往下预测，不再有真实观测来修正。这正是[L03 STORM 一节](../lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion#storm-的核心改进-单-token-随机潜变量)里说的**教师强制（teacher forcing）差距**，[L04](../lectures/lecture-04-evaluation-by-model/00-diagnostic-framework)对此有正式的诊断方法：训练时每一步用的都是真实的 `z_seq`，但这里的评估强迫每个模型累积自己的误差，这是检验学到的动力学是否真的能用于基于想象的规划的更难、也更贴近现实的测试。
+训练完成后，进入 rollout 评估，衡量预测越往未来走误差是如何累积的。`ROLLOUT_STEPS = 10` 步开环预测意味着每个模型拿到前 `CONTEXT` 帧真实观测和真实的动作序列，之后每一步都必须基于自己前面的预测继续往下预测，不再有真实观测来修正。上下文很重要：单独一帧只能看出方块在哪，看不出它移动多快；如果只从一帧和空的隐藏状态开始，模型只能去猜速度，比较结果反映的就是这个猜测，而不是学到的动力学。演示选用潜在空间里运动幅度最大的测试轨迹，因为贴在墙边不动的方块在所有模型下看起来都一样。这正是[L03 STORM 一节](../lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion#storm-的核心改进-单-token-随机潜变量)里说的**教师强制（teacher forcing）差距**，[L04](../lectures/lecture-04-evaluation-by-model/00-diagnostic-framework)对此有正式的诊断方法：训练时每一步用的都是真实的 `z_seq`，但这里的评估强迫每个模型累积自己的误差，这是检验学到的动力学是否真的能用于基于想象的规划的更难、也更贴近现实的测试。
 
 ```python
 # 图像网格：真实帧、GRU、MDN-RNN、RSSM。
@@ -704,7 +734,7 @@ fig.suptitle('10 步想象 Rollout 与真实帧对比', fontsize=12, y=1.05)
 display(fig)
 plt.close(fig)
 ```
-图像网格给出直观的视觉印象，下一个代码块把它转换成逐步的像素 MSE 曲线，提供定量视角。预期 GRU 最早、漂移得最严重（没有表达或修正不确定性的机制），MDN-RNN 会好一些，因为训练时建模了多种可能结果，尽管它的 rollout 只选了其中一个，RSSM 在这个近乎确定性的合成数据上表现最稳，因为它显式的先验网络专门被训练成去匹配后验在看到真实观测时本会给出的推断。
+图像网格给出直观的视觉印象，下一个代码块把它转换成逐步的像素 MSE 曲线，提供定量视角。不要指望 RSSM 在这里处处胜出。这份数据近乎确定：方块以恒定速度运动，只有少量噪声，动作也不影响运动，所以随机潜变量几乎没有随机性可以建模，确定性的 GRU 本来就很合适。RSSM 的优势在于它的先验被训练成贴近后验会做出的推断，因此在长 rollout 中误差往往增长得更慢。在一次参考运行中，RSSM 那一行 10 步都保持了方块的形状和移动方向，GRU 那一行大约 5 步后开始漂移、变模糊，而只跟随概率最高混合分量的 MDN-RNN 则让方块逐渐缩小、融进背景。这只是一条轨迹，下一节会在整个测试集上检验这个规律。
 
 ```python
 # 各步像素 MSE（相对于真实帧）。
@@ -729,31 +759,44 @@ ax.grid(True, alpha=0.3)
 plt.tight_layout()
 plt.show()
 ```
-## 5. 单步与多步预测误差
+## 5. 各步长的预测误差（1 到 10 步）
 
-在保留的测试轨迹上，为三个模型分别计算预测步长 1 到 5 的平均潜在空间 MSE。`horizon_mse` 在每条测试轨迹上滑动窗口（`for t0 in range(T - max_h)`），从每个窗口起点让模型向前滚动 `max_h` 步，分别在每个步长上累积与真实潜在状态之间的平方误差。这样得到的**误差-步长曲线**，正是 L04 诊断框架里长时程 rollout 这一层的标准证据：曲线保持低且平坦，说明模型的误差没有累积；曲线随步长陡峭上升，说明每步的小误差在滚雪球，这与[L04](../lectures/lecture-04-evaluation-by-model/05-diffusion-drift#时程漂移-所有世界模型的共同失效模式)里记录的、所有架构共有的**时程漂移**失效模式是同一回事。
+在保留的测试轨迹上，为三个模型分别计算预测步长 1 到 10 的平均潜在空间 MSE。`horizon_mse` 在每条测试轨迹上滑动窗口（`for t0 in range(context - 1, T - max_h)`），先给模型截至 `t0` 的 `context` 帧真实观测，再从那里向前滚动 `max_h` 步，分别在每个步长上累积与真实潜在状态之间的平方误差。两条平凡基线给这些数字提供参照：`copy_rollout` 重复最后一个观测到的潜在向量，`mean_rollout` 始终预测训练集均值。如果学到的模型连「复制上一帧」都赢不了，说明它没有学到任何运动。这样得到的**误差-步长曲线**，正是 L04 诊断框架里长时程 rollout 这一层的标准证据：曲线保持低且平坦，说明模型的误差没有累积；曲线随步长陡峭上升，说明每步的小误差在滚雪球，这与[L04](../lectures/lecture-04-evaluation-by-model/05-diffusion-drift#时程漂移-所有世界模型的共同失效模式)里记录的、所有架构共有的**时程漂移**失效模式是同一回事。
 
 ```python
-MAX_H = 5
+MAX_H = 10
 
 
-def horizon_mse(model_rollout_fn, Z, A, max_h=5):
+def horizon_mse(model_rollout_fn, Z, A, max_h=5, context=CONTEXT):
     """计算测试集上步长 1..max_h 的平均潜在 MSE。
-    model_rollout_fn(z0, a_seq) -> [1, steps+1, D]
+    每个窗口先给模型 context 帧真实观测，再从最后一帧开环预测。
+    model_rollout_fn(z_ctx, a_seq) -> [1, steps+1, D]
     """
     N, T, D = Z.shape
     errs   = np.zeros(max_h)
     counts = np.zeros(max_h)
     with torch.no_grad():
         for i in range(N):
-            for t0 in range(T - max_h):
-                z0   = Z[i, t0].unsqueeze(0)          # [1, D]
-                a_s  = A[i, t0:t0 + max_h]            # [max_h]
-                zs   = model_rollout_fn(z0, a_s).squeeze(0)  # [max_h+1, D]
+            for t0 in range(context - 1, T - max_h):
+                z_ctx = Z[i, t0 - context + 1:t0 + 1].unsqueeze(0)   # [1, C, D]
+                a_s   = A[i, t0 - context + 1:t0 + max_h]            # [C-1+max_h]
+                zs    = model_rollout_fn(z_ctx, a_s).squeeze(0)      # [max_h+1, D]
                 for h in range(1, max_h + 1):
                     errs[h - 1]   += F.mse_loss(zs[h], Z[i, t0 + h]).item()
                     counts[h - 1] += 1
     return errs / counts
+
+
+# 平凡基线：复制上一步潜在向量，或始终预测训练集均值。
+Z_MEAN = Z_train.reshape(-1, LATENT_DIM).mean(0, keepdim=True)  # [1, D]
+
+def copy_rollout(z_ctx, a_seq):
+    steps = len(a_seq) - z_ctx.shape[1] + 1
+    return z_ctx[:, -1:].expand(1, steps + 1, -1)
+
+def mean_rollout(z_ctx, a_seq):
+    steps = len(a_seq) - z_ctx.shape[1] + 1
+    return torch.cat([z_ctx[:, -1], Z_MEAN.expand(steps, -1)], dim=0).unsqueeze(0)
 
 
 print('正在计算测试集上的步长误差...')
@@ -762,23 +805,26 @@ gru_model.eval(); mdn_model.eval(); rssm_model.eval()
 err_gru  = horizon_mse(gru_model.rollout,  Z_test, A_test, MAX_H)
 err_mdn  = horizon_mse(mdn_model.rollout,  Z_test, A_test, MAX_H)
 err_rssm = horizon_mse(rssm_model.rollout, Z_test, A_test, MAX_H)
+err_copy = horizon_mse(copy_rollout,      Z_test, A_test, MAX_H)
+err_mean = horizon_mse(mean_rollout,      Z_test, A_test, MAX_H)
 
 horizons = list(range(1, MAX_H + 1))
 print('\n各步长潜在 MSE:')
-print(f'{"步长":>8}  {"GRU":>10}  {"MDN-RNN":>10}  {"RSSM":>10}')
-for h, (eg, em, er) in enumerate(zip(err_gru, err_mdn, err_rssm), start=1):
-    print(f'{h:>8}  {eg:>10.4f}  {em:>10.4f}  {er:>10.4f}')
+print(f'{"步长":>8}  {"GRU":>10}  {"MDN-RNN":>10}  {"RSSM":>10}  {"复制上一步":>10}  {"训练集均值":>10}')
+for h, (eg, em, er, ec, eb) in enumerate(zip(err_gru, err_mdn, err_rssm, err_copy, err_mean), start=1):
+    print(f'{h:>8}  {eg:>10.4f}  {em:>10.4f}  {er:>10.4f}  {ec:>10.4f}  {eb:>10.4f}')
 ```
-预测步数范围已经固定，下面把逐步误差画出来，方便直接比较短步长和长步长的表现。刻意把这张图和上面定性的 rollout 网格放在一起看：一个模型可以在步长 1 上误差很低（短期预测很准），但到步长 5 时已经漂移得很严重，只有多步长曲线才能揭示这一点，单一的聚合数字做不到。
+预测步数范围已经固定，下面把逐步误差画出来，方便直接比较短步长和长步长的表现。训练集均值基线只在上面打印，没有画进图里，因为它的误差大好几倍，会把其他曲线压平。刻意把这张图和上面定性的 rollout 网格放在一起看：一个模型可以在步长 1 上误差最低，后面却被反超，只有多步长曲线才能揭示这一点，单一的聚合数字做不到。在一次参考运行中，GRU 在所有步长上都赢过「复制上一帧」基线，RSSM 从步长 2 起赢过它，MDN-RNN 要到步长 4 才赢过它。GRU 在步长 4 以内误差最低，步长 5 两者持平，步长 6 到 10 则是 RSSM 更低，因为它的误差增长得更慢。MDN-RNN 在三者中一直最高，因为它的 rollout 每一步都只押注一个混合分量。
 
 ```python
 fig, ax = plt.subplots(figsize=(6, 4))
 ax.plot(horizons, err_gru,  marker='o', label='GRU',     color='tab:blue')
 ax.plot(horizons, err_mdn,  marker='s', label='MDN-RNN', color='tab:orange')
 ax.plot(horizons, err_rssm, marker='^', label='RSSM',    color='tab:green')
+ax.plot(horizons, err_copy, linestyle='--', label='复制上一步', color='gray')
 ax.set_xlabel('预测步长（步）')
 ax.set_ylabel('平均潜在 MSE')
-ax.set_title('单步至多步预测误差（保留测试集）')
+ax.set_title('1 到 10 步预测误差（保留测试集）')
 ax.set_xticks(horizons)
 ax.legend()
 ax.grid(True, alpha=0.3)

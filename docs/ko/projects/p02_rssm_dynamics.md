@@ -73,7 +73,7 @@ def optimizer_step(optimizer, scaler=None):
         scaler.step(optimizer)
         scaler.update()
     else:
-        optimizer_step(optimizer)
+        optimizer.step()
 
 LATENT_DIM = 32
 HIDDEN_DIM = 128
@@ -185,16 +185,16 @@ for p in list(encoder.parameters()) + list(decoder.parameters()):
 print(f'Encoder params: {sum(p.numel() for p in encoder.parameters()):,}')
 print(f'Decoder params: {sum(p.numel() for p in decoder.parameters()):,}')
 ```
-다음으로 합성 궤적을 생성합니다. 이 롤아웃들이 시퀀스 모델의 지도 신호가 됩니다. 각 궤적은 고정된 속도 `(vx, vy)`와 스텝마다 더해지는 작은 노이즈로 화면을 가로질러 이동하는 색상 있는 사각형이며, 매 스텝마다 이진 `action`이 함께 기록됩니다(현재는 장식적입니다. 기록되어 아래 모든 모델에 입력되지만, 사각형의 움직임은 이 값에 의존하지 않습니다). 이렇게 하면 비교의 초점이, 복잡한 동작 조건부 규칙을 발견할 수 있는지가 아니라, 단순하고 거의 결정론적인 동역학에 대해 GRU, MDN-RNN, RSSM이 *불확실성*을 모델링하는 방식이 어떻게 다른지에 맞춰집니다.
+다음으로 합성 궤적을 생성합니다. 이 롤아웃들이 시퀀스 모델의 지도 신호가 됩니다. 각 궤적은 고정된 속도 `(vx, vy)`와 스텝마다 더해지는 작은 노이즈로 화면을 가로질러 이동하는 색상 있는 사각형이며, 매 스텝마다 이진 `action`이 함께 기록됩니다(현재는 장식적입니다. 기록되어 아래 모든 모델에 입력되지만, 사각형의 움직임은 이 값에 의존하지 않습니다). 이렇게 하면 비교의 초점이, 복잡한 동작 조건부 규칙을 발견할 수 있는지가 아니라, 단순하고 거의 결정론적인 동역학에 대해 GRU, MDN-RNN, RSSM이 *불확실성*을 모델링하는 방식이 어떻게 다른지에 맞춰집니다. 사각형의 색상 범위(0.3~1)와 크기(16~32픽셀)는 P01의 VAE가 학습한 도형에 맞췄습니다. 더 어둡거나 작은 사각형이면 고정된 인코더가 대부분의 프레임을 거의 빈 잠재값으로 보내고, 아래 모든 모델이 VAE조차 재구성하지 못하는 프레임으로 평가받게 됩니다.
 
 ```python
 # Generate synthetic trajectory data.
 
 def make_trajectory(T=20, img_size=64, seed=None):
     rng = np.random.RandomState(seed)
-    color = rng.rand(3).astype(np.float32)
-    w  = rng.randint(10, 20)
-    h  = rng.randint(10, 20)
+    color = rng.uniform(0.3, 1.0, size=3).astype(np.float32)
+    w  = rng.randint(16, 33)
+    h  = rng.randint(16, 33)
     x  = float(rng.randint(0, img_size - w))
     y  = float(rng.randint(0, img_size - h))
     vx = float(rng.randint(-3, 4))
@@ -219,7 +219,7 @@ trajectories = [make_trajectory(T=T_STEPS, img_size=IMG_SIZE, seed=i) for i in r
 print(f"obs shape per trajectory:     {trajectories[0]['obs'].shape}")
 print(f"actions shape per trajectory: {trajectories[0]['actions'].shape}")
 ```
-궤적이 만들어지면, 각 관측을 z로 인코딩해 노트북의 나머지 부분이 원본 픽셀이 아니라 잠재 시퀀스에 대한 동역학을 학습하도록 합니다. `encoder.encode(obs)`는 P01의 `reparameterize`에서 나온 *샘플링* 경로(`mu + std * epsilon`)를 호출하며, 평균만 쓰는 것이 아닙니다. 그래서 여기서의 각 `z_t`는 이미 VAE의 사후분포가 해당 프레임에 부여하는 약간의 확률성을 담고 있습니다. 이는 아래 RSSM 절을 이해하는 데 중요합니다. `z_seq`는 RSSM 자신의 사후분포 네트워크가 재현하도록 학습하는 *사후분포 목표*를 제공합니다.
+궤적이 만들어지면, 각 관측을 z로 인코딩해 노트북의 나머지 부분이 원본 픽셀이 아니라 잠재 시퀀스에 대한 동역학을 학습하도록 합니다. `encoder(obs)`는 사후분포의 평균과 로그 분산을 반환하며, 이 셀은 P01 `reparameterize`의 *샘플링* 경로인 `encoder.encode(obs)`(`mu + std * epsilon`) 대신 평균 `mu`만 사용합니다. 이 프레임들에서는 많은 잠재 차원이 비활성이어서 사후분포가 N(0, 1)에 가깝습니다. 샘플링하면 어떤 동역학 모델도 예측할 수 없는 독립 노이즈가 매 스텝에 더해지고, 아래의 모든 오차 수치가 그 노이즈에 지배됩니다. 평균을 쓰면 깨끗하고 결정론적인 목표를 얻을 수 있으며, 고정된 VAE를 관측 인코더로 쓸 때 흔히 택하는 방식입니다. `z_seq`는 여전히 아래 RSSM 절에서 설명하듯 RSSM 자신의 사후분포 네트워크가 흡수하는 관측입니다.
 
 ```python
 # Encode observations into latent sequences z [N, T, 32]
@@ -229,7 +229,8 @@ latent_list = []
 with torch.no_grad():
     for traj in trajectories:
         obs = traj['obs'].to(DEVICE)      # [T,3,H,W]
-        z   = encoder.encode(obs)         # [T, latent_dim]
+        mu, _ = encoder(obs)              # [T, latent_dim], posterior mean
+        z   = mu                          # mean, not encode(): sampling noise would swamp the dynamics
         latent_list.append(z.cpu())
 
 Z_all = torch.stack(latent_list, dim=0)                                     # [N,T,32]
@@ -269,14 +270,20 @@ class GRUDynamics(nn.Module):
             preds.append(self.output(h))
         return torch.stack(preds, dim=1)  # [B, T-1, D]
 
-    def rollout(self, z0, a_seq):
-        """Open-loop rollout from z0 [1,D] for len(a_seq) steps.
-        Returns [1, steps+1, D] (includes z0).
+    def rollout(self, z_ctx, a_seq):
+        """Warm up the hidden state on observed latents, then roll out open-loop.
+        z_ctx [1, C, D]: observed z_0..z_{C-1} (pass [1, D] for C=1).
+        a_seq: actions starting at a_0; the last len(a_seq) - C + 1 drive the open-loop steps.
+        Returns [1, steps+1, D]: the last observed latent, then the predictions.
         """
-        z = z0
-        h = torch.zeros(1, self.hidden_dim, device=z0.device)
+        z_ctx = z_ctx.reshape(1, -1, z_ctx.shape[-1])
+        C = z_ctx.shape[1]
+        h = torch.zeros(1, self.hidden_dim, device=z_ctx.device)
+        for t in range(C - 1):  # teacher forcing on the context
+            h = self.gru(torch.cat([z_ctx[:, t], a_seq[t].view(1, 1)], dim=-1), h)
+        z  = z_ctx[:, -1]
         zs = [z]
-        for a in a_seq:
+        for a in a_seq[C - 1:]:
             inp = torch.cat([z, a.view(1, 1)], dim=-1)
             h   = self.gru(inp, h)
             z   = self.output(h)
@@ -345,14 +352,21 @@ class MDNRNN(nn.Module):
         log_pi = F.log_softmax(logits, dim=-1)          # [B,T,K]
         return -torch.logsumexp(log_pi + log_p, dim=-1).mean()
 
-    def rollout(self, z0, a_seq):
-        """Open-loop rollout using the most likely mixture component.
-        Returns [1, steps+1, D].
+    def rollout(self, z_ctx, a_seq):
+        """Warm up the hidden state on observed latents, then roll out open-loop
+        with the most likely mixture component.
+        z_ctx [1, C, D]: observed z_0..z_{C-1} (pass [1, D] for C=1).
+        a_seq: actions starting at a_0; the last len(a_seq) - C + 1 drive the open-loop steps.
+        Returns [1, steps+1, D]: the last observed latent, then the predictions.
         """
-        z  = z0
-        h  = torch.zeros(1, self.hidden_dim, device=z0.device)
+        z_ctx = z_ctx.reshape(1, -1, z_ctx.shape[-1])
+        C = z_ctx.shape[1]
+        h = torch.zeros(1, self.hidden_dim, device=z_ctx.device)
+        for t in range(C - 1):  # teacher forcing on the context
+            h = self.gru(torch.cat([z_ctx[:, t], a_seq[t].view(1, 1)], dim=-1), h)
+        z  = z_ctx[:, -1]
         zs = [z]
-        for a in a_seq:
+        for a in a_seq[C - 1:]:
             inp = torch.cat([z, a.view(1, 1)], dim=-1)
             h   = self.gru(inp, h)
             lg, mu, _ = self._split(self.mdn_head(h))
@@ -373,7 +387,9 @@ print(f'MDNRNN params: {sum(p.numel() for p in mdn_model.parameters()):,}')
 
 `forward`의 KL 항 `kl = 0.5 * (lv_pr - lv_po + (lv_po.exp() + (mu_po - mu_pr)**2) / lv_pr.exp().clamp(min=1e-4) - 1)`은 (표준정규가 아닌) 일반적인 두 대각 가우시안 사이의 닫힌 형태 KL 발산 $D_{KL}(q_\phi(\mathbf{z}_t \mid \mathbf{h}_t, \mathbf{o}_t) \,\|\, p_\phi(\mathbf{z}_t \mid \mathbf{h}_t))$입니다. 이는 P01에서 쓴 것과 같은 가우시안 KL 공식을 더 일반화한 형태로, "사후분포 대 표준정규 사전분포"에서 "사후분포 대 *학습된* 사전분포 네트워크"로 확장한 것이며, 이것이 바로 RSSM의 KL 항을 단순한 VAE와 구분 짓는 지점입니다. 이 KL을 최소화하면 (`o_t`에 접근하지 못하는) 사전분포가 (접근하는) 사후분포와 일치하도록 끌어당겨지므로, 롤아웃 시점에 사전분포만 사용할 수 있을 때도 사후분포가 말했을 법한 것을 근사하도록 학습됩니다.
 
-`RSSM.rollout`은 `post_net`은 전혀 쓰지 않고 `prior_net`만 사용하며, 샘플링 대신 사전분포의 평균(`mu`)을 그대로 씁니다. 이는 강의에서 상상을 "실제 관측이 전혀 관여하지 않는 사전분포 전용 롤아웃"으로 설명한 것과 정확히 일치합니다.
+`forward`는 이 KL을 재구성 손실에 더하기 전에 `kl_weight=0.1`을 곱합니다. 이렇게 거의 결정론적인 데이터에서 가중치가 1이면, 손실을 낮추는 가장 쉬운 방법은 사후분포가 `z_seq[:, t]`를 거의 무시하고 사전분포를 그대로 따르는 것, 즉 사후분포 붕괴(posterior collapse)입니다. 그러면 모델은 평균 잠재값 정도만 예측하게 됩니다. 가중치를 낮추면 관측 정보가 `z`에 남습니다. Dreamer도 같은 이유로 KL balancing, free bits 같은 관련 기법을 씁니다. `kl_weight`는 파라미터가 아닌 일반 속성이므로 저장된 state dict는 P03, P04와 계속 호환됩니다.
+
+`RSSM.rollout`은 먼저 관측된 컨텍스트 프레임 `z_ctx`에 대해 `forward`와 같은 필터링 루프를 돌립니다. 0 상태와 0 행동에서 시작해 관측된 각 스텝마다 `h`를 갱신하고 `post_net`의 사후분포 평균을 취하므로, 시작 상태에는 이미 위치와 속도 정보가 담깁니다. 컨텍스트 이후에는 `post_net`을 쓰지 않고 `prior_net`만 사용하며, 샘플링 대신 사전분포의 평균(`mu`)을 그대로 씁니다. 이는 강의에서 상상을 "실제 관측이 전혀 관여하지 않는 사전분포 전용 롤아웃"으로 설명한 것과 정확히 일치합니다. 아래 비교에서 중요한 세부 사항이 하나 있습니다. RSSM 내부의 `z`는 모델 자신의 확률적 상태이지 VAE 잠재 공간이 아니며, 학습에서 관측 잠재 벡터와 연결되는 것은 `self.recon(z)`뿐입니다. 그래서 `rollout`은 매 단계 `self.recon(z)`를 반환하고, 이렇게 해야 출력이 GRU, MDN-RNN의 예측과 같은 공간에 놓여 디코딩할 수 있고 실제 `z_seq`와도 비교할 수 있습니다. 관측된 잠재 벡터를 RSSM 상태인 것처럼 GRU에 그대로 넣거나 상태 `z`를 그대로 반환하면 서로 다른 두 좌표계를 하나로 취급하게 되어, RSSM이 실제보다 훨씬 나빠 보이게 됩니다.
 
 ```python
 class RSSM(nn.Module):
@@ -381,11 +397,12 @@ class RSSM(nn.Module):
     Deterministic path: h_t = GRU(h_{t-1}, z_{t-1}, a_{t-1})
     Stochastic prior:   z_t ~ N(mu_prior(h_t), sigma_prior(h_t))
     Stochastic posterior: z_t ~ N(mu_post(h_t, o_t), sigma_post(h_t, o_t))
-    Training: ELBO = reconstruction + KL(posterior || prior)
+    Training: ELBO = reconstruction + kl_weight * KL(posterior || prior)
     hidden_dim=128, latent_dim=32
     """
-    def __init__(self, latent_dim=32, action_dim=1, hidden_dim=128):
+    def __init__(self, latent_dim=32, action_dim=1, hidden_dim=128, kl_weight=0.1):
         super().__init__()
+        self.kl_weight  = kl_weight  # < 1 keeps the posterior from collapsing onto the prior
         self.hidden_dim = hidden_dim
         self.latent_dim = latent_dim
 
@@ -422,7 +439,9 @@ class RSSM(nn.Module):
         recon_loss = z_seq.new_zeros(())
         kl_loss    = z_seq.new_zeros(())
         for t in range(T):
-            inp = torch.cat([z, a_seq[:, t].unsqueeze(-1)], dim=-1)
+            # a_{t-1}: t=0에서는 0 행동을 사용해 docstring 및 rollout과 일치시킴
+            a_prev = a_seq[:, t - 1] if t > 0 else torch.zeros_like(a_seq[:, 0])
+            inp = torch.cat([z, a_prev.unsqueeze(-1)], dim=-1)
             h   = self.gru(inp, h)
 
             # Prior
@@ -446,22 +465,31 @@ class RSSM(nn.Module):
             )
             kl_loss = kl_loss + kl.mean()
 
-        return (recon_loss + kl_loss) / T
+        return (recon_loss + self.kl_weight * kl_loss) / T
 
-    def rollout(self, z0, a_seq):
-        """Open-loop rollout using the prior only (no observations).
-        Returns [1, steps+1, D].
+    def rollout(self, z_ctx, a_seq):
+        """Filter the observed context with the posterior, then use the prior only (no observations).
+        z_ctx [1, C, D] and a_seq as in GRUDynamics.rollout.
+        Returns predicted observation latents self.recon(z), [1, steps+1, D],
+        in the same space as z_seq (z is the RSSM's own state, not the VAE latent).
         """
-        z  = z0
-        h  = torch.zeros(1, self.hidden_dim, device=z0.device)
-        zs = [z]
-        for a in a_seq:
+        z_ctx = z_ctx.reshape(1, -1, z_ctx.shape[-1])
+        C = z_ctx.shape[1]
+        h = torch.zeros(1, self.hidden_dim, device=z_ctx.device)
+        z = torch.zeros_like(z_ctx[:, 0])
+        a = torch.zeros(1, 1, device=z_ctx.device)  # forward와 같은 0 상태, 0 행동에서 시작
+        for t in range(C):  # 사후 평균으로 컨텍스트를 필터링
+            h = self.gru(torch.cat([z, a], dim=-1), h)
+            z, _ = self.post_net(torch.cat([h, z_ctx[:, t]], dim=-1)).chunk(2, dim=-1)
+            a = a_seq[t].view(1, 1)
+        zs = [self.recon(z)]
+        for a in a_seq[C - 1:]:
             inp = torch.cat([z, a.view(1, 1)], dim=-1)
             h   = self.gru(inp, h)
             pr  = self.prior_net(h)
             mu, _ = pr.chunk(2, dim=-1)
-            z  = mu  # use prior mean for deterministic rollout
-            zs.append(z)
+            z  = mu  # 결정론적 rollout에는 사전 평균 사용
+            zs.append(self.recon(z))
         return torch.stack(zs, dim=1)
 
 
@@ -496,14 +524,14 @@ assert abs(z_t.item() - 0.50) < 1e-6
 ```
 ## 3. 학습
 
-세 모델 모두 180개 학습 궤적에 대해 Adam(lr=1e-3)으로 20 에폭 동안 학습됩니다.
+세 모델 모두 180개 학습 궤적에 대해 Adam(lr=1e-3)으로 50 에폭 동안 학습됩니다.
 손실 함수:
 - GRU: 예측된 z와 실제 z 사이의 MSE
 - MDN-RNN: 가우시안 혼합의 음의 로그가능도
-- RSSM: ELBO = z의 MSE 재구성 + KL 발산
+- RSSM: ELBO = z의 MSE 재구성 + 0.1 × KL 발산
 
 ```python
-EPOCHS = 20
+EPOCHS = 50
 BATCH  = 32
 LR     = 1e-3
 
@@ -586,26 +614,29 @@ plt.show()
 ```
 ## 4. 롤아웃 비교
 
-테스트 궤적의 첫 프레임에서 시작해, 각 모델이 미래 관측을 보지 않고 10스텝을 앞으로 굴립니다.
-예측된 잠재값은 다시 픽셀 공간으로 디코딩되어 3행 10열 격자로 표시됩니다.
+각 모델은 먼저 테스트 궤적의 처음 `CONTEXT = 5`개 프레임을 본 뒤, 미래 관측을 보지 않고 10스텝을 앞으로 굴립니다.
+예측된 잠재값은 다시 픽셀 공간으로 디코딩되어 4행 11열 격자로 표시됩니다(0스텝은 마지막 관측 프레임).
 
 ```python
 ROLLOUT_STEPS = 10
 
-# Use the first test trajectory.
-z_traj = Z_test[0]           # [T, D]
-a_traj = A_test[0]           # [T]
-z0     = z_traj[0].unsqueeze(0)        # [1, D]
-a_seq  = a_traj[:ROLLOUT_STEPS]        # [10]
+CONTEXT       = 5   # real frames each model sees before it starts imagining
+
+# Use the test trajectory that moves the most, so rollout differences are visible.
+traj_idx = int((Z_test[:, 1:] - Z_test[:, :-1]).pow(2).sum(dim=(1, 2)).argmax())
+z_traj = Z_test[traj_idx]    # [T, D]
+a_traj = A_test[traj_idx]    # [T]
+z_ctx  = z_traj[:CONTEXT].unsqueeze(0)              # [1, C, D]
+a_seq  = a_traj[:CONTEXT - 1 + ROLLOUT_STEPS]       # [C-1+10]
 
 gru_model.eval()
 mdn_model.eval()
 rssm_model.eval()
 
 with torch.no_grad():
-    zs_gru  = gru_model.rollout(z0, a_seq).squeeze(0)    # [11, D]
-    zs_mdn  = mdn_model.rollout(z0, a_seq).squeeze(0)
-    zs_rssm = rssm_model.rollout(z0, a_seq).squeeze(0)
+    zs_gru  = gru_model.rollout(z_ctx, a_seq).squeeze(0)    # [11, D]
+    zs_mdn  = mdn_model.rollout(z_ctx, a_seq).squeeze(0)
+    zs_rssm = rssm_model.rollout(z_ctx, a_seq).squeeze(0)
 
     def decode_seq(zs):
         """zs [S, D] -> numpy [S, H, W, 3] in [0,1]."""
@@ -615,11 +646,11 @@ with torch.no_grad():
     imgs_gru  = decode_seq(zs_gru)
     imgs_mdn  = decode_seq(zs_mdn)
     imgs_rssm = decode_seq(zs_rssm)
-    imgs_gt   = decode_seq(z_traj[:ROLLOUT_STEPS + 1])   # ground truth
+    imgs_gt   = decode_seq(z_traj[CONTEXT - 1:CONTEXT + ROLLOUT_STEPS])   # ground truth
 
 print(f'Decoded rollout shape (GRU): {imgs_gru.shape}  (steps+1, H, W, 3)')
 ```
-학습이 끝났으니, 롤아웃 평가로 넘어가 예측이 미래로 갈수록 오차가 어떻게 누적되는지 측정합니다. `ROLLOUT_STEPS = 10`개의 개방루프 스텝은, 각 모델에 첫 프레임 `z0`와 실제 동작 시퀀스만 주어지고, 이후의 모든 잠재값은 실제 관측의 추가 보정 없이 오직 자신의 이전 예측만으로 예측해야 한다는 뜻입니다. 이는 [L03의 STORM 논의](../lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion#storms-key-improvement-single-token-stochastic-latent-variable)에서 설명하고 [L04](../lectures/lecture-04-evaluation-by-model/00-diagnostic-framework)에서 공식적으로 진단하는 **teacher forcing 격차**입니다. 학습에서는 매 스텝마다 실제 `z_seq`를 사용했지만, 이 평가는 각 모델이 스스로의 오차를 누적시키도록 강제합니다. 이것이 학습된 동역학이 실제로 상상 기반 계획에 쓸모 있는지를 판단하는 더 어렵고 더 현실적인 테스트입니다.
+학습이 끝났으니, 롤아웃 평가로 넘어가 예측이 미래로 갈수록 오차가 어떻게 누적되는지 측정합니다. `ROLLOUT_STEPS = 10`개의 개방루프 스텝은, 각 모델에 처음 `CONTEXT`개의 실제 프레임과 실제 동작 시퀀스가 주어지고, 이후의 모든 잠재값은 실제 관측의 추가 보정 없이 오직 자신의 이전 예측만으로 예측해야 한다는 뜻입니다. 컨텍스트가 중요한 이유가 있습니다. 프레임 하나로는 사각형이 어디 있는지는 알 수 있어도 얼마나 빨리 움직이는지는 알 수 없습니다. 프레임 하나와 빈 은닉 상태에서 시작하면 모델은 속도를 추측할 수밖에 없고, 비교 결과는 학습된 동역학이 아니라 그 추측에 좌우됩니다. 데모에는 잠재 공간에서 가장 많이 움직이는 테스트 궤적을 씁니다. 벽에 붙어 멈춘 사각형은 어느 모델에서나 똑같아 보이기 때문입니다. 이는 [L03의 STORM 논의](../lectures/lecture-03-architecture-patterns/01-architectures-rnn-transformer-diffusion#storms-key-improvement-single-token-stochastic-latent-variable)에서 설명하고 [L04](../lectures/lecture-04-evaluation-by-model/00-diagnostic-framework)에서 공식적으로 진단하는 **teacher forcing 격차**입니다. 학습에서는 매 스텝마다 실제 `z_seq`를 사용했지만, 이 평가는 각 모델이 스스로의 오차를 누적시키도록 강제합니다. 이것이 학습된 동역학이 실제로 상상 기반 계획에 쓸모 있는지를 판단하는 더 어렵고 더 현실적인 테스트입니다.
 
 ```python
 # Image grid: GT, GRU, MDN-RNN, RSSM.
@@ -658,7 +689,7 @@ fig.suptitle('10-step Imagined Rollouts vs Ground Truth', fontsize=12, y=1.05)
 display(fig)
 plt.close(fig)
 ```
-이미지 격자는 시각적인 이야기를 보여줍니다. 다음 블록은 이를 정량적으로 보기 위해 스텝별 픽셀 MSE 곡선으로 바꿉니다. GRU는 불확실성을 표현하거나 보정할 메커니즘이 없으므로 가장 먼저, 가장 심하게 드리프트할 것으로 예상됩니다. MDN-RNN은 롤아웃이 결국 하나만 고르더라도 학습 중에는 여러 가능한 결과를 모델링하므로 다소 나은 결과를 보일 것입니다. RSSM은 사후분포가 실제 관측으로부터 추론했을 값과 일치하도록 명시적인 사전분포 네트워크를 학습했기 때문에, 이 거의 결정론적인 합성 데이터에서 가장 잘 버틸 것으로 예상됩니다.
+이미지 격자는 시각적인 이야기를 보여줍니다. 다음 블록은 이를 정량적으로 보기 위해 스텝별 픽셀 MSE 곡선으로 바꿉니다. 여기서 RSSM이 모든 면에서 이길 것이라고 기대하지는 마세요. 이 데이터는 거의 결정론적입니다. 사각형은 작은 노이즈와 함께 일정한 속도로 움직이고 행동은 아무 영향도 주지 않으므로, 확률적 잠재 변수가 모델링할 무작위성이 거의 없고 결정론적인 GRU가 잘 맞습니다. RSSM의 강점은 사전분포가 사후분포의 추론에 가깝도록 학습된다는 점이며, 그래서 긴 롤아웃에서 오차가 더 천천히 커지는 경향이 있습니다. 참고 실행에서 RSSM 행은 10스텝 내내 사각형의 모양과 방향을 유지했고, GRU 행은 약 5스텝 이후 드리프트하며 흐려졌으며, 가장 가능성 높은 혼합 성분만 따르는 MDN-RNN은 사각형을 배경 속으로 점점 줄여 버렸습니다. 이는 궤적 하나일 뿐이므로, 다음 절에서 전체 테스트 세트로 이 패턴을 확인합니다.
 
 ```python
 # Per-step pixel MSE vs ground truth.
@@ -683,31 +714,44 @@ ax.grid(True, alpha=0.3)
 plt.tight_layout()
 plt.show()
 ```
-## 5. 1스텝 대 5스텝 예측 오차
+## 5. 지평선별 예측 오차 (1~10스텝)
 
-홀드아웃 테스트 궤적에서 세 모델 모두에 대해 1~5스텝 지평선의 평균 잠재 공간 MSE를 계산합니다. `horizon_mse`는 모든 테스트 궤적에 걸쳐 창을 슬라이딩합니다(`for t0 in range(T - max_h)`). 각 창의 시작점에서 각 모델을 `max_h`스텝 앞으로 굴리고, 각 지평선에서 실제 잠재값과의 제곱 오차를 따로 누적합니다. 이는 L04의 진단 프레임워크가 장기 롤아웃 계층의 표준 근거로 꼽는 **오차-지평선 곡선**을 만들어냅니다. 곡선이 낮고 평평하게 유지되면 모델의 오차가 누적되지 않는다는 뜻이고, 지평선이 늘어남에 따라 곡선이 가파르게 오르면 스텝마다의 작은 실수가 눈덩이처럼 불어나고 있다는 뜻입니다. 이는 [L04](../lectures/lecture-04-evaluation-by-model/05-diffusion-drift#horizon-drift-the-universal-failure-mode-across-all-world-models)에서 모든 아키텍처에 대해 기록된 것과 같은 **지평선 드리프트(horizon drift)** 실패 모드입니다.
+홀드아웃 테스트 궤적에서 세 모델 모두에 대해 1~10스텝 지평선의 평균 잠재 공간 MSE를 계산합니다. `horizon_mse`는 모든 테스트 궤적에 걸쳐 창을 슬라이딩합니다(`for t0 in range(context - 1, T - max_h)`). 각 모델에 `t0`에서 끝나는 `context`개의 실제 프레임을 준 뒤 거기서 `max_h`스텝 앞으로 굴리고, 각 지평선에서 실제 잠재값과의 제곱 오차를 따로 누적합니다. 두 개의 자명한 기준선이 수치의 기준점이 됩니다. `copy_rollout`은 마지막 관측 잠재값을 반복하고, `mean_rollout`은 항상 학습 세트 평균을 예측합니다. 학습된 모델이 마지막 프레임 복사조차 이기지 못한다면 움직임을 전혀 학습하지 못한 것입니다. 이는 L04의 진단 프레임워크가 장기 롤아웃 계층의 표준 근거로 꼽는 **오차-지평선 곡선**을 만들어냅니다. 곡선이 낮고 평평하게 유지되면 모델의 오차가 누적되지 않는다는 뜻이고, 지평선이 늘어남에 따라 곡선이 가파르게 오르면 스텝마다의 작은 실수가 눈덩이처럼 불어나고 있다는 뜻입니다. 이는 [L04](../lectures/lecture-04-evaluation-by-model/05-diffusion-drift#horizon-drift-the-universal-failure-mode-across-all-world-models)에서 모든 아키텍처에 대해 기록된 것과 같은 **지평선 드리프트(horizon drift)** 실패 모드입니다.
 
 ```python
-MAX_H = 5
+MAX_H = 10
 
 
-def horizon_mse(model_rollout_fn, Z, A, max_h=5):
+def horizon_mse(model_rollout_fn, Z, A, max_h=5, context=CONTEXT):
     """Average latent MSE at horizons 1..max_h on test set.
-    model_rollout_fn(z0, a_seq) -> [1, steps+1, D]
+    Each window gives the model `context` real frames, then predicts open-loop from the last one.
+    model_rollout_fn(z_ctx, a_seq) -> [1, steps+1, D]
     """
     N, T, D = Z.shape
     errs   = np.zeros(max_h)
     counts = np.zeros(max_h)
     with torch.no_grad():
         for i in range(N):
-            for t0 in range(T - max_h):
-                z0   = Z[i, t0].unsqueeze(0)          # [1, D]
-                a_s  = A[i, t0:t0 + max_h]            # [max_h]
-                zs   = model_rollout_fn(z0, a_s).squeeze(0)  # [max_h+1, D]
+            for t0 in range(context - 1, T - max_h):
+                z_ctx = Z[i, t0 - context + 1:t0 + 1].unsqueeze(0)   # [1, C, D]
+                a_s   = A[i, t0 - context + 1:t0 + max_h]            # [C-1+max_h]
+                zs    = model_rollout_fn(z_ctx, a_s).squeeze(0)      # [max_h+1, D]
                 for h in range(1, max_h + 1):
                     errs[h - 1]   += F.mse_loss(zs[h], Z[i, t0 + h]).item()
                     counts[h - 1] += 1
     return errs / counts
+
+
+# Trivial baselines: copy the last latent, or always predict the training mean.
+Z_MEAN = Z_train.reshape(-1, LATENT_DIM).mean(0, keepdim=True)  # [1, D]
+
+def copy_rollout(z_ctx, a_seq):
+    steps = len(a_seq) - z_ctx.shape[1] + 1
+    return z_ctx[:, -1:].expand(1, steps + 1, -1)
+
+def mean_rollout(z_ctx, a_seq):
+    steps = len(a_seq) - z_ctx.shape[1] + 1
+    return torch.cat([z_ctx[:, -1], Z_MEAN.expand(steps, -1)], dim=0).unsqueeze(0)
 
 
 print('Computing horizon errors on test set...')
@@ -716,23 +760,26 @@ gru_model.eval(); mdn_model.eval(); rssm_model.eval()
 err_gru  = horizon_mse(gru_model.rollout,  Z_test, A_test, MAX_H)
 err_mdn  = horizon_mse(mdn_model.rollout,  Z_test, A_test, MAX_H)
 err_rssm = horizon_mse(rssm_model.rollout, Z_test, A_test, MAX_H)
+err_copy = horizon_mse(copy_rollout,      Z_test, A_test, MAX_H)
+err_mean = horizon_mse(mean_rollout,      Z_test, A_test, MAX_H)
 
 horizons = list(range(1, MAX_H + 1))
 print('\nLatent MSE by horizon:')
-print(f'{"Horizon":>8}  {"GRU":>10}  {"MDN-RNN":>10}  {"RSSM":>10}')
-for h, (eg, em, er) in enumerate(zip(err_gru, err_mdn, err_rssm), start=1):
-    print(f'{h:>8}  {eg:>10.4f}  {em:>10.4f}  {er:>10.4f}')
+print(f'{"Horizon":>8}  {"GRU":>10}  {"MDN-RNN":>10}  {"RSSM":>10}  {"Copy last":>10}  {"Train mean":>10}')
+for h, (eg, em, er, ec, eb) in enumerate(zip(err_gru, err_mdn, err_rssm, err_copy, err_mean), start=1):
+    print(f'{h:>8}  {eg:>10.4f}  {em:>10.4f}  {er:>10.4f}  {ec:>10.4f}  {eb:>10.4f}')
 ```
-지평선 범위를 정했으니, 스텝별 예측 오차를 그래프로 그려 단기와 장기 지평선의 거동을 직접 비교할 수 있게 합니다. 이 그래프를 위의 정성적 롤아웃 격자와 함께 보는 것은 의도적입니다. 어떤 모델은 지평선 1에서의 오차가 낮으면서도(직후 예측은 정확하면서도) 지평선 5까지는 심하게 드리프트할 수 있는데, 단일 집계 수치가 아니라 다중 지평선 곡선만이 이를 드러냅니다.
+지평선 범위를 정했으니, 스텝별 예측 오차를 그래프로 그려 단기와 장기 지평선의 거동을 직접 비교할 수 있게 합니다. 학습 세트 평균 기준선은 위에 출력만 하고 그래프에서는 뺐습니다. 오차가 몇 배나 커서 다른 곡선을 납작하게 만들기 때문입니다. 이 그래프를 위의 정성적 롤아웃 격자와 함께 보는 것은 의도적입니다. 어떤 모델은 지평선 1에서 오차가 가장 낮아도 나중에 역전당할 수 있는데, 단일 집계 수치가 아니라 다중 지평선 곡선만이 이를 드러냅니다. 참고 실행에서 GRU는 모든 지평선에서 마지막 프레임 복사 기준선을 이겼고, RSSM은 지평선 2부터, MDN-RNN은 지평선 4부터 이겼습니다. GRU는 지평선 4까지 오차가 가장 낮았고, 지평선 5에서 두 모델이 비슷했으며, 지평선 6~10에서는 오차가 더 천천히 커진 RSSM이 더 낮았습니다. MDN-RNN은 롤아웃이 매 스텝 하나의 혼합 성분에만 의존하므로 세 모델 중 계속 가장 높았습니다.
 
 ```python
 fig, ax = plt.subplots(figsize=(6, 4))
 ax.plot(horizons, err_gru,  marker='o', label='GRU',     color='tab:blue')
 ax.plot(horizons, err_mdn,  marker='s', label='MDN-RNN', color='tab:orange')
 ax.plot(horizons, err_rssm, marker='^', label='RSSM',    color='tab:green')
+ax.plot(horizons, err_copy, linestyle='--', label='Copy last', color='gray')
 ax.set_xlabel('Prediction Horizon (steps)')
 ax.set_ylabel('Average Latent MSE')
-ax.set_title('1-step to 5-step Prediction Error (held-out test set)')
+ax.set_title('1-step to 10-step Prediction Error (held-out test set)')
 ax.set_xticks(horizons)
 ax.legend()
 ax.grid(True, alpha=0.3)
